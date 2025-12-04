@@ -11,6 +11,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 import re
+import json
+
+# Constantes para llamadas API (Compra Ágil)
+API_BASE_CA = "https://servicios-compra-agil.mercadopublico.cl/v1/compra-agil"
+DEFAULT_COOKIE = "cf8fc9f9992a81aa1f6cd62d77d1d62b=19395daaa97624eb1f7f9f9e68b099e5"
 
 def descargar_compra_agil(codigo_ca, driver=None):
     """
@@ -79,6 +84,108 @@ def descargar_compra_agil(codigo_ca, driver=None):
     except Exception as e:
         print(f"Error durante la descarga: {str(e)}")
         return False
+
+
+def descargar_compra_agil_api(codigo_ca, token_path="token"):
+    """
+    Descarga los adjuntos de una compra ágil usando la API oficial con el token Bearer.
+
+    Args:
+        codigo_ca (str): Código de la compra ágil
+        token_path (str): Ruta al archivo que contiene el token (por defecto 'token')
+
+    Returns:
+        bool: True si todo fue bien, False en caso contrario
+    """
+    try:
+        token = _leer_token(token_path)
+    except Exception as e:
+        print(f"[API] Error leyendo token: {e}")
+        return False
+
+    carpeta_base = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
+    os.makedirs(carpeta_base, exist_ok=True)
+
+    exitosos = 0
+    errores = 0
+
+    # 1) Descargas generales (comprador/listar) - pueden ser bases administrativas o anexos generales
+    try:
+        archivos_generales, _ = _listar_adjuntos_api(codigo_ca, token)
+    except Exception as e:
+        print(f"[API] Error al listar adjuntos generales: {e}")
+        archivos_generales = []
+
+    if archivos_generales:
+        print(f"[API] Adjuntos generales encontrados: {len(archivos_generales)}")
+        carpeta_adjuntos = os.path.join(carpeta_base, "Adjuntos")
+        os.makedirs(carpeta_adjuntos, exist_ok=True)
+        for adjunto in archivos_generales:
+            file_id = adjunto.get("fileId") or adjunto.get("id") or adjunto.get("uuid")
+            if not file_id:
+                continue
+            nombre_archivo = adjunto.get("filename") or adjunto.get("nombre") or f"{file_id}.bin"
+            try:
+                contenido, nombre_final = _descargar_archivo_api(file_id, token, nombre_archivo)
+                ruta_archivo = os.path.join(carpeta_adjuntos, nombre_final)
+                with open(ruta_archivo, "wb") as f:
+                    f.write(contenido)
+                exitosos += 1
+                print(f"[API] Descargado (general) {nombre_final} -> {ruta_archivo}")
+            except Exception as e:
+                errores += 1
+                print(f"[API] Error al descargar (general) {file_id}: {e}")
+
+    # 2) Adjuntos por postulante (cotización) usando IDs de candidatos
+    try:
+        info_data = _obtener_info_compra(codigo_ca, token)
+        candidatos = extract_candidate_ids(info_data)
+    except Exception as e:
+        print(f"[API] Error al obtener información de compra o candidatos: {e}")
+        candidatos = []
+
+    if not candidatos:
+        print(f"[API] No se encontraron candidatos/postulantes para la compra ágil {codigo_ca}")
+    else:
+        print(f"[API] Candidatos encontrados: {len(candidatos)}")
+
+    for candidato in candidatos:
+        candidato_id = candidato.get("id")
+        etiqueta = candidato.get("label") or f"Postulante_{candidato_id}"
+        carpeta_candidato = os.path.join(carpeta_base, limpiar_nombre_archivo(etiqueta))
+        os.makedirs(carpeta_candidato, exist_ok=True)
+
+        try:
+            documentos = _obtener_documentos_por_cotizacion(candidato_id, token)
+        except Exception as e:
+            print(f"[API] Error al obtener adjuntos para {etiqueta}: {e}")
+            errores += 1
+            continue
+
+        if not documentos:
+            print(f"[API] Sin documentos para {etiqueta}")
+            continue
+
+        print(f"[API] Descargando {len(documentos)} documentos de {etiqueta}")
+
+        for doc in documentos:
+            file_id = doc.get("id") or doc.get("documentoId") or doc.get("fileId")
+            if not file_id:
+                continue
+            nombre_archivo = doc.get("filename") or doc.get("nombre") or doc.get("fileName") or f"{file_id}.bin"
+            try:
+                contenido, nombre_final = _descargar_archivo_api(file_id, token, nombre_archivo)
+                ruta_archivo = os.path.join(carpeta_candidato, nombre_final)
+                with open(ruta_archivo, "wb") as f:
+                    f.write(contenido)
+                exitosos += 1
+                print(f"[API] Descargado ({etiqueta}) {nombre_final} -> {ruta_archivo}")
+            except Exception as e:
+                errores += 1
+                print(f"[API] Error al descargar ({etiqueta}) {file_id}: {e}")
+
+    print(f"[API] Descarga finalizada. Éxitos: {exitosos} | Errores: {errores}")
+    return exitosos > 0
 
 def navegar_a_compra_agil(codigo_ca, driver):
     """
@@ -524,6 +631,156 @@ def obtener_extension_por_content_type(content_type):
     }
     
     return extensiones.get(content_type.lower(), '')
+
+
+# ==========================
+# Funciones auxiliares API
+# ==========================
+
+def _leer_token(token_path):
+    with open(token_path, "r", encoding="utf-8") as f:
+        token = f.read().strip()
+    if not token:
+        raise ValueError("El archivo de token está vacío")
+    return token
+
+
+def _headers_api(token):
+    return {
+        "Authorization": token,
+        "Cookie": DEFAULT_COOKIE,
+        "Origin": "https://compra-agil.mercadopublico.cl",
+        "Referer": "https://compra-agil.mercadopublico.cl/",
+        "Accept": "application/json, text/plain, */*",
+    }
+
+
+def _listar_adjuntos_api(codigo_ca, token):
+    url = f"{API_BASE_CA}/comprador/listar/{codigo_ca}"
+    resp = requests.get(url, headers=_headers_api(token), timeout=40)
+    if resp.status_code != 200:
+        raise RuntimeError(f"HTTP {resp.status_code}: {resp.text}")
+    data = resp.json()
+    payload = data.get("payload") or {}
+    archivos = payload.get("files") or []
+    return archivos, payload
+
+
+def _descargar_archivo_api(file_id, token, nombre_archivo):
+    url = f"{API_BASE_CA}/comprador/descargar?id={file_id}"
+    resp = requests.get(url, headers=_headers_api(token), timeout=60, stream=True)
+    if resp.status_code != 200:
+        raise RuntimeError(f"HTTP {resp.status_code}: {resp.text}")
+
+    # Si Content-Disposition trae nombre de archivo, respetarlo
+    disposition = resp.headers.get("content-disposition") or resp.headers.get("Content-Disposition")
+    if disposition:
+        try:
+            # Ej: attachment;filename=nombre.pdf
+            parts = disposition.split("filename=")
+            if len(parts) > 1:
+                candidato = parts[1].strip().strip('"').strip("'")
+                if candidato:
+                    nombre_archivo = candidato
+        except Exception:
+            pass
+
+    return resp.content, nombre_archivo
+
+
+def _obtener_info_compra(codigo_compra, token):
+    url = f"{API_BASE_CA}/solicitud/{codigo_compra}?size=20&page=0"
+    resp = requests.get(url, headers=_headers_api(token), timeout=40)
+    if resp.status_code != 200:
+        raise RuntimeError(f"HTTP {resp.status_code}: {resp.text}")
+    return resp.json()
+
+
+def _obtener_documentos_por_cotizacion(id_objetivo, token):
+    url = f"{API_BASE_CA}/solicitud/cotizacion/{id_objetivo}"
+    resp = requests.get(url, headers=_headers_api(token), timeout=40)
+    if resp.status_code != 200:
+        raise RuntimeError(f"HTTP {resp.status_code}: {resp.text}")
+    data = resp.json()
+    payload = data.get("payload") or {}
+    documentos = payload.get("documentosAdjuntos") or []
+    resultados = []
+    for doc in documentos:
+        if not isinstance(doc, dict):
+            continue
+        doc_id = doc.get("id") or doc.get("documentoId") or doc.get("fileId")
+        nombre = doc.get("filename") or doc.get("nombre") or doc.get("fileName")
+        if not doc_id:
+            continue
+        resultados.append({"id": doc_id, "filename": nombre})
+    return resultados
+
+
+def extract_candidate_ids(info_data):
+    payload = info_data.get("payload") or {}
+    records = []
+    for key in ("ofertasSeleccionadas", "ofertas", "detalleOfertasProveedor", "ofertasInadmisibles"):
+        section = payload.get(key)
+        if isinstance(section, list):
+            records.extend(section)
+        elif isinstance(section, dict):
+            if all(isinstance(item, dict) for item in section.values()):
+                records.extend(section.values())
+            else:
+                records.append(section)
+    candidates = []
+    seen = set()
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        identifier = (
+            record.get("idEntidad")
+            or record.get("idRespuesta")
+            or record.get("id")
+            or record.get("codigoEmpresa")
+            or record.get("codigoSucursalEmpresa")
+        )
+        if identifier is None:
+            continue
+        identifier_str = str(identifier).strip()
+        if not identifier_str or identifier_str in seen:
+            continue
+        label = (
+            record.get("razonSocial")
+            or record.get("nombre")
+            or record.get("nombreApellido")
+            or f"Postulante {identifier_str}"
+        )
+        candidates.append({"id": identifier_str, "label": label})
+        seen.add(identifier_str)
+    return candidates
+
+
+def build_user_label(file_info):
+    """Genera una etiqueta legible para el postulante/usuario dueño del archivo."""
+    posibles_nombres = [
+        "postulanteNombre",
+        "postulante",
+        "usuarioNombre",
+        "usuario",
+        "userName",
+        "providerName",
+        "provider",
+        "nombre",
+        "empresaNombre",
+    ]
+    posibles_rut = ["postulanteRut", "usuarioRut", "rut"]
+
+    nombre = next((file_info.get(key) for key in posibles_nombres if file_info.get(key)), None)
+    rut = next((file_info.get(key) for key in posibles_rut if file_info.get(key)), None)
+
+    if nombre and rut:
+        return f"{nombre} ({rut})"
+    if nombre:
+        return str(nombre)
+    if rut:
+        return f"RUT {rut}"
+    return "Adjuntos"
 
 def crear_zip_proveedor(ruta_proveedor, nombre_proveedor):
     """

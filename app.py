@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import os
 import webbrowser
+import json
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -30,6 +31,7 @@ class DescargadorLicitacionesApp:
         self.codigo = tk.StringVar()
         self.navegador_iniciado = False
         self.driver = None
+        self.token_guardado = False
         
         self.setup_ui()
     
@@ -223,21 +225,32 @@ class DescargadorLicitacionesApp:
     def iniciar_navegador(self):
         """Inicia el navegador web con Selenium"""
         try:
+            print("[DEBUG] iniciar_navegador: iniciando Chrome...")
             self.status_var.set("Iniciando navegador...")
             
             # Configurar opciones de Chrome
             chrome_options = Options()
             chrome_options.add_argument("--start-maximized")
+            # Activar logs de rendimiento para capturar headers de red (incluye Authorization)
+            chrome_options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
             
             # Iniciar el navegador
             self.driver = webdriver.Chrome(options=chrome_options)
+            print("[DEBUG] iniciar_navegador: driver creado")
             self.driver.get("https://mercadopublico.cl/Home")
+            print("[DEBUG] iniciar_navegador: cargada https://mercadopublico.cl/Home")
             
             self.navegador_iniciado = True
+            self.token_guardado = False
+            print("[DEBUG] iniciar_navegador: navegador_iniciado=True, token_guardado=False")
             self.btn_navegador.configure(state='disabled')
             self.btn_continuar.configure(state='normal')
             
             self.status_var.set("Navegador iniciado - Ingrese a su cuenta y presione 'Continuar'")
+            
+            # Iniciar monitoreo automático del token de Compra Ágil
+            print("[DEBUG] iniciar_navegador: iniciando monitoreo automático de token")
+            self._iniciar_monitoreo_token_automatico()
             
             messagebox.showinfo("Navegador Iniciado", 
                                "Navegador iniciado correctamente.\n\n"
@@ -246,14 +259,45 @@ class DescargadorLicitacionesApp:
                                "2. Una vez logueado, presione el botón 'Continuar'")
             
         except Exception as e:
+            print(f"[DEBUG] iniciar_navegador: error al iniciar navegador: {e}")
             messagebox.showerror("Error", f"Error al iniciar el navegador:\n{str(e)}")
             self.status_var.set("Error al iniciar navegador")
     
     def continuar_proceso(self):
-        """Continúa con el proceso después del login"""
+        """Continúa con el proceso después del login y guarda el token de API"""
         if not self.navegador_iniciado:
+            print("[DEBUG] continuar_proceso: navegador no iniciado")
             messagebox.showwarning("Advertencia", "Debe iniciar el navegador primero")
             return
+        
+        # Intentar una captura final del token si aún no se ha guardado
+        if self.token_guardado:
+            print("[DEBUG] continuar_proceso: token ya guardado anteriormente")
+            self.status_var.set(
+                "Token de sesión ya capturado y guardado en 'token' para uso de las APIs"
+            )
+        else:
+            print("[DEBUG] continuar_proceso: intentando captura final de token...")
+            token_guardado = self.capturar_y_guardar_token_desde_selenium()
+            if token_guardado:
+                print("[DEBUG] continuar_proceso: token capturado correctamente en captura final")
+                self.status_var.set(
+                    "Token de sesión capturado y guardado en 'token' para uso de las APIs"
+                )
+            else:
+                print("[DEBUG] continuar_proceso: no se pudo capturar token en captura final")
+                # No bloquea el flujo si no se encuentra el token, pero se informa al usuario
+                self.status_var.set(
+                    "No se pudo detectar automáticamente el token. "
+                    "El flujo continuará, pero las APIs que dependen del token pueden fallar."
+                )
+                messagebox.showwarning(
+                    "Token no detectado",
+                    "No se pudo obtener automáticamente el token de autenticación desde el navegador.\n\n"
+                    "Asegúrese de haber iniciado sesión en MercadoPublico y haber abierto al menos una vista "
+                    "de Compra Ágil / Licitación antes de presionar 'Continuar'.\n\n"
+                    "Si utiliza APIs que leen el archivo 'token', verifique o actualice manualmente su contenido.",
+                )
             
         # Habilitar los botones de acción
         self.btn_flujo_completo.configure(state='normal')
@@ -261,7 +305,9 @@ class DescargadorLicitacionesApp:
         self.btn_generar_excel.configure(state='normal')
         self.btn_ficha_proveedor.configure(state='normal')
         
-        self.status_var.set("Listo para procesar - Ingrese el código y ejecute el flujo completo o las acciones individuales")
+        self.status_var.set(
+            "Listo para procesar - Ingrese el código y ejecute el flujo completo o las acciones individuales"
+        )
         
         messagebox.showinfo(
             "Listo",
@@ -272,6 +318,320 @@ class DescargadorLicitacionesApp:
             "• Ejecutar el flujo completo (recomendado)\n"
             "• O usar las acciones individuales para debug"
         )
+
+    def capturar_y_guardar_token_desde_selenium(self):
+        """
+        Intenta extraer el token JWT desde el contexto del navegador interceptando las llamadas a la API
+        de Compra Ágil (Authorization header) y lo guarda en el archivo 'token' con el prefijo 'Bearer '
+        para ser usado por las APIs.
+        """
+        if not self.driver:
+            print("[DEBUG] capturar_y_guardar_token_desde_selenium: no hay driver")
+            return False
+
+        # 1) Intentar primero desde los logs de rendimiento (Network.requestWillBeSent)
+        print("[DEBUG] capturar_y_guardar_token_desde_selenium: intentando obtener token desde logs de performance")
+        token_crudo = self._obtener_token_desde_logs_performance()
+        print(f"[DEBUG] capturar_y_guardar_token_desde_selenium: token_crudo_desde_logs={repr(token_crudo)[:120]}")
+
+        # 2) Si no se encontró en logs, intentar vía hook JS en fetch/XMLHttpRequest
+        if not token_crudo:
+            print("[DEBUG] capturar_y_guardar_token_desde_selenium: intentando obtener token desde _obtener_token_desde_navegador()")
+            token_crudo = self._obtener_token_desde_navegador()
+            print(f"[DEBUG] capturar_y_guardar_token_desde_selenium: token_crudo_desde_js={repr(token_crudo)[:120]}")
+
+        if not token_crudo:
+            print("[DEBUG] capturar_y_guardar_token_desde_selenium: no se encontró token por ningún método")
+            return False
+
+        token_formateado = token_crudo.strip()
+        if not token_formateado.lower().startswith("bearer "):
+            token_formateado = f"Bearer {token_formateado}"
+
+        try:
+            with open("token", "w", encoding="utf-8") as f:
+                f.write(token_formateado)
+            self.token_guardado = True
+            print("[DEBUG] capturar_y_guardar_token_desde_selenium: token guardado en archivo 'token'")
+            return True
+        except Exception as e:
+            print(f"[DEBUG] capturar_y_guardar_token_desde_selenium: error al escribir archivo 'token': {e}")
+            return False
+
+    def _obtener_token_desde_logs_performance(self):
+        """
+        Revisa los logs de rendimiento de Chrome (Network.requestWillBeSent)
+        y busca peticiones a servicios-compra-agil.mercadopublico.cl con header Authorization.
+        Devuelve el último token visto o None.
+        """
+        if not self.driver:
+            print("[DEBUG] _obtener_token_desde_logs_performance: no hay driver")
+            return None
+
+        try:
+            logs = self.driver.get_log("performance")
+        except Exception as e:
+            print(f"[DEBUG] _obtener_token_desde_logs_performance: error al obtener logs de performance: {e}")
+            return None
+
+        if not logs:
+            print("[DEBUG] _obtener_token_desde_logs_performance: logs de performance vacíos")
+            return None
+
+        print(f"[DEBUG] _obtener_token_desde_logs_performance: {len(logs)} entradas de performance recibidas")
+
+        token_encontrado = None
+
+        # Revisar desde el final (las peticiones más recientes primero)
+        for entry in reversed(logs):
+            try:
+                mensaje_raw = entry.get("message")
+                if not mensaje_raw:
+                    continue
+                envoltura = json.loads(mensaje_raw)
+                mensaje = envoltura.get("message", {})
+                metodo = mensaje.get("method")
+                if metodo != "Network.requestWillBeSent":
+                    continue
+                params = mensaje.get("params", {})
+                request = params.get("request", {})
+                url = request.get("url", "")
+                if "servicios-compra-agil.mercadopublico.cl" not in url:
+                    continue
+                headers = request.get("headers", {})
+                auth = headers.get("Authorization") or headers.get("authorization")
+                if auth:
+                    print(f"[DEBUG] _obtener_token_desde_logs_performance: Authorization encontrado para url={url}")
+                    token_encontrado = auth
+                    break
+            except Exception as e:
+                print(f"[DEBUG] _obtener_token_desde_logs_performance: error procesando entrada de log: {e}")
+                continue
+
+        if not token_encontrado:
+            print("[DEBUG] _obtener_token_desde_logs_performance: no se encontró Authorization en los logs")
+        else:
+            print(f"[DEBUG] _obtener_token_desde_logs_performance: token_encontrado={repr(token_encontrado)[:120]}")
+
+        return token_encontrado
+
+    def _obtener_token_desde_navegador(self):
+        """
+        Instala (si es necesario) un hook en fetch/XMLHttpRequest para capturar el header Authorization
+        cuando la página llama a https://servicios-compra-agil.mercadopublico.cl, y devuelve el último
+        token visto (sin modificar archivo).
+        """
+        if not self.driver:
+            print("[DEBUG] _obtener_token_desde_navegador: no hay driver")
+            return None
+
+        script_hook_y_token = """
+            (function() {
+                function storeAuth(value) {
+                    if (!value || typeof value !== 'string') return;
+                    var v = value.trim();
+                    if (!v) return;
+                    var lower = v.toLowerCase();
+                    if (lower.indexOf('bearer ') !== 0 && v.indexOf('.') === -1) return;
+                    window.__MP_CA_AUTH_TOKEN__ = v;
+                }
+
+                function shouldInspect(input) {
+                    try {
+                        var url = null;
+                        if (typeof input === 'string') {
+                            url = input;
+                        } else if (input && typeof input.url === 'string') {
+                            url = input.url;
+                        }
+                        if (!url) return false;
+                        return url.indexOf('servicios-compra-agil.mercadopublico.cl') !== -1;
+                    } catch (e) {
+                        return false;
+                    }
+                }
+
+                function extractFromHeaders(headers) {
+                    if (!headers) return;
+                    try {
+                        if (typeof headers.get === 'function') {
+                            var h = headers.get('Authorization') || headers.get('authorization');
+                            if (h) {
+                                storeAuth(h);
+                            }
+                            if (window.__MP_CA_AUTH_TOKEN__ && window.__MP_CA_AUTH_TOKEN__.length) return;
+                            if (typeof headers.forEach === 'function') {
+                                headers.forEach(function(v, k) {
+                                    if (k && typeof k === 'string' && k.toLowerCase() === 'authorization') {
+                                        storeAuth(v);
+                                    }
+                                });
+                            }
+                        } else if (Array.isArray(headers)) {
+                            for (var i = 0; i < headers.length; i++) {
+                                var entry = headers[i];
+                                if (!entry) continue;
+                                var name = entry[0];
+                                var val = entry[1];
+                                if (name && typeof name === 'string' && name.toLowerCase() === 'authorization') {
+                                    storeAuth(val);
+                                }
+                            }
+                        } else if (typeof headers === 'object') {
+                            var cand = headers['Authorization'] || headers['authorization'];
+                            if (cand) {
+                                storeAuth(cand);
+                            }
+                            if (window.__MP_CA_AUTH_TOKEN__ && window.__MP_CA_AUTH_TOKEN__.length) return;
+                            for (var key in headers) {
+                                if (!Object.prototype.hasOwnProperty.call(headers, key)) continue;
+                                if (key && typeof key === 'string' && key.toLowerCase() === 'authorization') {
+                                    storeAuth(headers[key]);
+                                }
+                            }
+                        }
+                    } catch (e) {}
+                }
+
+                if (!window.__MP_CA_TOKEN_HOOK_INSTALLED__) {
+                    window.__MP_CA_TOKEN_HOOK_INSTALLED__ = true;
+                    window.__MP_CA_AUTH_TOKEN__ = window.__MP_CA_AUTH_TOKEN__ || null;
+
+                    if (window.fetch) {
+                        var originalFetch = window.fetch;
+                        window.fetch = function(input, init) {
+                            try {
+                                if (shouldInspect(input)) {
+                                    if (init && init.headers) {
+                                        extractFromHeaders(init.headers);
+                                    }
+                                    if (!window.__MP_CA_AUTH_TOKEN__ && input && input.headers) {
+                                        extractFromHeaders(input.headers);
+                                    }
+                                }
+                            } catch (e) {}
+                            return originalFetch.apply(this, arguments);
+                        };
+                    }
+
+                    if (window.XMLHttpRequest && window.XMLHttpRequest.prototype) {
+                        var originalOpen = window.XMLHttpRequest.prototype.open;
+                        var originalSetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
+
+                        window.XMLHttpRequest.prototype.open = function(method, url) {
+                            try {
+                                this.__mp_ca_should_inspect__ = false;
+                                if (typeof url === 'string' &&
+                                    url.indexOf('servicios-compra-agil.mercadopublico.cl') !== -1) {
+                                    this.__mp_ca_should_inspect__ = true;
+                                }
+                            } catch (e) {}
+                            return originalOpen.apply(this, arguments);
+                        };
+
+                        window.XMLHttpRequest.prototype.setRequestHeader = function(name, value) {
+                            try {
+                                if (this.__mp_ca_should_inspect__ &&
+                                    name && typeof name === 'string' &&
+                                    name.toLowerCase() === 'authorization') {
+                                    storeAuth(value);
+                                }
+                            } catch (e) {}
+                            return originalSetRequestHeader.apply(this, arguments);
+                        };
+                    }
+                }
+
+                return window.__MP_CA_AUTH_TOKEN__ || null;
+            })();
+        """
+
+        token_encontrado = None
+
+        try:
+            try:
+                ventana_original = self.driver.current_window_handle
+                print(f"[DEBUG] _obtener_token_desde_navegador: ventana_original={ventana_original}")
+            except Exception as e:
+                print(f"[DEBUG] _obtener_token_desde_navegador: no se pudo obtener ventana_original: {e}")
+                ventana_original = None
+
+            try:
+                handles = self.driver.window_handles
+                print(f"[DEBUG] _obtener_token_desde_navegador: window_handles={handles}")
+            except Exception as e:
+                print(f"[DEBUG] _obtener_token_desde_navegador: no se pudieron obtener window_handles: {e}")
+                handles = []
+
+            if not handles and ventana_original:
+                handles = [ventana_original]
+
+            for handle in handles:
+                try:
+                    print(f"[DEBUG] _obtener_token_desde_navegador: probando handle={handle}")
+                    self.driver.switch_to.window(handle)
+                    resultado = self.driver.execute_script(script_hook_y_token)
+                    print(f"[DEBUG] _obtener_token_desde_navegador: resultado script en {handle}={repr(resultado)[:200]}")
+                    if isinstance(resultado, str) and resultado.strip():
+                        token_encontrado = resultado.strip()
+                        print("[DEBUG] _obtener_token_desde_navegador: token encontrado en este handle")
+                        break
+                except Exception as e:
+                    print(f"[DEBUG] _obtener_token_desde_navegador: error ejecutando script en {handle}: {e}")
+                    continue
+        finally:
+            try:
+                if ventana_original:
+                    print(f"[DEBUG] _obtener_token_desde_navegador: volviendo a ventana_original={ventana_original}")
+                    self.driver.switch_to.window(ventana_original)
+            except Exception as e:
+                print(f"[DEBUG] _obtener_token_desde_navegador: error al volver a ventana_original: {e}")
+
+        print(f"[DEBUG] _obtener_token_desde_navegador: token_encontrado={repr(token_encontrado)[:120]}")
+        return token_encontrado
+
+    def _iniciar_monitoreo_token_automatico(self):
+        """Comienza a intentar detectar el token en segundo plano usando el mainloop de Tkinter."""
+        if not self.driver:
+            print("[DEBUG] _iniciar_monitoreo_token_automatico: no hay driver, no se programa monitoreo")
+            return
+        self.token_guardado = False
+        print("[DEBUG] _iniciar_monitoreo_token_automatico: programando primer poll de token en 3000ms")
+        self._programar_poll_token(3000)
+
+    def _programar_poll_token(self, delay_ms=5000):
+        if not self.driver or self.token_guardado:
+            print(f"[DEBUG] _programar_poll_token: no se programa poll (driver={bool(self.driver)}, token_guardado={self.token_guardado})")
+            return
+        try:
+            print(f"[DEBUG] _programar_poll_token: programando _poll_token_automatico en {delay_ms}ms")
+            self.root.after(delay_ms, self._poll_token_automatico)
+        except tk.TclError as e:
+            print(f"[DEBUG] _programar_poll_token: TclError al programar poll: {e}")
+
+    def _poll_token_automatico(self):
+        """Intento periódico de captura automática del token mientras el navegador está abierto."""
+        if not self.driver or self.token_guardado:
+            print(f"[DEBUG] _poll_token_automatico: cancelado (driver={bool(self.driver)}, token_guardado={self.token_guardado})")
+            return
+
+        print("[DEBUG] _poll_token_automatico: intentando captura automática de token...")
+        if self.capturar_y_guardar_token_desde_selenium():
+            try:
+                self.status_var.set(
+                    "Token de Compra Ágil detectado automáticamente y guardado en 'token'."
+                )
+                messagebox.showinfo(
+                    "Token detectado",
+                    "Se detectó automáticamente el token de autenticación para Compra Ágil.\n"
+                    "El archivo 'token' ha sido actualizado para las APIs."
+                )
+                print("[DEBUG] _poll_token_automatico: token detectado y mensaje mostrado")
+            except tk.TclError as e:
+                print(f"[DEBUG] _poll_token_automatico: TclError al mostrar mensaje de token detectado: {e}")
+        else:
+            print("[DEBUG] _poll_token_automatico: todavía no se detecta token, reintentando en 5000ms")
+            self._programar_poll_token(5000)
     
     def validar_codigo(self):
         """Valida que se haya ingresado un código"""
@@ -310,7 +670,7 @@ class DescargadorLicitacionesApp:
                 if tipo == "licitacion":
                     resultado_descarga = descarga_lici.descargar_licitacion(codigo, self.driver)
                 else:
-                    resultado_descarga = descarga_ca.descargar_compra_agil(codigo, self.driver)
+                    resultado_descarga = descarga_ca.descargar_compra_agil_api(codigo)
                 
                 if not resultado_descarga:
                     messagebox.showerror("Error", f"Error durante la descarga de {tipo}: {codigo}")
@@ -397,8 +757,8 @@ class DescargadorLicitacionesApp:
                     messagebox.showinfo("Función pendiente", "Descarga de licitación - Función por implementar")
                     resultado = False
                 else:
-                    # Llamar a descarga_ca.py
-                    resultado = descarga_ca.descargar_compra_agil(codigo, self.driver)
+                    # Llamar a descarga_ca.py usando API y token guardado
+                    resultado = descarga_ca.descargar_compra_agil_api(codigo)
                 
                 if resultado:
                     messagebox.showinfo("Descarga Completada", 
