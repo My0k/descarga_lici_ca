@@ -1,55 +1,31 @@
 @echo off
-echo ========================================
-echo  Descargador de Licitaciones - MercadoPublico.cl
-echo ========================================
-echo.
+setlocal
 
-echo Verificando Python...
-python --version >nul 2>&1
+REM Crear/usar entorno virtual local
+if not exist "%~dp0venv" (
+    echo Creando entorno virtual...
+    python -m venv "%~dp0venv"
+)
+
+call "%~dp0venv\Scripts\activate.bat"
 if errorlevel 1 (
-    echo ERROR: Python no esta instalado o no esta en el PATH
-    echo Por favor instale Python desde https://python.org
-    pause
+    echo No se pudo activar el entorno virtual.
     exit /b 1
 )
 
-echo Python encontrado correctamente.
-echo.
-
-echo Verificando pip...
-pip --version >nul 2>&1
-if errorlevel 1 (
-    echo ERROR: pip no esta disponible
-    pause
-    exit /b 1
+REM Instalar dependencias del proyecto
+if exist "%~dp0requirements.txt" (
+    echo Instalando dependencias desde requirements.txt...
+    pip install --upgrade pip
+    pip install -r "%~dp0requirements.txt"
+) else (
+    echo No se encontro requirements.txt, se omite la instalacion de dependencias.
 )
 
-echo pip encontrado correctamente.
-echo.
+REM Asegurar PyQt para compatibilidad en Windows (Tkinter ya viene con Python)
+pip install --upgrade PyQt5 PyQt5-Qt5 PyQt5-sip
 
-echo Instalando/actualizando dependencias...
-echo.
+REM Ejecutar la aplicacion
+python "%~dp0app.py"
 
-pip install --upgrade pip
-pip install selenium
-pip install tkinter
-pip install openpyxl
-pip install pandas
-pip install requests
-pip install beautifulsoup4
-pip install webdriver-manager
-
-echo.
-echo ========================================
-echo  Instalacion completada
-echo ========================================
-echo.
-
-echo Iniciando aplicacion...
-echo.
-
-python app.py
-
-echo.
-echo Aplicacion cerrada.
-pause
+endlocal

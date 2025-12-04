@@ -833,6 +833,30 @@ def limpiar_nombre_archivo(nombre):
     
     return nombre_limpio.strip()
 
+
+def crear_zips_proveedores(codigo_ca):
+    """
+    Recorre las carpetas de proveedores de una compra ágil y genera un ZIP por cada una.
+    Ignora la carpeta 'Adjuntos' (adjuntos generales).
+    """
+    carpeta_base = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
+    if not os.path.isdir(carpeta_base):
+        print(f"[ZIP] Carpeta base no existe: {carpeta_base}")
+        return []
+
+    generados = []
+    for nombre in os.listdir(carpeta_base):
+        ruta = os.path.join(carpeta_base, nombre)
+        if not os.path.isdir(ruta):
+            continue
+        if nombre.lower() == "adjuntos":
+            continue
+        zip_path = crear_zip_proveedor(ruta, nombre)
+        if zip_path:
+            generados.append(zip_path)
+    print(f"[ZIP] Zips generados: {len(generados)}")
+    return generados
+
 if __name__ == "__main__":
     # Función principal para pruebas
     print("Módulo descarga_ca.py - Descarga de adjuntos de compras ágiles")

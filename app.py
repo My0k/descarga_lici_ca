@@ -668,53 +668,28 @@ class DescargadorLicitacionesApp:
             try:
                 # Paso 1: descargar adjuntos de todos los proveedores
                 if tipo == "licitacion":
-                    resultado_descarga = descarga_lici.descargar_licitacion(codigo, self.driver)
-                else:
-                    resultado_descarga = descarga_ca.descargar_compra_agil_api(codigo)
-                
+                    # TODO: implementar flujo completo para licitación
+                    messagebox.showinfo("Función pendiente", "Flujo completo para licitación aún no implementado.")
+                    self.status_var.set("Flujo licitación pendiente")
+                    return
+
+                # Compra ágil: usar API para descarga
+                resultado_descarga = descarga_ca.descargar_compra_agil_api(codigo)
                 if not resultado_descarga:
                     messagebox.showerror("Error", f"Error durante la descarga de {tipo}: {codigo}")
                     self.status_var.set("Error en la descarga")
                     return
-                
-                # Paso 2: generar ficha(s) de proveedor
-                # Nota: la lógica de generación de fichas aún debe implementarse
+
+                # Paso 2: crear ZIP por proveedor
                 try:
-                    proveedores = []
-                    if tipo == "compra_agil":
-                        # Para compras ágiles podemos reutilizar la lógica de obtención de proveedores
-                        proveedores = descarga_ca.obtener_proveedores_ca(self.driver)
-                    
-                    if proveedores:
-                        for proveedor in proveedores:
-                            rut = proveedor.get('rut')
-                            if not rut:
-                                continue
-                            try:
-                                genera_ficha_proveedor.generar_ficha_proveedor(
-                                    rut_proveedor=rut,
-                                    codigo_proceso=codigo,
-                                    tipo_proceso=tipo,
-                                    driver=self.driver
-                                )
-                            except Exception as e:
-                                print(f"Error al generar ficha para proveedor {rut}: {e}")
-                    else:
-                        # Placeholder mientras se implementa la lógica completa
-                        messagebox.showinfo(
-                            "Fichas de proveedor",
-                            "Generación de fichas de proveedor aún no implementada completamente.\n"
-                            "Solo se ha ejecutado la descarga de adjuntos."
-                        )
+                    zips_generados = descarga_ca.crear_zips_proveedores(codigo)
+                    print(f"[ZIP] Generados {len(zips_generados)} ZIPs para compra ágil {codigo}")
                 except Exception as e:
-                    print(f"Error en la etapa de fichas de proveedor: {e}")
-                
-                # Paso 3: generar Excel de resumen
-                if tipo == "licitacion":
-                    ruta_excel = genera_xls_lici.generar_excel_licitacion(codigo, self.driver)
-                else:
-                    ruta_excel = genera_xls_ca.generar_excel_compra_agil(codigo, self.driver)
-                
+                    print(f"[ZIP] Error al crear ZIPs: {e}")
+
+                # Paso 3: generar Excel (reutiliza el mismo botón de excel)
+                ruta_excel = genera_xls_ca.generar_excel_compra_agil(codigo, self.driver)
+
                 if ruta_excel:
                     messagebox.showinfo(
                         "Flujo completado",
@@ -722,8 +697,6 @@ class DescargadorLicitacionesApp:
                         f"Excel generado en:\n{ruta_excel}"
                     )
                     self.status_var.set(f"Flujo completado para {tipo}: {codigo}")
-                    
-                    # Preguntar si desea abrir el archivo
                     if messagebox.askyesno("Abrir Excel", "¿Desea abrir el archivo Excel generado?"):
                         os.startfile(ruta_excel) if os.name == 'nt' else os.system(f'xdg-open \"{ruta_excel}\"')
                 else:
