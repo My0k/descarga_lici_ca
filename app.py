@@ -674,7 +674,7 @@ class DescargadorLicitacionesApp:
                     return
 
                 # Compra ágil: usar API para descarga
-                resultado_descarga = descarga_ca.descargar_compra_agil_api(codigo)
+                resultado_descarga = descarga_ca.descargar_compra_agil_api(codigo, driver=self.driver)
                 if not resultado_descarga:
                     messagebox.showerror("Error", f"Error durante la descarga de {tipo}: {codigo}")
                     self.status_var.set("Error en la descarga")
@@ -731,7 +731,7 @@ class DescargadorLicitacionesApp:
                     resultado = False
                 else:
                     # Llamar a descarga_ca.py usando API y token guardado
-                    resultado = descarga_ca.descargar_compra_agil_api(codigo)
+                    resultado = descarga_ca.descargar_compra_agil_api(codigo, driver=self.driver)
                 
                 if resultado:
                     messagebox.showinfo("Descarga Completada", 

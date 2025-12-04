@@ -5,6 +5,7 @@ import os
 import time
 import zipfile
 import requests
+import base64
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,6 +17,7 @@ import json
 # Constantes para llamadas API (Compra Ágil)
 API_BASE_CA = "https://servicios-compra-agil.mercadopublico.cl/v1/compra-agil"
 DEFAULT_COOKIE = "cf8fc9f9992a81aa1f6cd62d77d1d62b=19395daaa97624eb1f7f9f9e68b099e5"
+CERT_BASE_URL = "https://proveedor.mercadopublico.cl/ficha/certificado"
 
 def descargar_compra_agil(codigo_ca, driver=None):
     """
@@ -69,6 +71,11 @@ def descargar_compra_agil(codigo_ca, driver=None):
             
             # Descargar adjuntos del proveedor
             adjuntos_descargados = descargar_adjuntos_proveedor(proveedor, carpeta_proveedor, driver)
+
+            try:
+                descargar_certificado_habilidad(proveedor.get("rut"), carpeta_proveedor, driver)
+            except Exception as cert_error:
+                print(f"[CERT] Error al obtener certificado para {nombre_proveedor}: {cert_error}")
             
             # Crear ZIP si hay adjuntos
             if adjuntos_descargados:
@@ -86,13 +93,14 @@ def descargar_compra_agil(codigo_ca, driver=None):
         return False
 
 
-def descargar_compra_agil_api(codigo_ca, token_path="token"):
+def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
     """
     Descarga los adjuntos de una compra ágil usando la API oficial con el token Bearer.
 
     Args:
         codigo_ca (str): Código de la compra ágil
         token_path (str): Ruta al archivo que contiene el token (por defecto 'token')
+        driver: Instancia Selenium opcional, usada como respaldo para imprimir certificados
 
     Returns:
         bool: True si todo fue bien, False en caso contrario
@@ -156,14 +164,23 @@ def descargar_compra_agil_api(codigo_ca, token_path="token"):
         os.makedirs(carpeta_candidato, exist_ok=True)
 
         try:
-            documentos = _obtener_documentos_por_cotizacion(candidato_id, token)
+            documentos, rut_cotizacion = _obtener_documentos_por_cotizacion(candidato_id, token)
         except Exception as e:
             print(f"[API] Error al obtener adjuntos para {etiqueta}: {e}")
             errores += 1
             continue
 
+        rut_candidato = candidato.get("rut") or rut_cotizacion or _extraer_rut_desde_texto(etiqueta)
+
         if not documentos:
             print(f"[API] Sin documentos para {etiqueta}")
+            try:
+                certificado_ok = descargar_certificado_habilidad(rut_candidato, carpeta_candidato, driver)
+                if certificado_ok:
+                    exitosos += 1
+            except Exception as cert_error:
+                errores += 1
+                print(f"[CERT] Error al descargar certificado de {etiqueta}: {cert_error}")
             continue
 
         print(f"[API] Descargando {len(documentos)} documentos de {etiqueta}")
@@ -183,6 +200,14 @@ def descargar_compra_agil_api(codigo_ca, token_path="token"):
             except Exception as e:
                 errores += 1
                 print(f"[API] Error al descargar ({etiqueta}) {file_id}: {e}")
+
+        try:
+            certificado_ok = descargar_certificado_habilidad(rut_candidato, carpeta_candidato, driver)
+            if certificado_ok:
+                exitosos += 1
+        except Exception as cert_error:
+            errores += 1
+            print(f"[CERT] Error al descargar certificado de {etiqueta}: {cert_error}")
 
     print(f"[API] Descarga finalizada. Éxitos: {exitosos} | Errores: {errores}")
     return exitosos > 0
@@ -703,6 +728,7 @@ def _obtener_documentos_por_cotizacion(id_objetivo, token):
         raise RuntimeError(f"HTTP {resp.status_code}: {resp.text}")
     data = resp.json()
     payload = data.get("payload") or {}
+    rut = _extraer_rut_de_record(payload)
     documentos = payload.get("documentosAdjuntos") or []
     resultados = []
     for doc in documentos:
@@ -713,7 +739,167 @@ def _obtener_documentos_por_cotizacion(id_objetivo, token):
         if not doc_id:
             continue
         resultados.append({"id": doc_id, "filename": nombre})
-    return resultados
+    return resultados, rut
+
+
+def _extraer_rut_de_record(record):
+    if not isinstance(record, dict):
+        return None
+
+    for key, value in record.items():
+        if value is None:
+            continue
+        key_lower = str(key).lower()
+        texto = str(value)
+
+        # Solo confia en claves que indican rut/tributario
+        if "rut" in key_lower or "tribut" in key_lower:
+            rut_detectado = _normalizar_rut(texto)
+            if rut_detectado:
+                return rut_detectado
+
+        # Como fallback, busca un patrón de RUT en el texto (debe tener guion)
+        rut_en_texto = _extraer_rut_en_string(texto)
+        if rut_en_texto:
+            return rut_en_texto
+
+    return None
+
+
+def _extraer_rut_desde_texto(texto):
+    if not texto:
+        return None
+    return _extraer_rut_en_string(str(texto))
+
+
+def _normalizar_rut(rut_raw):
+    """
+    Normaliza un RUT que ya viene en formato válido con guion.
+    Si no trae guion, se descarta para evitar falsos positivos con IDs numéricos.
+    """
+    if not rut_raw:
+        return None
+
+    texto = str(rut_raw).strip().upper()
+    if "-" not in texto:
+        return None
+
+    match = re.search(r'(\d{1,2}\.?\d{3}\.?\d{3}-[\dK])|(\d{7,8}-[\dK])', texto)
+    if not match:
+        return None
+
+    texto = match.group(0)
+    solo_permitidos = re.sub(r'[^0-9K]', '', texto)
+    cuerpo = solo_permitidos[:-1]
+    dv = solo_permitidos[-1]
+    if not cuerpo:
+        return None
+    cuerpo_formateado = _formatear_cuerpo_con_puntos(cuerpo)
+    return f"{cuerpo_formateado}-{dv}"
+
+
+def _extraer_rut_en_string(texto):
+    if not texto:
+        return None
+    match = re.search(r'(\d{1,2}\.?\d{3}\.?\d{3}-[\dK])', str(texto).upper())
+    if match:
+        return _normalizar_rut(match.group(0))
+    match_simple = re.search(r'\d{7,8}-[\dK]', str(texto).upper())
+    if match_simple:
+        return _normalizar_rut(match_simple.group(0))
+    return None
+
+
+def _formatear_cuerpo_con_puntos(cuerpo):
+    cuerpo = str(cuerpo)
+    partes = []
+    while len(cuerpo) > 3:
+        partes.insert(0, cuerpo[-3:])
+        cuerpo = cuerpo[:-3]
+    partes.insert(0, cuerpo)
+    return ".".join(partes)
+
+
+def descargar_certificado_habilidad(rut, carpeta_proveedor, driver=None):
+    """
+    Descarga el certificado de habilidad del proveedor y lo guarda como PDF.
+    Intenta primero con requests (esperando un PDF directo). Si la respuesta no es un PDF,
+    usa el navegador (si está disponible) para imprimir la página a PDF vía Chrome DevTools.
+    """
+    rut_normalizado = _normalizar_rut(rut)
+    if not rut_normalizado:
+        print(f"[CERT] RUT no válido o ausente para certificado: {rut}")
+        return False
+
+    carpeta_certificados = os.path.join(carpeta_proveedor, "CERTIFICADOS")
+    os.makedirs(carpeta_certificados, exist_ok=True)
+    destino_pdf = os.path.join(carpeta_certificados, "CertificadoHabilidad.pdf")
+    url = f"{CERT_BASE_URL}/{rut_normalizado}"
+
+    try:
+        resp = requests.get(url, timeout=60)
+        resp.raise_for_status()
+        contenido = resp.content
+        content_type = (resp.headers.get("content-type") or "").lower()
+        if contenido.startswith(b"%PDF") or "pdf" in content_type:
+            with open(destino_pdf, "wb") as f:
+                f.write(contenido)
+            print(f"[CERT] Certificado descargado -> {destino_pdf}")
+            return True
+        print(f"[CERT] Respuesta no es PDF (content-type: {content_type}), intentando imprimir con navegador.")
+    except Exception as e:
+        print(f"[CERT] Error descargando certificado vía requests para {rut_normalizado}: {e}")
+
+    if not driver:
+        print("[CERT] No hay navegador disponible para imprimir el certificado.")
+        return False
+
+    return _imprimir_certificado_con_navegador(url, destino_pdf, driver)
+
+
+def _imprimir_certificado_con_navegador(url, destino_pdf, driver):
+    try:
+        handle_original = driver.current_window_handle
+    except Exception:
+        handle_original = None
+
+    nueva_ventana = False
+    original_url = None
+    try:
+        original_url = driver.current_url
+    except Exception:
+        pass
+
+    try:
+        driver.switch_to.new_window('tab')
+        nueva_ventana = True
+    except Exception:
+        nueva_ventana = False
+
+    try:
+        driver.get(url)
+        time.sleep(2)
+        resultado_pdf = driver.execute_cdp_cmd("Page.printToPDF", {"printBackground": True})
+        data_base64 = resultado_pdf.get("data") if isinstance(resultado_pdf, dict) else None
+        if not data_base64:
+            raise RuntimeError("Chrome no entregó datos para el PDF")
+        with open(destino_pdf, "wb") as f:
+            f.write(base64.b64decode(data_base64))
+        print(f"[CERT] Certificado generado con navegador -> {destino_pdf}")
+        return True
+    except Exception as e:
+        print(f"[CERT] Error al generar PDF con navegador: {e}")
+        return False
+    finally:
+        try:
+            if nueva_ventana:
+                driver.close()
+                if handle_original:
+                    driver.switch_to.window(handle_original)
+            elif original_url:
+                driver.get(original_url)
+        except Exception:
+            pass
 
 
 def extract_candidate_ids(info_data):
@@ -751,7 +937,8 @@ def extract_candidate_ids(info_data):
             or record.get("nombreApellido")
             or f"Postulante {identifier_str}"
         )
-        candidates.append({"id": identifier_str, "label": label})
+        rut = _extraer_rut_de_record(record) or _extraer_rut_desde_texto(label)
+        candidates.append({"id": identifier_str, "label": label, "rut": rut})
         seen.add(identifier_str)
     return candidates
 
