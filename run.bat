@@ -1,11 +1,11 @@
 @echo off
-setlocal
+setlocal EnableDelayedExpansion
 
 REM Crear/usar entorno virtual local
 if not exist "%~dp0venv" (
     echo [INFO] Creando entorno virtual en "%~dp0venv%"
     echo [INFO] PATH actual:
-    echo %PATH%
+    echo !PATH!
     echo [INFO] Buscando python...
     where python
     if errorlevel 1 (
