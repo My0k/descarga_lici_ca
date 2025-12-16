@@ -18,6 +18,7 @@ import json
 API_BASE_CA = "https://servicios-compra-agil.mercadopublico.cl/v1/compra-agil"
 DEFAULT_COOKIE = "cf8fc9f9992a81aa1f6cd62d77d1d62b=19395daaa97624eb1f7f9f9e68b099e5"
 CERT_BASE_URL = "https://proveedor.mercadopublico.cl/ficha/certificado"
+DECLARACION_JURADA_BASE_URL = "https://proveedor.mercadopublico.cl/BeneficiariosFinales/lectura"
 
 def descargar_compra_agil(codigo_ca, driver=None):
     """
@@ -76,6 +77,11 @@ def descargar_compra_agil(codigo_ca, driver=None):
                 descargar_certificado_habilidad(proveedor.get("rut"), carpeta_proveedor, driver)
             except Exception as cert_error:
                 print(f"[CERT] Error al obtener certificado para {nombre_proveedor}: {cert_error}")
+
+            try:
+                descargar_declaracion_jurada(proveedor.get("rut"), carpeta_proveedor, driver)
+            except Exception as dj_error:
+                print(f"[DJ] Error al obtener declaración jurada para {nombre_proveedor}: {dj_error}")
             
             # Crear ZIP si hay adjuntos
             if adjuntos_descargados:
@@ -181,6 +187,14 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
             except Exception as cert_error:
                 errores += 1
                 print(f"[CERT] Error al descargar certificado de {etiqueta}: {cert_error}")
+
+            try:
+                dj_ok = descargar_declaracion_jurada(rut_candidato, carpeta_candidato, driver)
+                if dj_ok:
+                    exitosos += 1
+            except Exception as dj_error:
+                errores += 1
+                print(f"[DJ] Error al descargar declaración jurada de {etiqueta}: {dj_error}")
             continue
 
         print(f"[API] Descargando {len(documentos)} documentos de {etiqueta}")
@@ -208,6 +222,14 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
         except Exception as cert_error:
             errores += 1
             print(f"[CERT] Error al descargar certificado de {etiqueta}: {cert_error}")
+
+        try:
+            dj_ok = descargar_declaracion_jurada(rut_candidato, carpeta_candidato, driver)
+            if dj_ok:
+                exitosos += 1
+        except Exception as dj_error:
+            errores += 1
+            print(f"[DJ] Error al descargar declaración jurada de {etiqueta}: {dj_error}")
 
     print(f"[API] Descarga finalizada. Éxitos: {exitosos} | Errores: {errores}")
     return exitosos > 0
@@ -774,21 +796,25 @@ def _extraer_rut_desde_texto(texto):
 
 def _normalizar_rut(rut_raw):
     """
-    Normaliza un RUT que ya viene en formato válido con guion.
-    Si no trae guion, se descarta para evitar falsos positivos con IDs numéricos.
+    Normaliza un RUT para dejarlo en formato con puntos y guion (ej: 76.709.823-5).
+    Acepta formatos con guion y también el caso compacto sin guion (ej: 767098235).
     """
     if not rut_raw:
         return None
 
     texto = str(rut_raw).strip().upper()
-    if "-" not in texto:
-        return None
+    texto = re.sub(r"\s+", "", texto)
 
-    match = re.search(r'(\d{1,2}\.?\d{3}\.?\d{3}-[\dK])|(\d{7,8}-[\dK])', texto)
+    match = re.search(
+        r'(\d{1,2}\.?\d{3}\.?\d{3}-[\dK])|(\d{7,8}-[\dK])|(\d{7,8}[\dK])',
+        texto,
+    )
     if not match:
         return None
 
     texto = match.group(0)
+    if "-" not in texto:
+        texto = f"{texto[:-1]}-{texto[-1]}"
     solo_permitidos = re.sub(r'[^0-9K]', '', texto)
     cuerpo = solo_permitidos[:-1]
     dv = solo_permitidos[-1]
@@ -857,6 +883,43 @@ def descargar_certificado_habilidad(rut, carpeta_proveedor, driver=None):
     return _imprimir_certificado_con_navegador(url, destino_pdf, driver)
 
 
+def descargar_declaracion_jurada(rut, carpeta_proveedor, driver=None):
+    """
+    Descarga la página de Beneficiarios Finales (Declaración Jurada) del proveedor y la guarda como PDF.
+    Intenta primero con requests (si devuelve PDF directo). Si no es PDF o falla, usa el navegador
+    (si está disponible) para imprimir la página a PDF vía Chrome DevTools.
+    """
+    rut_normalizado = _normalizar_rut(rut)
+    if not rut_normalizado:
+        print(f"[DJ] RUT no válido o ausente para declaración jurada: {rut}")
+        return False
+
+    carpeta_certificados = os.path.join(carpeta_proveedor, "CERTIFICADOS")
+    os.makedirs(carpeta_certificados, exist_ok=True)
+    destino_pdf = os.path.join(carpeta_certificados, "DeclaracionJurada.pdf")
+    url = f"{DECLARACION_JURADA_BASE_URL}/{rut_normalizado}"
+
+    try:
+        resp = requests.get(url, timeout=60)
+        resp.raise_for_status()
+        contenido = resp.content or b""
+        content_type = (resp.headers.get("content-type") or "").lower()
+        if contenido.startswith(b"%PDF") or "application/pdf" in content_type:
+            with open(destino_pdf, "wb") as f:
+                f.write(contenido)
+            print(f"[DJ] Declaración jurada descargada -> {destino_pdf}")
+            return True
+        print(f"[DJ] Respuesta no es PDF (content-type: {content_type}), intentando imprimir con navegador.")
+    except Exception as e:
+        print(f"[DJ] Error descargando declaración jurada vía requests para {rut_normalizado}: {e}")
+
+    if not driver:
+        print("[DJ] No hay navegador disponible para imprimir la declaración jurada.")
+        return False
+
+    return _imprimir_certificado_con_navegador(url, destino_pdf, driver)
+
+
 def _imprimir_certificado_con_navegador(url, destino_pdf, driver):
     try:
         handle_original = driver.current_window_handle
@@ -878,6 +941,10 @@ def _imprimir_certificado_con_navegador(url, destino_pdf, driver):
 
     try:
         driver.get(url)
+        try:
+            WebDriverWait(driver, 20).until(lambda d: d.execute_script("return document.readyState") == "complete")
+        except Exception:
+            pass
         time.sleep(2)
         resultado_pdf = driver.execute_cdp_cmd("Page.printToPDF", {"printBackground": True})
         data_base64 = resultado_pdf.get("data") if isinstance(resultado_pdf, dict) else None
