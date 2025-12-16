@@ -6,6 +6,8 @@ import time
 import zipfile
 import requests
 import base64
+from datetime import datetime
+from urllib.parse import unquote
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -19,6 +21,58 @@ API_BASE_CA = "https://servicios-compra-agil.mercadopublico.cl/v1/compra-agil"
 DEFAULT_COOKIE = "cf8fc9f9992a81aa1f6cd62d77d1d62b=19395daaa97624eb1f7f9f9e68b099e5"
 CERT_BASE_URL = "https://proveedor.mercadopublico.cl/ficha/certificado"
 DECLARACION_JURADA_BASE_URL = "https://proveedor.mercadopublico.cl/BeneficiariosFinales/lectura"
+MANIFEST_ADJUNTOS_FILENAME = "manifest_adjuntos.json"
+
+
+def _normalizar_content_type(content_type):
+    if not content_type:
+        return ""
+    return str(content_type).split(";", 1)[0].strip().lower()
+
+
+def _asegurar_nombre_unico(carpeta_destino, nombre_archivo):
+    base, ext = os.path.splitext(nombre_archivo)
+    candidato = nombre_archivo
+    contador = 2
+    while os.path.exists(os.path.join(carpeta_destino, candidato)):
+        candidato = f"{base} ({contador}){ext}"
+        contador += 1
+    return candidato
+
+
+def _limpiar_nombre_archivo_con_extension(nombre, max_len=160):
+    """
+    Limpia nombres de archivo intentando preservar la extensión y el sufijo del nombre,
+    evitando truncar justo donde va el diferenciador (ej: "... 1.jpg", "... 2.jpg").
+    """
+    nombre = (nombre or "").strip()
+    if not nombre:
+        return "archivo"
+    base, ext = os.path.splitext(nombre)
+    ext = ext[:20]
+    base_limpia = limpiar_nombre_archivo(base)
+    if ext:
+        # Dejar espacio para extensión
+        limite_base = max(1, max_len - len(ext))
+        if len(base_limpia) > limite_base:
+            base_limpia = base_limpia[:limite_base].rstrip()
+        return f"{base_limpia}{ext}"
+    return limpiar_nombre_archivo(nombre)[:max_len].rstrip()
+
+
+def _listar_archivos_descargados(carpeta_proveedor):
+    try:
+        return sorted(
+            f
+            for f in os.listdir(carpeta_proveedor)
+            if os.path.isfile(os.path.join(carpeta_proveedor, f))
+        )
+    except Exception:
+        return []
+
+
+def _normalizar_nombre_para_comparar(nombre):
+    return _limpiar_nombre_archivo_con_extension(nombre).lower()
 
 def descargar_compra_agil(codigo_ca, driver=None):
     """
@@ -122,6 +176,11 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
 
     exitosos = 0
     errores = 0
+    manifest = {
+        "codigo": codigo_ca,
+        "generado_en": datetime.now().isoformat(timespec="seconds"),
+        "proveedores": [],
+    }
 
     # 1) Descargas generales (comprador/listar) - pueden ser bases administrativas o anexos generales
     try:
@@ -140,7 +199,13 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
                 continue
             nombre_archivo = adjunto.get("filename") or adjunto.get("nombre") or f"{file_id}.bin"
             try:
-                contenido, nombre_final = _descargar_archivo_api(file_id, token, nombre_archivo)
+                contenido, nombre_final, content_type = _descargar_archivo_api(file_id, token, nombre_archivo)
+                nombre_final = _limpiar_nombre_archivo_con_extension(nombre_final)
+                if not os.path.splitext(nombre_final)[1]:
+                    extension = obtener_extension_por_content_type(content_type)
+                    if extension:
+                        nombre_final += extension
+                nombre_final = _asegurar_nombre_unico(carpeta_adjuntos, nombre_final)
                 ruta_archivo = os.path.join(carpeta_adjuntos, nombre_final)
                 with open(ruta_archivo, "wb") as f:
                     f.write(contenido)
@@ -177,6 +242,23 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
             continue
 
         rut_candidato = candidato.get("rut") or rut_cotizacion or _extraer_rut_desde_texto(etiqueta)
+        rut_normalizado = _normalizar_rut(rut_candidato) or rut_candidato
+
+        entry_manifest = {
+            "id_cotizacion": candidato_id,
+            "label": etiqueta,
+            "rut": rut_normalizado,
+            "carpeta": carpeta_candidato,
+            "esperados_api": len(documentos) if documentos else 0,
+            "nombres_esperados_api": [
+                (d.get("filename") or d.get("nombre") or d.get("fileName") or str(d.get("id") or "")).strip()
+                for d in (documentos or [])
+                if isinstance(d, dict)
+            ],
+            "descargados": [],
+            "errores_descarga": [],
+        }
+        manifest["proveedores"].append(entry_manifest)
 
         if not documentos:
             print(f"[API] Sin documentos para {etiqueta}")
@@ -205,14 +287,22 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
                 continue
             nombre_archivo = doc.get("filename") or doc.get("nombre") or doc.get("fileName") or f"{file_id}.bin"
             try:
-                contenido, nombre_final = _descargar_archivo_api(file_id, token, nombre_archivo)
+                contenido, nombre_final, content_type = _descargar_archivo_api(file_id, token, nombre_archivo)
+                nombre_final = _limpiar_nombre_archivo_con_extension(nombre_final)
+                if not os.path.splitext(nombre_final)[1]:
+                    extension = obtener_extension_por_content_type(content_type)
+                    if extension:
+                        nombre_final += extension
+                nombre_final = _asegurar_nombre_unico(carpeta_candidato, nombre_final)
                 ruta_archivo = os.path.join(carpeta_candidato, nombre_final)
                 with open(ruta_archivo, "wb") as f:
                     f.write(contenido)
                 exitosos += 1
+                entry_manifest["descargados"].append(nombre_final)
                 print(f"[API] Descargado ({etiqueta}) {nombre_final} -> {ruta_archivo}")
             except Exception as e:
                 errores += 1
+                entry_manifest["errores_descarga"].append({"id": file_id, "nombre": nombre_archivo, "error": str(e)})
                 print(f"[API] Error al descargar ({etiqueta}) {file_id}: {e}")
 
         try:
@@ -230,6 +320,22 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
         except Exception as dj_error:
             errores += 1
             print(f"[DJ] Error al descargar declaración jurada de {etiqueta}: {dj_error}")
+
+    # Verificación final (si hay Selenium) comparando contra la UI
+    try:
+        if driver:
+            _verificar_adjuntos_con_ui(codigo_ca, driver, manifest)
+    except Exception as e:
+        print(f"[VERIFY] Error inesperado verificando adjuntos con UI: {e}")
+
+    # Guardar manifest para análisis/Excel
+    try:
+        ruta_manifest = os.path.join(carpeta_base, MANIFEST_ADJUNTOS_FILENAME)
+        with open(ruta_manifest, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, ensure_ascii=False, indent=2)
+        print(f"[API] Manifest guardado -> {ruta_manifest}")
+    except Exception as e:
+        print(f"[API] No se pudo guardar manifest: {e}")
 
     print(f"[API] Descarga finalizada. Éxitos: {exitosos} | Errores: {errores}")
     return exitosos > 0
@@ -563,6 +669,26 @@ def descargar_adjuntos_proveedor(proveedor, carpeta_destino, driver):
         
         print(f"Adjuntos encontrados en el modal: {len(enlaces_descarga)}")
         
+        # Intentar fallback API cuando los enlaces no traen href (caso típico: imágenes con click JS)
+        token_fallback = None
+        mapa_adjuntos_api = {}
+        if adjuntos_api:
+            try:
+                token_fallback = _leer_token("token")
+            except Exception:
+                token_fallback = None
+            for doc in adjuntos_api:
+                if not isinstance(doc, dict):
+                    continue
+                doc_id = doc.get("id") or doc.get("documentoId") or doc.get("fileId")
+                nombre_doc = doc.get("filename") or doc.get("nombre") or doc.get("fileName")
+                if not doc_id or not nombre_doc:
+                    continue
+                mapa_adjuntos_api[_normalizar_nombre_para_comparar(nombre_doc)] = {
+                    "id": doc_id,
+                    "filename": nombre_doc,
+                }
+
         for i, enlace in enumerate(enlaces_descarga, 1):
             try:
                 href = enlace.get_attribute('href')
@@ -570,11 +696,33 @@ def descargar_adjuntos_proveedor(proveedor, carpeta_destino, driver):
                 
                 # Obtener nombre del archivo
                 nombre_archivo = texto_enlace if texto_enlace else f"adjunto_{len(adjuntos_descargados)+1}"
-                nombre_archivo = limpiar_nombre_archivo(nombre_archivo)
+                nombre_archivo = _limpiar_nombre_archivo_con_extension(nombre_archivo)
                 print(f"  [{i}] adjunto nombre='{nombre_archivo}', href='{href}'")
                 
                 if not href:
-                    # Aún no sabemos la URL de descarga, pero dejamos trazas para debug
+                    if token_fallback and texto_enlace:
+                        clave = _normalizar_nombre_para_comparar(texto_enlace)
+                        info_api = mapa_adjuntos_api.get(clave)
+                        if info_api:
+                            try:
+                                contenido, nombre_final, content_type = _descargar_archivo_api(
+                                    info_api["id"], token_fallback, info_api["filename"]
+                                )
+                                nombre_final = _limpiar_nombre_archivo_con_extension(nombre_final)
+                                if not os.path.splitext(nombre_final)[1]:
+                                    extension = obtener_extension_por_content_type(content_type)
+                                    if extension:
+                                        nombre_final += extension
+                                nombre_final = _asegurar_nombre_unico(carpeta_destino, nombre_final)
+                                ruta_archivo = os.path.join(carpeta_destino, nombre_final)
+                                with open(ruta_archivo, "wb") as f:
+                                    f.write(contenido)
+                                adjuntos_descargados.append(ruta_archivo)
+                                print(f"  - Descargado (API fallback): {nombre_final}")
+                                continue
+                            except Exception as e:
+                                print(f"  - Error API fallback para '{texto_enlace}': {e}")
+                    # Aún no sabemos la URL de descarga; se omite
                     continue
                 
                 # Descargar archivo si tenemos URL
@@ -632,15 +780,19 @@ def descargar_archivo(url, carpeta_destino, nombre_archivo, driver):
             session.cookies.set(cookie['name'], cookie['value'])
         
         # Descargar archivo
-        response = session.get(url, stream=True)
+        response = session.get(url, stream=True, timeout=60)
         response.raise_for_status()
         
         # Determinar extensión del archivo
-        content_type = response.headers.get('content-type', '')
+        content_type = _normalizar_content_type(response.headers.get('content-type', ''))
         extension = obtener_extension_por_content_type(content_type)
         
-        if not nombre_archivo.endswith(extension) and extension:
+        # Si el nombre ya incluye extensión, no forzar; si no, inferir desde content-type
+        if not os.path.splitext(nombre_archivo)[1] and extension:
             nombre_archivo += extension
+
+        nombre_archivo = _limpiar_nombre_archivo_con_extension(nombre_archivo)
+        nombre_archivo = _asegurar_nombre_unico(carpeta_destino, nombre_archivo)
         
         ruta_archivo = os.path.join(carpeta_destino, nombre_archivo)
         
@@ -665,6 +817,8 @@ def obtener_extension_por_content_type(content_type):
     Returns:
         str: Extensión del archivo
     """
+    content_type = _normalizar_content_type(content_type)
+
     extensiones = {
         'application/pdf': '.pdf',
         'application/msword': '.doc',
@@ -723,16 +877,23 @@ def _descargar_archivo_api(file_id, token, nombre_archivo):
     disposition = resp.headers.get("content-disposition") or resp.headers.get("Content-Disposition")
     if disposition:
         try:
-            # Ej: attachment;filename=nombre.pdf
-            parts = disposition.split("filename=")
-            if len(parts) > 1:
-                candidato = parts[1].strip().strip('"').strip("'")
+            # Soporta filename= y filename*=UTF-8''...
+            m_star = re.search(r"filename\\*=(?:UTF-8''|utf-8'')?([^;]+)", disposition)
+            if m_star:
+                candidato = unquote(m_star.group(1).strip().strip('"').strip("'"))
                 if candidato:
                     nombre_archivo = candidato
+            else:
+                m = re.search(r"filename=([^;]+)", disposition)
+                if m:
+                    candidato = m.group(1).strip().strip('"').strip("'")
+                    if candidato:
+                        nombre_archivo = candidato
         except Exception:
             pass
 
-    return resp.content, nombre_archivo
+    content_type = _normalizar_content_type(resp.headers.get("content-type", ""))
+    return resp.content, nombre_archivo, content_type
 
 
 def _obtener_info_compra(codigo_compra, token):
@@ -762,6 +923,189 @@ def _obtener_documentos_por_cotizacion(id_objetivo, token):
             continue
         resultados.append({"id": doc_id, "filename": nombre})
     return resultados, rut
+
+
+def _normalizar_nombre_laxo(nombre):
+    limpio = _normalizar_nombre_para_comparar(nombre)
+    base, ext = os.path.splitext(limpio)
+    base = re.sub(r" \\(\\d+\\)$", "", base).strip()
+    return f"{base[:90]}{ext}"
+
+
+def _verificar_adjuntos_con_ui(codigo_ca, driver, manifest):
+    """
+    Verifica al final del proceso que los adjuntos descargados coinciden con los adjuntos
+    visibles en la UI (modal 'Adjuntos de la cotización') para cada proveedor.
+    Anota resultados dentro del manifest y reporta por consola.
+    """
+    if not navegar_a_compra_agil(codigo_ca, driver):
+        print("[VERIFY] No se pudo navegar a la compra ágil para verificación UI")
+        return
+
+    proveedores_ui = obtener_proveedores_ca(driver)
+    if not proveedores_ui:
+        print("[VERIFY] No se encontraron proveedores en UI para verificación")
+        return
+
+    entradas = manifest.get("proveedores") or []
+    by_rut = {}
+    by_label = {}
+    for e in entradas:
+        rut = e.get("rut")
+        rut_norm = _normalizar_rut(rut) or (str(rut).strip() if rut else None)
+        if rut_norm:
+            by_rut[rut_norm] = e
+        label = (e.get("label") or "").strip().upper()
+        if label:
+            by_label[label] = e
+
+    faltantes_total = 0
+    proveedores_con_faltantes = 0
+
+    for proveedor in proveedores_ui:
+        rut_ui = _normalizar_rut(proveedor.get("rut")) or (proveedor.get("rut") or "").strip()
+        label_ui = (proveedor.get("nombre") or "").strip().upper()
+
+        entry = by_rut.get(rut_ui) if rut_ui else None
+        if not entry and label_ui:
+            entry = by_label.get(label_ui)
+
+        if not entry:
+            # Crea una entrada mínima para que quede registro
+            entry = {
+                "id_cotizacion": None,
+                "label": proveedor.get("nombre") or "",
+                "rut": rut_ui or proveedor.get("rut") or "",
+                "carpeta": "",
+                "esperados_api": None,
+                "nombres_esperados_api": [],
+                "descargados": [],
+                "errores_descarga": [],
+            }
+            entradas.append(entry)
+            if rut_ui:
+                by_rut[rut_ui] = entry
+            if label_ui:
+                by_label[label_ui] = entry
+
+        nombres_ui = _listar_nombres_adjuntos_ui(proveedor, driver)
+        entry["esperados_ui"] = len(nombres_ui)
+        entry["nombres_esperados_ui"] = nombres_ui
+
+        carpeta = entry.get("carpeta") or ""
+        descargados_fs = _listar_archivos_descargados(carpeta) if carpeta else []
+        entry["descargados_fs"] = descargados_fs
+
+        descargados_norm = {_normalizar_nombre_para_comparar(n) for n in descargados_fs}
+        descargados_laxo = {_normalizar_nombre_laxo(n) for n in descargados_fs}
+
+        faltantes = []
+        for n in nombres_ui:
+            n_norm = _normalizar_nombre_para_comparar(n)
+            if n_norm in descargados_norm:
+                continue
+            if _normalizar_nombre_laxo(n) in descargados_laxo:
+                continue
+            faltantes.append(n)
+
+        entry["faltantes_ui"] = faltantes
+        entry["ok_ui"] = len(faltantes) == 0
+
+        if faltantes:
+            proveedores_con_faltantes += 1
+            faltantes_total += len(faltantes)
+            print(
+                f"[VERIFY] Faltan {len(faltantes)}/{len(nombres_ui)} adjuntos para "
+                f"'{entry.get('label')}' ({entry.get('rut')}). Carpeta='{carpeta}'."
+            )
+            for n in faltantes[:10]:
+                print(f"         - {n}")
+            if len(faltantes) > 10:
+                print(f"         - ... y {len(faltantes) - 10} más")
+
+    manifest["proveedores"] = entradas
+    manifest["verificacion_ui"] = {
+        "total_proveedores_ui": len(proveedores_ui),
+        "proveedores_con_faltantes": proveedores_con_faltantes,
+        "faltantes_total": faltantes_total,
+        "verificado_en": datetime.now().isoformat(timespec="seconds"),
+    }
+
+
+def _listar_nombres_adjuntos_ui(proveedor, driver):
+    """
+    Abre el detalle del proveedor y devuelve los nombres visibles en la sección 'Adjuntos de la cotización'.
+    """
+    elemento_ver_detalle = proveedor.get("elemento_ver_detalle") or proveedor.get("elemento")
+    if not elemento_ver_detalle:
+        return []
+
+    wait = WebDriverWait(driver, 20)
+
+    try:
+        try:
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", elemento_ver_detalle)
+        except Exception:
+            pass
+
+        try:
+            wait.until(EC.element_to_be_clickable(elemento_ver_detalle))
+            elemento_ver_detalle.click()
+        except Exception:
+            driver.execute_script("arguments[0].click();", elemento_ver_detalle)
+
+        etiqueta_adjuntos = wait.until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    "//p[contains(normalize-space(),'Adjuntos de la cotización') or "
+                    "contains(normalize-space(),'Adjuntos de la cotizacion')]",
+                )
+            )
+        )
+
+        try:
+            contenedor_adjuntos = etiqueta_adjuntos.find_element(
+                By.XPATH,
+                "./ancestor::div[contains(@class,'MuiGrid-root')][1]/following-sibling::div[1]",
+            )
+        except Exception:
+            contenedor_adjuntos = etiqueta_adjuntos.find_element(By.XPATH, "./ancestor::div[1]")
+
+        enlaces = contenedor_adjuntos.find_elements(By.CSS_SELECTOR, "a.sc-cInsRk")
+        if not enlaces:
+            enlaces = contenedor_adjuntos.find_elements(By.TAG_NAME, "a")
+
+        nombres = []
+        for enlace in enlaces:
+            try:
+                t = (enlace.text or "").strip()
+                if t:
+                    nombres.append(t)
+            except Exception:
+                continue
+
+        # Cerrar modal
+        try:
+            boton_cerrar = driver.find_element(By.XPATH, "//button[contains(normalize-space(),'Cerrar')]")
+            driver.execute_script("arguments[0].click();", boton_cerrar)
+        except Exception:
+            try:
+                body = driver.find_element(By.TAG_NAME, "body")
+                body.send_keys(Keys.ESCAPE)
+            except Exception:
+                pass
+
+        time.sleep(0.5)
+        return nombres
+    except Exception:
+        # Intentar cerrar en caso de error
+        try:
+            body = driver.find_element(By.TAG_NAME, "body")
+            body.send_keys(Keys.ESCAPE)
+        except Exception:
+            pass
+        return []
 
 
 def _extraer_rut_de_record(record):

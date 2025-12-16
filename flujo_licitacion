@@ -1,0 +1,35 @@
+para obtener los adjuntos de las licitaciones es distinto que las compras ComprasAgiles, no se obtienen por api sino que por scrapping
+
+
+hay que ir a https://mercadopublico.cl/Procurement/Modules/RFB/SearchAcquisitions.aspx
+
+/html/body/form/div[3]/div[2]/table[2]/tbody/tr[1]/td[2]/input
+<input name="txt_Nombre" type="text" id="txt_Nombre" class="form-control" autocomplete="off" onkeydown="if(event.keyCode == 13){document.getElementById('buttonSearchByAll').focus();}">
+
+
+en ese input poner el codigo de la licitacion (por ej 728-27-LE25)
+
+Y presionar este botón /html/body/form/div[3]/div[2]/table[2]/tbody/tr[3]/td[4]/input
+
+<input type="submit" name="buttonSearchByAll" value="Buscar" id="buttonSearchByAll" tabindex="1" class="btn btn-pri btnNuevoEstilo2" style="visibility: visible;" autocomplete="off">
+
+Luego de buscardo, aparecerá
+
+<a onclick="openPopUp('DetailsAcquisition.aspx?qs=JjO5zKqb+2R21IMjm8Gxkg==', 0, 0, 0, 1);return false;" id="dgd_Search_ctl02_hlkNumAcquisition" href="javascript:__doPostBack('dgd_Search$ctl02$hlkNumAcquisition','')">728-27-LE25</a>
+(con el codigo correspondiente)
+/html/body/form/div[4]/table/tbody/tr/td/div[2]/table/tbody/tr[2]/td[1]/a
+
+que llevará a una pagina donde se encuentra el botón Cuadro de Ofertas
+
+/html/body/form/div[6]/div[5]/div/div[6]/div/input
+<input type="image" name="imgCuadroOferta" id="imgCuadroOferta" alt="" class="" href="/Procurement/Modules/RFB/StepsProcessAward/OpeningFrame.aspx?enc=6FQcl9G2Yc2VyWokMkQx5BWLFPmfna%2bngQJ9iBNa7shR47RyDnHwYgZONyGWZOXrj4ACIJGOy47oDiFDPmTt7MzUpeMf5S%2bQaR3AyB9TRsjkTgM3Jl9XxK0h6aIJ474G" src="../../Includes/images/FichaLight/iconos_licitacion/ic-32.png" onclick="openPopupFicha(this); return false;" style="border-width:0px;width: 46; height: 58;">
+
+en ese cuadro de ofertas hay que descargar para cada proveedor
+
+Anexos Administrativos
+Anexos Tecnicos
+Anexos Economicos (puede que no suban anexos de uno de estos)
+
+
+ejemplo de boton anexos administrativos
+<input type="image" name="grdSupplies$ctl02$_GvImgbAdministrativeAttachment" id="grdSupplies_ctl02__GvImgbAdministrativeAttachment" title="Anexos Administrativos" src="../../../Includes/images/Ofertas/adj-administrativos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=F%2b9gyIZGH5B4sZ88u%2b7TVM%2bIsnx7aOHrIBm3Qw0EVb4LPavKetctoS9746jYZ553ZMbm6JesjO7xnq5YfA0IJsMkBEOu9TbLZVLWSsrVAgbU9%2bsK%2f26WKEaXav1ZA0aUAHofHpHXlHYmk3fWZ5t8Cg%3d%3d', 800, 520); return false;" style="border-width:0px;">

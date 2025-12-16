@@ -6,6 +6,9 @@ import json
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import threading
 import descarga_ca
 import genera_xls_ca
@@ -32,6 +35,8 @@ class DescargadorLicitacionesApp:
         self.navegador_iniciado = False
         self.driver = None
         self.token_guardado = False
+        self._token_poll_after_id = None
+        self._compra_agil_clicked = False
         
         self.setup_ui()
     
@@ -112,6 +117,15 @@ class DescargadorLicitacionesApp:
                                        command=self.continuar_proceso, 
                                        state='disabled', style='Custom.TButton')
         self.btn_continuar.pack(anchor='w', pady=(10, 0))
+
+        self.btn_cerrar_navegador = ttk.Button(
+            nav_frame,
+            text="⏹ Cerrar navegador",
+            command=self.cerrar_navegador,
+            state='disabled',
+            style='Custom.TButton',
+        )
+        self.btn_cerrar_navegador.pack(anchor='w', pady=(10, 0))
         
         # Separador
         separator2 = ttk.Separator(main_frame, orient='horizontal')
@@ -211,6 +225,15 @@ class DescargadorLicitacionesApp:
                                              command=self.generar_ficha_proveedor, 
                                              state='disabled', style='Custom.TButton')
         self.btn_ficha_proveedor.pack(side='left')
+
+        self.btn_test_flujo_lici = ttk.Button(
+            buttons_frame,
+            text="🧪 Testear flujo licitación",
+            command=self.testear_flujo_licitacion,
+            state='disabled',
+            style='Custom.TButton'
+        )
+        self.btn_test_flujo_lici.pack(side='left', padx=(15, 0))
         
         # Status bar
         self.status_var = tk.StringVar(value="Listo - Inicie el navegador para comenzar")
@@ -242,9 +265,11 @@ class DescargadorLicitacionesApp:
             
             self.navegador_iniciado = True
             self.token_guardado = False
+            self._compra_agil_clicked = False
             print("[DEBUG] iniciar_navegador: navegador_iniciado=True, token_guardado=False")
             self.btn_navegador.configure(state='disabled')
             self.btn_continuar.configure(state='normal')
+            self.btn_cerrar_navegador.configure(state='normal')
             
             self.status_var.set("Navegador iniciado - Ingrese a su cuenta y presione 'Continuar'")
             
@@ -262,6 +287,32 @@ class DescargadorLicitacionesApp:
             print(f"[DEBUG] iniciar_navegador: error al iniciar navegador: {e}")
             messagebox.showerror("Error", f"Error al iniciar el navegador:\n{str(e)}")
             self.status_var.set("Error al iniciar navegador")
+
+    def cerrar_navegador(self):
+        """Cierra el navegador Selenium y deja el programa listo para iniciar nuevamente."""
+        if self._token_poll_after_id is not None:
+            try:
+                self.root.after_cancel(self._token_poll_after_id)
+            except Exception:
+                pass
+            self._token_poll_after_id = None
+
+        if self.driver:
+            try:
+                self.driver.quit()
+            except Exception:
+                pass
+
+        self.driver = None
+        self.navegador_iniciado = False
+        self.token_guardado = False
+        self._compra_agil_clicked = False
+
+        self.btn_navegador.configure(state='normal')
+        self.btn_continuar.configure(state='disabled')
+        self.btn_cerrar_navegador.configure(state='disabled')
+        self._set_estado_botones_accion('disabled')
+        self.status_var.set("Listo - Inicie el navegador para comenzar")
     
     def continuar_proceso(self):
         """Continúa con el proceso después del login y guarda el token de API"""
@@ -304,6 +355,7 @@ class DescargadorLicitacionesApp:
         self.btn_descargar.configure(state='normal')
         self.btn_generar_excel.configure(state='normal')
         self.btn_ficha_proveedor.configure(state='normal')
+        self.btn_test_flujo_lici.configure(state='normal' if self.tipo_proceso.get() == "licitacion" else 'disabled')
         
         self.status_var.set(
             "Listo para procesar - Ingrese el código y ejecute el flujo completo o las acciones individuales"
@@ -605,7 +657,13 @@ class DescargadorLicitacionesApp:
             return
         try:
             print(f"[DEBUG] _programar_poll_token: programando _poll_token_automatico en {delay_ms}ms")
-            self.root.after(delay_ms, self._poll_token_automatico)
+            if self._token_poll_after_id is not None:
+                try:
+                    self.root.after_cancel(self._token_poll_after_id)
+                except Exception:
+                    pass
+                self._token_poll_after_id = None
+            self._token_poll_after_id = self.root.after(delay_ms, self._poll_token_automatico)
         except tk.TclError as e:
             print(f"[DEBUG] _programar_poll_token: TclError al programar poll: {e}")
 
@@ -616,6 +674,7 @@ class DescargadorLicitacionesApp:
             return
 
         print("[DEBUG] _poll_token_automatico: intentando captura automática de token...")
+        self._intentar_click_compra_agil()
         if self.capturar_y_guardar_token_desde_selenium():
             try:
                 self.status_var.set(
@@ -630,8 +689,41 @@ class DescargadorLicitacionesApp:
             except tk.TclError as e:
                 print(f"[DEBUG] _poll_token_automatico: TclError al mostrar mensaje de token detectado: {e}")
         else:
-            print("[DEBUG] _poll_token_automatico: todavía no se detecta token, reintentando en 5000ms")
-            self._programar_poll_token(5000)
+            delay_ms = 1000 if not self._compra_agil_clicked else 2000
+            print(f"[DEBUG] _poll_token_automatico: todavía no se detecta token, reintentando en {delay_ms}ms")
+            self._programar_poll_token(delay_ms)
+
+    def _intentar_click_compra_agil(self):
+        """
+        Si aparece el botón "Compra Ágil" en el portal, lo presiona una vez para gatillar
+        llamadas a la API y facilitar la captura automática del token.
+        """
+        if not self.driver or self._compra_agil_clicked:
+            return False
+
+        xpath_compra_agil = "/html/body/form/section[2]/div/div/div/div[1]/nav/div[1]/ul/li[6]/a"
+        try:
+            elementos = self.driver.find_elements("xpath", xpath_compra_agil)
+            if not elementos:
+                return False
+            elemento = elementos[0]
+            try:
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", elemento)
+            except Exception:
+                pass
+            try:
+                elemento.click()
+            except Exception:
+                try:
+                    self.driver.execute_script("arguments[0].click();", elemento)
+                except Exception:
+                    return False
+            self._compra_agil_clicked = True
+            print("[DEBUG] _intentar_click_compra_agil: clic en 'Compra Ágil' ejecutado")
+            return True
+        except Exception as e:
+            print(f"[DEBUG] _intentar_click_compra_agil: error intentando click: {e}")
+            return False
     
     def validar_codigo(self):
         """Valida que se haya ingresado un código"""
@@ -646,6 +738,10 @@ class DescargadorLicitacionesApp:
         self.btn_descargar.configure(state=estado)
         self.btn_generar_excel.configure(state=estado)
         self.btn_ficha_proveedor.configure(state=estado)
+        if estado == 'normal' and self.tipo_proceso.get() != "licitacion":
+            self.btn_test_flujo_lici.configure(state='disabled')
+        else:
+            self.btn_test_flujo_lici.configure(state=estado)
     
     def ejecutar_flujo_completo(self):
         """Ejecuta el flujo completo: descarga adjuntos, ficha(s) y Excel"""
@@ -801,6 +897,164 @@ class DescargadorLicitacionesApp:
         thread = threading.Thread(target=proceso_excel)
         thread.daemon = True
         thread.start()
+
+    def testear_flujo_licitacion(self):
+        """Abre la licitación, navega al Cuadro de Ofertas y abre Anexos Administrativos (prueba)."""
+        if not self.validar_codigo():
+            return
+        if self.tipo_proceso.get() != "licitacion":
+            messagebox.showwarning("Solo licitación", "Esta prueba aplica solo para licitación.")
+            return
+        if not self.navegador_iniciado or not self.driver:
+            messagebox.showwarning("Advertencia", "Debe iniciar el navegador primero")
+            return
+
+        codigo = self.codigo.get().strip()
+        self.status_var.set(f"Testeando flujo licitación: {codigo}...")
+        self._set_estado_botones_accion('disabled')
+
+        def proceso_test():
+            try:
+                ok = self._probar_flujo_licitacion(codigo)
+                if ok:
+                    messagebox.showinfo(
+                        "Test licitación",
+                        "Se abrió la licitación, el Cuadro de Ofertas y los Anexos Administrativos (primer proveedor encontrado)."
+                    )
+                    self.status_var.set(f"Test licitación OK para {codigo}")
+                else:
+                    messagebox.showerror(
+                        "Test licitación",
+                        "No se pudo llegar a los Anexos Administrativos. Revise consola/log."
+                    )
+                    self.status_var.set(f"Fallo test licitación para {codigo}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Error en test licitación: {e}")
+                self.status_var.set("Error en test licitación")
+            finally:
+                self._set_estado_botones_accion('normal')
+
+        thread = threading.Thread(target=proceso_test, daemon=True)
+        thread.start()
+
+    def _probar_flujo_licitacion(self, codigo_lici):
+        driver = self.driver
+        wait = WebDriverWait(driver, 20)
+
+        def esperar_nueva_ventana(handles_prev, timeout=15):
+            try:
+                WebDriverWait(driver, timeout).until(lambda d: len(d.window_handles) > len(handles_prev))
+                for h in driver.window_handles:
+                    if h not in handles_prev:
+                        return h
+            except Exception:
+                return None
+            return None
+
+        print(f"[TEST LICITACION] Abriendo buscador para código {codigo_lici}")
+        driver.get("https://mercadopublico.cl/Procurement/Modules/RFB/SearchAcquisitions.aspx")
+
+        try:
+            campo_codigo = wait.until(EC.presence_of_element_located((By.ID, "txt_Nombre")))
+            campo_codigo.clear()
+            campo_codigo.send_keys(codigo_lici)
+        except Exception as e:
+            print(f"[TEST LICITACION] No se encontró campo de código: {e}")
+            return False
+
+        try:
+            btn_buscar = wait.until(EC.element_to_be_clickable((By.ID, "buttonSearchByAll")))
+            btn_buscar.click()
+        except Exception as e:
+            print(f"[TEST LICITACION] No se pudo hacer click en Buscar: {e}")
+            return False
+
+        # Abrir la licitación desde el resultado
+        enlace_licitacion = None
+        try:
+            enlace_licitacion = wait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, f"//a[contains(@id,'hlkNumAcquisition') and normalize-space(text())='{codigo_lici}']")
+                )
+            )
+        except Exception:
+            try:
+                enlace_licitacion = wait.until(
+                    EC.element_to_be_clickable(
+                        (By.XPATH, "//a[contains(@id,'hlkNumAcquisition')]")
+                    )
+                )
+            except Exception as e:
+                print(f"[TEST LICITACION] No se encontró enlace de licitación: {e}")
+                return False
+
+        handles_prev = driver.window_handles[:]
+        try:
+            driver.execute_script("arguments[0].click();", enlace_licitacion)
+        except Exception:
+            try:
+                enlace_licitacion.click()
+            except Exception as e:
+                print(f"[TEST LICITACION] Click en licitación falló: {e}")
+                return False
+
+        nuevo_handle = esperar_nueva_ventana(handles_prev)
+        if nuevo_handle:
+            driver.switch_to.window(nuevo_handle)
+
+        # Click en Cuadro de Ofertas
+        try:
+            btn_cuadro = WebDriverWait(driver, 20).until(
+                EC.element_to_be_clickable((By.XPATH, "//input[contains(@id,'imgCuadroOferta')]"))
+            )
+        except Exception as e:
+            print(f"[TEST LICITACION] No se encontró botón Cuadro de Ofertas: {e}")
+            return False
+
+        handles_prev = driver.window_handles[:]
+        try:
+            driver.execute_script("arguments[0].click();", btn_cuadro)
+        except Exception:
+            try:
+                btn_cuadro.click()
+            except Exception as e:
+                print(f"[TEST LICITACION] Click en Cuadro de Ofertas falló: {e}")
+                return False
+
+        nuevo_handle = esperar_nueva_ventana(handles_prev)
+        if nuevo_handle:
+            driver.switch_to.window(nuevo_handle)
+
+        # Abrir Anexos Administrativos del primer proveedor disponible
+        try:
+            btn_admin = WebDriverWait(driver, 25).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "input[id*='_GvImgbAdministrativeAttachment']"))
+            )
+        except Exception as e:
+            print(f"[TEST LICITACION] No se encontró botón de Anexos Administrativos: {e}")
+            return False
+
+        handles_prev = driver.window_handles[:]
+        try:
+            driver.execute_script("arguments[0].click();", btn_admin)
+        except Exception:
+            try:
+                btn_admin.click()
+            except Exception as e:
+                print(f"[TEST LICITACION] Click en Anexos Administrativos falló: {e}")
+                return False
+
+        nuevo_handle = esperar_nueva_ventana(handles_prev)
+        if nuevo_handle:
+            driver.switch_to.window(nuevo_handle)
+
+        try:
+            WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        except Exception:
+            pass
+
+        print("[TEST LICITACION] Anexos Administrativos abiertos.")
+        return True
     
     def generar_ficha_proveedor(self):
         """Genera la ficha del proveedor"""
@@ -819,11 +1073,10 @@ class DescargadorLicitacionesApp:
     
     def on_closing(self):
         """Maneja el cierre de la aplicación"""
-        if self.driver:
-            try:
-                self.driver.quit()
-            except:
-                pass
+        try:
+            self.cerrar_navegador()
+        except Exception:
+            pass
         self.root.destroy()
 
 def main():

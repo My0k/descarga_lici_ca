@@ -3,6 +3,7 @@
 
 import os
 import pandas as pd
+import json
 from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
@@ -11,6 +12,28 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import descarga_ca
+
+
+def _cargar_manifest_adjuntos(codigo_ca):
+    carpeta_base = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
+    ruta_manifest = os.path.join(carpeta_base, descarga_ca.MANIFEST_ADJUNTOS_FILENAME)
+    if not os.path.exists(ruta_manifest):
+        return {}
+    try:
+        with open(ruta_manifest, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return {}
+
+    proveedores = data.get("proveedores") or []
+    by_rut = {}
+    for p in proveedores:
+        rut = p.get("rut")
+        rut_norm = descarga_ca._normalizar_rut(rut) or (str(rut).strip() if rut else None)
+        if not rut_norm:
+            continue
+        by_rut[rut_norm] = p
+    return by_rut
 
 def generar_excel_compra_agil(codigo_ca, driver=None):
     """
@@ -143,15 +166,31 @@ def extraer_datos_proveedores(codigo_ca, driver):
     try:
         # Obtener proveedores usando la función del módulo de descarga
         proveedores = descarga_ca.obtener_proveedores_ca(driver)
+        manifest_by_rut = _cargar_manifest_adjuntos(codigo_ca)
         
         datos_proveedores = []
         
         for i, proveedor in enumerate(proveedores, 1):
             # Construir rutas basadas en la estructura de carpetas
             carpeta_base = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
-            nombre_proveedor_limpio = descarga_ca.limpiar_nombre_archivo(proveedor['nombre'])
-            carpeta_proveedor = os.path.join(carpeta_base, nombre_proveedor_limpio)
-            ruta_zip = os.path.join(carpeta_base, f"{nombre_proveedor_limpio}.zip")
+            rut_norm = descarga_ca._normalizar_rut(proveedor.get("rut")) or (proveedor.get("rut") or "").strip()
+            entry = manifest_by_rut.get(rut_norm) if rut_norm else None
+
+            carpeta_proveedor = None
+            if entry and entry.get("carpeta"):
+                carpeta_proveedor = entry.get("carpeta")
+            else:
+                nombre_proveedor_limpio = descarga_ca.limpiar_nombre_archivo(proveedor['nombre'])
+                carpeta_proveedor = os.path.join(carpeta_base, nombre_proveedor_limpio)
+
+            nombre_carpeta = os.path.basename(carpeta_proveedor.rstrip(os.sep)) if carpeta_proveedor else ""
+            ruta_zip = os.path.join(carpeta_base, f"{nombre_carpeta}.zip") if nombre_carpeta else "No creado"
+
+            adjuntos_esperados = None
+            if entry:
+                adjuntos_esperados = entry.get("esperados_ui")
+                if adjuntos_esperados is None:
+                    adjuntos_esperados = entry.get("esperados_api")
             
             # Verificar si existen los archivos/carpetas
             existe_carpeta = os.path.exists(carpeta_proveedor)
@@ -172,6 +211,7 @@ def extraer_datos_proveedores(codigo_ca, driver):
                 'RUT': proveedor['rut'],
                 'Carpeta Path': carpeta_proveedor if existe_carpeta else 'No descargada',
                 'ZIP Path': ruta_zip if existe_zip else 'No creado',
+                'Adjuntos Esperados': adjuntos_esperados if adjuntos_esperados is not None else '',
                 'Número Adjuntos': num_adjuntos,
                 'Estado Descarga': 'Completada' if existe_carpeta and num_adjuntos > 0 else 'Pendiente',
                 'Estado ZIP': 'Creado' if existe_zip else 'No creado',
@@ -277,11 +317,11 @@ def crear_hoja_proveedores(ws, datos_proveedores):
     ws['A1'].font = Font(size=14, bold=True)
     ws['A1'].fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
     ws['A1'].font = Font(size=14, bold=True, color="FFFFFF")
-    ws.merge_cells('A1:I1')
+    ws.merge_cells('A1:J1')
     
     # Encabezados
     encabezados = ['N°', 'Nombre Proveedor', 'RUT', 'Carpeta Path', 'ZIP Path', 
-                   'Número Adjuntos', 'Estado Descarga', 'Estado ZIP', 'Fecha Procesamiento']
+                   'Adjuntos Esperados', 'Número Adjuntos', 'Estado Descarga', 'Estado ZIP', 'Fecha Procesamiento']
     
     for col, encabezado in enumerate(encabezados, 1):
         cell = ws.cell(row=3, column=col, value=encabezado)
@@ -296,13 +336,14 @@ def crear_hoja_proveedores(ws, datos_proveedores):
         ws.cell(row=row_idx, column=3, value=proveedor['RUT'])
         ws.cell(row=row_idx, column=4, value=proveedor['Carpeta Path'])
         ws.cell(row=row_idx, column=5, value=proveedor['ZIP Path'])
-        ws.cell(row=row_idx, column=6, value=proveedor['Número Adjuntos'])
-        ws.cell(row=row_idx, column=7, value=proveedor['Estado Descarga'])
-        ws.cell(row=row_idx, column=8, value=proveedor['Estado ZIP'])
-        ws.cell(row=row_idx, column=9, value=proveedor['Fecha Procesamiento'])
+        ws.cell(row=row_idx, column=6, value=proveedor.get('Adjuntos Esperados', ''))
+        ws.cell(row=row_idx, column=7, value=proveedor['Número Adjuntos'])
+        ws.cell(row=row_idx, column=8, value=proveedor['Estado Descarga'])
+        ws.cell(row=row_idx, column=9, value=proveedor['Estado ZIP'])
+        ws.cell(row=row_idx, column=10, value=proveedor['Fecha Procesamiento'])
     
     # Ajustar anchos de columna
-    anchos = [5, 30, 15, 40, 40, 15, 15, 15, 20]
+    anchos = [5, 30, 15, 40, 40, 18, 15, 15, 15, 20]
     for col, ancho in enumerate(anchos, 1):
         ws.column_dimensions[chr(64 + col)].width = ancho
     
@@ -325,12 +366,24 @@ def crear_hoja_resumen(ws, datos_proveedores, info_compra):
     proveedores_descargados = sum(1 for p in datos_proveedores if p['Estado Descarga'] == 'Completada')
     zips_creados = sum(1 for p in datos_proveedores if p['Estado ZIP'] == 'Creado')
     total_adjuntos = sum(p['Número Adjuntos'] for p in datos_proveedores)
+    total_adjuntos_esperados = 0
+    for p in datos_proveedores:
+        v = p.get('Adjuntos Esperados')
+        if isinstance(v, int):
+            total_adjuntos_esperados += v
+        else:
+            try:
+                if str(v).strip():
+                    total_adjuntos_esperados += int(v)
+            except Exception:
+                pass
     
     row = 3
     estadisticas = [
         ('Total Proveedores:', total_proveedores),
         ('Proveedores Descargados:', proveedores_descargados),
         ('ZIPs Creados:', zips_creados),
+        ('Total Adjuntos Esperados:', total_adjuntos_esperados),
         ('Total Adjuntos:', total_adjuntos),
         ('Porcentaje Completado:', f"{(proveedores_descargados/total_proveedores*100):.1f}%" if total_proveedores > 0 else "0%")
     ]
