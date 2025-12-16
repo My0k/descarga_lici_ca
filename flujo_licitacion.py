@@ -87,10 +87,9 @@ def test_flujo_licitacion(codigo_lici, driver, carpeta_base="Descargas/Licitacio
 
 def _procesar_cuadro_ofertas(driver, wait, session, carpeta_lici):
     proveedores = []
-    try:
-        tabla = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id*='grdSupplies']")))
-    except Exception:
-        print("[LICI] No se encontró la tabla de ofertas (grdSupplies).")
+    tabla = _buscar_tabla_ofertas(driver, wait)
+    if not tabla:
+        print("[LICI] No se encontró la tabla de ofertas (grdSupplies) en la ventana/iframe actual.")
         return proveedores
 
     filas = tabla.find_elements(By.XPATH, ".//tr[td]")
@@ -177,11 +176,13 @@ def _descargar_anexos_tipo(driver, fila, session, carpeta_prov, etiqueta, select
                     pass
                 try:
                     driver.switch_to.window(handle_base)
+                    driver.switch_to.default_content()
                 except Exception:
                     pass
             else:
                 try:
                     driver.switch_to.window(handle_base)
+                    driver.switch_to.default_content()
                 except Exception:
                     pass
 
@@ -201,10 +202,32 @@ def _descargar_adjuntos_popup(driver, session, carpeta_destino):
     except Exception:
         pass
 
-    links = driver.find_elements(By.XPATH, "//a[contains(@href,'http') or contains(@href,'Download') or contains(@href,'View') or contains(@href,'.pdf') or contains(@href,'.doc') or contains(@href,'.xls') or contains(@href,'.jpg') or contains(@href,'.jpeg') or contains(@href,'.png')]")
+    links = driver.find_elements(
+        By.XPATH,
+        "//a[contains(@href,'http') or contains(@href,'Download') or contains(@href,'View') or "
+        "contains(@href,'.pdf') or contains(@href,'.doc') or contains(@href,'.xls') or contains(@href,'.jpg') "
+        "or contains(@href,'.jpeg') or contains(@href,'.png')]"
+    )
     # Si no hay enlaces claros, intentar botones de lupa
     if not links:
-        links = driver.find_elements(By.XPATH, "//input[contains(@onclick,'Download') or contains(@onclick,'open') or contains(@onclick,'View')]")
+        links = driver.find_elements(
+            By.XPATH,
+            "//input[contains(@onclick,'Download') or contains(@onclick,'open') or contains(@onclick,'View')]"
+        )
+    # Si sigue vacío, intentar dentro de iframes
+    if not links:
+        _switch_to_frame_containing(driver, (By.XPATH, "//table"))
+        links = driver.find_elements(
+            By.XPATH,
+            "//a[contains(@href,'http') or contains(@href,'Download') or contains(@href,'View') or "
+            "contains(@href,'.pdf') or contains(@href,'.doc') or contains(@href,'.xls') or contains(@href,'.jpg') "
+            "or contains(@href,'.jpeg') or contains(@href,'.png')]"
+        )
+        if not links:
+            links = driver.find_elements(
+                By.XPATH,
+                "//input[contains(@onclick,'Download') or contains(@onclick,'open') or contains(@onclick,'View')]"
+            )
 
     for link in links:
         try:
@@ -309,6 +332,49 @@ def _esperar_nueva_ventana(driver, handles_prev, timeout=15):
     except Exception:
         return None
     return None
+
+
+def _switch_to_frame_containing(driver, locator, timeout=2):
+    """
+    Recorre iframes/frames y cambia al primero que contenga el elemento indicado por locator.
+    """
+    try:
+        driver.switch_to.default_content()
+    except Exception:
+        pass
+    frames = driver.find_elements(By.TAG_NAME, "iframe") + driver.find_elements(By.TAG_NAME, "frame")
+    for frame in frames:
+        try:
+            driver.switch_to.frame(frame)
+            elems = driver.find_elements(*locator)
+            if elems:
+                return True
+        except Exception:
+            continue
+        finally:
+            try:
+                driver.switch_to.default_content()
+            except Exception:
+                pass
+    return False
+
+
+def _buscar_tabla_ofertas(driver, wait):
+    """
+    Busca la tabla de ofertas (grdSupplies) en la ventana actual o dentro de iframes.
+    """
+    try:
+        return wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id*='grdSupplies']")))
+    except Exception:
+        pass
+
+    # Probar dentro de iframes
+    if not _switch_to_frame_containing(driver, (By.CSS_SELECTOR, "table[id*='grdSupplies']")):
+        return None
+    try:
+        return wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id*='grdSupplies']")))
+    except Exception:
+        return None
 
 
 def _asegurar_nombre_unico(carpeta, nombre):
