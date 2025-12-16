@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 import os
 import webbrowser
 import json
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -263,6 +264,15 @@ class DescargadorLicitacionesApp:
             print("[DEBUG] iniciar_navegador: driver creado")
             self.driver.get("https://mercadopublico.cl/Home")
             print("[DEBUG] iniciar_navegador: cargada https://mercadopublico.cl/Home")
+
+            # Intentar restaurar cookies de sesión previa
+            cookies_ok = self._restaurar_sesion_cookies()
+            if cookies_ok:
+                print("[DEBUG] iniciar_navegador: cookies restauradas, refrescando Home")
+                try:
+                    self.driver.get("https://mercadopublico.cl/Home")
+                except Exception as e:
+                    print(f"[DEBUG] iniciar_navegador: error refrescando tras restaurar cookies: {e}")
             
             self.navegador_iniciado = True
             self.token_guardado = False
@@ -336,6 +346,7 @@ class DescargadorLicitacionesApp:
                 self.status_var.set(
                     "Token de sesión capturado y guardado en 'token' para uso de las APIs"
                 )
+                self._guardar_sesion_cookies()
             else:
                 print("[DEBUG] continuar_proceso: no se pudo capturar token en captura final")
                 # No bloquea el flujo si no se encuentra el token, pero se informa al usuario
@@ -743,6 +754,85 @@ class DescargadorLicitacionesApp:
             self.btn_test_flujo_lici.configure(state='disabled')
         else:
             self.btn_test_flujo_lici.configure(state=estado)
+
+    # =========================
+    # Sesión / cookies
+    # =========================
+    def _ruta_sesion_dir(self):
+        ruta = os.path.join(os.getcwd(), "sesion")
+        os.makedirs(ruta, exist_ok=True)
+        return ruta
+
+    def _ruta_cookies(self):
+        return os.path.join(self._ruta_sesion_dir(), "cookies.json")
+
+    def _guardar_sesion_cookies(self):
+        if not self.driver:
+            return False
+        try:
+            cookies = self.driver.get_cookies()
+            data = {
+                "timestamp": time.time(),
+                "cookies": cookies,
+            }
+            with open(self._ruta_cookies(), "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            print(f"[DEBUG] Cookies guardadas en {self._ruta_cookies()} ({len(cookies)} cookies)")
+            return True
+        except Exception as e:
+            print(f"[DEBUG] Error guardando cookies: {e}")
+            return False
+
+    def _restaurar_sesion_cookies(self):
+        ruta = self._ruta_cookies()
+        if not os.path.exists(ruta):
+            print("[DEBUG] No hay cookies previas para restaurar.")
+            return False
+        try:
+            with open(ruta, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            cookies = data.get("cookies") or []
+        except Exception as e:
+            print(f"[DEBUG] Error leyendo cookies guardadas: {e}")
+            return False
+
+        if not cookies:
+            print("[DEBUG] Archivo de cookies vacío.")
+            return False
+
+        # Agrupar por dominio y agregarlas
+        dominios = sorted({c.get("domain") for c in cookies if c.get("domain")})
+        print(f"[DEBUG] Restaurando cookies para dominios: {dominios}")
+        for dom in dominios:
+            if not dom:
+                continue
+            url = f"https://{dom.lstrip('.')}/"
+            try:
+                self.driver.get(url)
+            except Exception as e:
+                print(f"[DEBUG] No se pudo navegar a {url} para setear cookies: {e}")
+                continue
+            for c in cookies:
+                if c.get("domain") != dom:
+                    continue
+                cookie = {k: v for k, v in c.items() if k in {"name", "value", "domain", "path", "expiry", "secure", "httpOnly", "sameSite"}}
+                if "path" not in cookie:
+                    cookie["path"] = "/"
+                if "expiry" in cookie:
+                    try:
+                        cookie["expiry"] = int(cookie["expiry"])
+                    except Exception:
+                        cookie.pop("expiry", None)
+                try:
+                    self.driver.add_cookie(cookie)
+                except Exception as e:
+                    print(f"[DEBUG] No se pudo agregar cookie {cookie.get('name')} para dominio {dom}: {e}")
+                    continue
+        try:
+            self.driver.get("https://mercadopublico.cl/Home")
+        except Exception:
+            pass
+        return True
     
     def ejecutar_flujo_completo(self):
         """Ejecuta el flujo completo: descarga adjuntos, ficha(s) y Excel"""
