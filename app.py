@@ -15,6 +15,7 @@ import genera_xls_ca
 import descarga_lici
 import genera_xls_lici
 import genera_ficha_proveedor
+import flujo_licitacion
 
 class DescargadorLicitacionesApp:
     def __init__(self, root):
@@ -915,17 +916,22 @@ class DescargadorLicitacionesApp:
 
         def proceso_test():
             try:
-                ok = self._probar_flujo_licitacion(codigo)
+                resultado = flujo_licitacion.test_flujo_licitacion(codigo, self.driver)
+                ok = bool(resultado.get("ok"))
+                descargados = sum(
+                    (p.get("total_descargados") or 0) for p in resultado.get("proveedores", [])
+                )
                 if ok:
                     messagebox.showinfo(
                         "Test licitación",
-                        "Se abrió la licitación, el Cuadro de Ofertas y los Anexos Administrativos (primer proveedor encontrado)."
+                        f"Se abrió la licitación, el Cuadro de Ofertas y se descargaron anexos.\n\n"
+                        f"Archivos descargados: {descargados}"
                     )
                     self.status_var.set(f"Test licitación OK para {codigo}")
                 else:
                     messagebox.showerror(
                         "Test licitación",
-                        "No se pudo llegar a los Anexos Administrativos. Revise consola/log."
+                        "No se pudo completar el flujo de anexos. Revise consola/log."
                     )
                     self.status_var.set(f"Fallo test licitación para {codigo}")
             except Exception as e:
