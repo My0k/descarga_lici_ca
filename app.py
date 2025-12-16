@@ -4,6 +4,7 @@ import os
 import webbrowser
 import json
 import time
+from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -256,6 +257,10 @@ class DescargadorLicitacionesApp:
             # Configurar opciones de Chrome
             chrome_options = Options()
             chrome_options.add_argument("--start-maximized")
+            # Perfil persistente para reutilizar sesión (cookies/localStorage)
+            profile_dir = os.path.join(self._ruta_sesion_dir(), "chrome_profile")
+            Path(profile_dir).mkdir(parents=True, exist_ok=True)
+            chrome_options.add_argument(f"--user-data-dir={profile_dir}")
             # Activar logs de rendimiento para capturar headers de red (incluye Authorization)
             chrome_options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
             

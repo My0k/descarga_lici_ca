@@ -382,23 +382,58 @@ def _buscar_tabla_ofertas(driver, wait):
     except Exception as e:
         print(f"[LICI] No se pudieron listar tablas en contexto actual: {e}")
     try:
-        return wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id*='grdSupplies']")))
+        encontrado = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id*='grdSupplies']")))
+        return encontrado
     except Exception:
         pass
 
-    # Probar dentro de iframes
-    if not _switch_to_frame_containing(driver, (By.CSS_SELECTOR, "table[id*='grdSupplies']")):
-        print("[LICI] No se encontró frame con la tabla de ofertas.")
-        return None
+    # Probar recursivamente en iframes/frames
+    locator = (By.CSS_SELECTOR, "table[id*='grdSupplies']")
     try:
-        return wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id*='grdSupplies']")))
-    except Exception as e:
-        try:
-            tablas_iframe = driver.find_elements(By.CSS_SELECTOR, "table")
-            print(f"[LICI] Tablas dentro de iframe: {len(tablas_iframe)} (buscando id*grdSupplies) error={e}")
-        except Exception:
-            pass
+        driver.switch_to.default_content()
+    except Exception:
+        pass
+    tabla = _find_element_in_frames(driver, locator, max_depth=4)
+    if tabla:
+        print("[LICI] Tabla encontrada dentro de algún frame.")
+        return tabla
+    print("[LICI] No se encontró frame con la tabla de ofertas.")
+    return None
+
+
+def _find_element_in_frames(driver, locator, max_depth=3):
+    """
+    Busca un elemento tratando de descender en iframes/frames hasta max_depth.
+    Devuelve el elemento si lo encuentra y deja el foco en el frame donde está.
+    """
+    try:
+        elem = driver.find_element(*locator)
+        return elem
+    except Exception:
+        pass
+    if max_depth <= 0:
         return None
+    frames = driver.find_elements(By.TAG_NAME, "iframe") + driver.find_elements(By.TAG_NAME, "frame")
+    print(f"[LICI] Buscando en {len(frames)} frames (depth={max_depth})")
+    for i, frame in enumerate(frames, 1):
+        try:
+            src = frame.get_attribute("src")
+            print(f"   [LICI] Entrando frame {i} src={src}")
+            driver.switch_to.frame(frame)
+            found = _find_element_in_frames(driver, locator, max_depth=max_depth - 1)
+            if found:
+                return found
+        except Exception as e:
+            print(f"   [LICI] No se pudo entrar a frame {i}: {e}")
+        finally:
+            try:
+                driver.switch_to.parent_frame()
+            except Exception:
+                try:
+                    driver.switch_to.default_content()
+                except Exception:
+                    pass
+    return None
 
 
 def _debug_dump_context(driver, label):
