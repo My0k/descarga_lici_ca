@@ -67,7 +67,9 @@ def test_flujo_licitacion(codigo_lici, driver, carpeta_base="Descargas/Licitacio
         return resumen
 
     handle_cuadro = _click_y_capturar_nueva_ventana(driver, btn_cuadro) or driver.current_window_handle
+    print(f"[LICI] Handles tras abrir Cuadro: {driver.window_handles}, usando={handle_cuadro}")
     driver.switch_to.window(handle_cuadro)
+    _debug_dump_context(driver, "post-cuadro")
 
     # Procesar tabla de ofertas
     carpeta_lici = os.path.join(carpeta_base, codigo_lici)
@@ -87,10 +89,16 @@ def test_flujo_licitacion(codigo_lici, driver, carpeta_base="Descargas/Licitacio
 
 def _procesar_cuadro_ofertas(driver, wait, session, carpeta_lici):
     proveedores = []
+    _debug_dump_context(driver, "procesar_cuadro_ofertas")
     tabla = _buscar_tabla_ofertas(driver, wait)
     if not tabla:
         print("[LICI] No se encontró la tabla de ofertas (grdSupplies) en la ventana/iframe actual.")
         return proveedores
+
+    try:
+        print(f"[LICI] Tabla encontrada id={tabla.get_attribute('id')} filas={len(tabla.find_elements(By.XPATH, './/tr'))}")
+    except Exception as e:
+        print(f"[LICI] Tabla encontrada, error leyendo info: {e}")
 
     filas = tabla.find_elements(By.XPATH, ".//tr[td]")
     for idx, fila in enumerate(filas[1:], 1):  # omitir encabezado
@@ -313,6 +321,7 @@ def _descargar_archivo(session, url, carpeta, nombre):
 
 def _click_y_capturar_nueva_ventana(driver, elemento):
     handles_prev = driver.window_handles[:]
+    print(f"[LICI] Handles antes de click: {handles_prev}")
     try:
         driver.execute_script("arguments[0].click();", elemento)
     except Exception:
@@ -320,7 +329,9 @@ def _click_y_capturar_nueva_ventana(driver, elemento):
             elemento.click()
         except Exception:
             return None
-    return _esperar_nueva_ventana(driver, handles_prev)
+    nuevo = _esperar_nueva_ventana(driver, handles_prev)
+    print(f"[LICI] Handles después de click: {driver.window_handles}, nuevo={nuevo}")
+    return nuevo
 
 
 def _esperar_nueva_ventana(driver, handles_prev, timeout=15):
@@ -364,17 +375,50 @@ def _buscar_tabla_ofertas(driver, wait):
     Busca la tabla de ofertas (grdSupplies) en la ventana actual o dentro de iframes.
     """
     try:
+        tablas = driver.find_elements(By.CSS_SELECTOR, "table")
+        print(f"[LICI] Tablas visibles (contexto actual): {len(tablas)}")
+        if tablas[:3]:
+            print("       Primeras tablas ids:", [t.get_attribute("id") for t in tablas[:3]])
+    except Exception as e:
+        print(f"[LICI] No se pudieron listar tablas en contexto actual: {e}")
+    try:
         return wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id*='grdSupplies']")))
     except Exception:
         pass
 
     # Probar dentro de iframes
     if not _switch_to_frame_containing(driver, (By.CSS_SELECTOR, "table[id*='grdSupplies']")):
+        print("[LICI] No se encontró frame con la tabla de ofertas.")
         return None
     try:
         return wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "table[id*='grdSupplies']")))
-    except Exception:
+    except Exception as e:
+        try:
+            tablas_iframe = driver.find_elements(By.CSS_SELECTOR, "table")
+            print(f"[LICI] Tablas dentro de iframe: {len(tablas_iframe)} (buscando id*grdSupplies) error={e}")
+        except Exception:
+            pass
         return None
+
+
+def _debug_dump_context(driver, label):
+    try:
+        print(f"[LICI][{label}] URL: {driver.current_url}")
+        print(f"[LICI][{label}] Title: {driver.title}")
+        print(f"[LICI][{label}] Handles: {driver.window_handles}")
+    except Exception:
+        pass
+    try:
+        frames = driver.find_elements(By.TAG_NAME, "iframe") + driver.find_elements(By.TAG_NAME, "frame")
+        print(f"[LICI][{label}] Frames encontrados: {len(frames)}")
+        for i, fr in enumerate(frames[:5], 1):
+            try:
+                src = fr.get_attribute("src")
+                print(f"   Frame {i}: src={src}")
+            except Exception:
+                continue
+    except Exception:
+        pass
 
 
 def _asegurar_nombre_unico(carpeta, nombre):
