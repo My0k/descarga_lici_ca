@@ -21,7 +21,7 @@ Luego de buscardo, aparecerá
 
 que llevará a una pagina donde se encuentra el botón Cuadro de Ofertas
 
-/html/body/form/div[6]/div[5]/div/div[6]/div/input
+/html/body/form/div[6]/div[5]/div/div[6]/div/inputs
 <input type="image" name="imgCuadroOferta" id="imgCuadroOferta" alt="" class="" href="/Procurement/Modules/RFB/StepsProcessAward/OpeningFrame.aspx?enc=6FQcl9G2Yc2VyWokMkQx5BWLFPmfna%2bngQJ9iBNa7shR47RyDnHwYgZONyGWZOXrj4ACIJGOy47oDiFDPmTt7MzUpeMf5S%2bQaR3AyB9TRsjkTgM3Jl9XxK0h6aIJ474G" src="../../Includes/images/FichaLight/iconos_licitacion/ic-32.png" onclick="openPopupFicha(this); return false;" style="border-width:0px;width: 46; height: 58;">
 
 en ese cuadro de ofertas hay que descargar para cada proveedor
