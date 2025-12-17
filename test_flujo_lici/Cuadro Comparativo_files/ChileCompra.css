@@ -1,0 +1,6832 @@
+﻿
+/* =================================================================================================================== */
+
+/* --------------- HOJA DE ESTILOS CONSOLIDADA PORTAL CHILECOMPRA 2008 --------------- */
+
+/* =================================================================================================================== */
+
+
+
+
+
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PARA FORMULARIOS --------------- */
+
+/* ========================================================= */
+
+.adquisicionTitulo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 19px;
+	color: #1D4D9E;
+	margin: 5px 0;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	border-bottom-color: #1D4D9E;
+	border-bottom: solid;
+	border: 1px;
+}
+.formTablas
+{
+	border-collapse: collapse;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+.formObliga
+{
+	color: #FF0000;
+	font-weight: bold;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+tr.formFilas td
+{
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+tr.formFilas2 td
+{
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	border-top: 1px solid #C9C9C9;
+}
+.formTablas tr.formFilas td
+{
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	border-bottom: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+}
+td.formTextos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	width: 170px;
+}
+td.formTextosLargo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	width: 219px;
+}
+td.formTextos .texto12Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal !important;
+}
+td.formTextosError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #FF0000;
+	width: 170px;
+}
+.formTextosDetalle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	font-weight: normal;
+	font-style: italic;
+	color: #1D4D9E;
+}
+td.formEjemplos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #484848;
+	padding-left: 10px;
+	padding-right: 20px;
+	background-color: #F2F2F2;
+}
+td.formEjemplosAntecedentes
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #484848;
+	padding-left: 10px;
+	padding-right: 0px;
+	background-color: #F2F2F2;
+}
+.formCampos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+}
+.formAlinearDerecha
+{
+	text-align: right;
+}
+td.formEjemplos .formCampos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 13px;
+}
+.bordeVerde
+{
+	border: 2px solid #4DCA2A;
+}
+.bordeComunNegro
+{
+	border-bottom: 1px solid #C9C9C9;
+}
+.formTextos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	width: 170px;
+}
+
+
+.formFilas td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	border-top: 1px solid #C9C9C9;
+}
+.formFilas2 td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+.formTablas tr.formFilas td
+{
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	border-bottom: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+}
+.formTextos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	width: 170px;
+}
+.formTextosLargo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	width: 219px;
+}
+.formTextos .texto12Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal !important;
+}
+.formTextosError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #FF0000;
+	width: 170px;
+}
+.formTextosDetalle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	font-weight: normal;
+	font-style: italic;
+	color: #1D4D9E;
+}
+.formEjemplos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #484848;
+	padding-left: 10px;
+	padding-right: 20px;
+	background-color: #F2F2F2;
+}
+.formEjemplosAntecedentes
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #484848;
+	padding-left: 10px;
+	padding-right: 0px;
+	background-color: #F2F2F2;
+}
+
+.formFilas td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	border-top: 1px solid #C9C9C9;
+}
+.formFilas2 td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+.formTablas tr.formFilas td
+{
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	border-bottom: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+}
+.formTextos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	width: 170px;
+}
+.formTextosLargo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	width: 219px;
+}
+.formTextos .texto12Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal !important;
+}
+.formTextosError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	font-weight: bold;
+	color: #FF0000;
+	width: 170px;
+}
+.formTextosDetalle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	font-weight: normal;
+	font-style: italic;
+	color: #1D4D9E;
+}
+.formEjemplos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #484848;
+	padding-left: 10px;
+	padding-right: 20px;
+	background-color: #F2F2F2;
+}
+.formEjemplosAntecedentes
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #484848;
+	padding-left: 10px;
+	padding-right: 0px;
+	background-color: #F2F2F2;
+}
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PARA TEXTOS --------------- */
+
+/* ========================================================= */
+
+
+.texto12
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+}
+.texto13
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+}
+.texto10GrisO
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 10px;
+	color: #505050;
+}
+.texto10Link
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 10px;
+	color: #0000FF;
+}
+.texto10Azul
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 10px;
+	color: #1D4D9E;
+}
+.texto10Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 10px;
+	color: #000000;
+}
+.texto10blanco
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 10px;
+	color: #FFFFFF;
+}
+.texto10Rojo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 10px;
+	color: #FF0000;
+}
+.texto10GrisC
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 10px;
+	color: #A7A7A7;
+}
+.texto10Naranja
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 10px;
+	color: #F47532;
+}
+.texto10Verde
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 10px;
+	color: #24BF00;
+}
+.texto11Link
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 11px;
+	color: #0000FF;
+}
+.texto11Azul
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 11px;
+	color: #1D4D9E;
+}
+.texto11Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 11px;
+	color: #000000;
+}
+.texto11Rojo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 11px;
+	color: #FF0000;
+}
+.texto11GrisC
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 11px;
+	color: #A7A7A7;
+	font-weight: normal !important;
+}
+.texto11GrisO
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 11px;
+	color: #505050;
+}
+.gralSubtitulos .texto11GrisC
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 11px;
+	color: #A7A7A7;
+	font-weight: normal !important;
+}
+.texto11Naranja
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 11px;
+	color: #F47532;
+}
+.texto11Verde
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 11px;
+	color: #24BF00;
+}
+.texto12Verde
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #24BF00;
+}
+.texto12VerdeO
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #1A8C00;
+}
+.texto12Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #000000;
+}
+.texto12Rojo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #FF0000;
+}
+.texto12Naranja
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #F47532;
+}
+/*.texto12GrisOTachado { font-family: "Trebuchet MS", Arial, Helvetica, sans-serif,Verdana; font-size: 12px; color: #737373; text-decoration: line-through; }*/
+.texto12GrisO
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #505050;
+}
+.gralSubtitulos .texto12GrisO
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #505050;
+	font-weight: normal !important;
+}
+.texto12Azul
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #1D4D9E;
+}
+.texto12Rojo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #FF0000;
+}
+.gralSubtitulos14 .texto12Rojo
+{
+	font-weight: normal !important;
+}
+.texto13Verde
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #24BF00;
+}
+.texto12Link
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #0000FF;
+}
+.texto13Link
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #0000FF;
+}
+.texto13Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #000000;
+}
+.texto13GrisO
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #505050;
+}
+.texto13Azul
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.texto13AzulBold
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #1D4D9E;
+	font-weight: bold;
+}
+.texto13Azul0
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #7777CC;
+}
+.texto13Azul0bold
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #7777CC;
+	font-weight: bold;
+}
+.texto13Rojo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #FF0000;
+}
+.texto13Naranja
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 13px;
+	color: #F47532;
+}
+.texto14Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 14px;
+	color: #000000;
+}
+.texto14Azul
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 14px;
+	color: #1D4D9E;
+	font-weight: normal !important;
+}
+.texto14Verde
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 14px;
+	color: #24BF00;
+}
+.texto14Link
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 14px;
+	color: #0000FF;
+}
+.texto14Naranja
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 14px;
+	color: #F47532;
+}
+.texto16Azul
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 16px;
+	color: #1D4D9E;
+}
+.texto16AzulTitle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 16px;
+	color: #1D4D9E;
+	font-weight: bold;
+}
+.texto18Naranja
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 18px;
+	color: #F47532;
+}
+.texto22Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 22px;
+	color: #000;
+}
+.texto24Negro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 24px;
+	color: #000000;
+}
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PARTICULARES --------------- */
+
+/* ========================================================= */
+
+.formCamposError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	font-weight: bold;
+	color: #FF0000;
+}
+td.formInfo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	color: #484848;
+	padding-right: 10px;
+	padding-left: 10px;
+	background-color: #F2F2F2;
+	width: 235px;
+}
+td.formInfoSm
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #484848;
+	padding-right: 10px;
+	padding-left: 10px;
+	background-color: #F2F2F2;
+	width: 235px;
+}
+td.formInfoCorto
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	color: #484848;
+	padding-right: 5px;
+	padding-left: 5px;
+	background-color: #F2F2F2;
+	width: 180px;
+}
+td.formInfoDestacada
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	color: #484848;
+	padding-right: 10px;
+	padding-left: 10px;
+	background-color: #FDFDDD;
+	width: 235px;
+}
+#tablaSeccSeleccionarProducto td
+{
+	border: 0 !important;
+	padding: 2px 2px 2px 0;
+}
+
+
+
+
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PARA VINCULOS --------------- */
+
+/* ========================================================= */
+
+
+a
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana;
+	font-size: 12px;
+	color: #0000FF;
+	font-size: 12px;
+}
+a:visited
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	text-decoration: none;
+}
+a:hover
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	text-decoration: underline;
+}
+a:active
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	text-decoration: none;
+}
+
+#gralCabezal a
+{
+	color: #0000FF;
+	margin-left: 10px;
+}
+#gralCabezal a.gralCabezalSalir
+{
+	color: #FF0000;
+	font-weight: bold;
+}
+.derColumna a
+{
+	color: #0000FF;
+}
+.derColumna a.derVinculoNaranja
+{
+	color: #F47532;
+}
+.homeTablaCeldaNro a.homeTablaTextoRojo
+{
+	color: #FF0000;
+}
+#gralCabezal a:hover
+{
+	background-color: #2A51AE;
+	color: #FFFFFF;
+}
+a.imagenSinRollover
+{
+	background-color: transparent !important;
+}
+
+
+
+
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PARA CONTENIDOS --------------- */
+
+/* ========================================================= */
+
+
+.contSeparador10
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 5px;
+	height: 10px;
+}
+.contContenedorBorde
+{
+	border-bottom: 1px solid #DADADA;
+}
+
+.contAdquisicion
+{
+	background-color: #F2F2F2;
+	padding: 5px 10px;
+	border-bottom: 1px solid #D1D1D1;
+}
+.contAdquisicion label
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	font-weight: bold;
+	color: #1D4D9E;
+	display: block;
+	text-align: right;
+}
+.contAdquisicion label.contAdquisicionError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FF0000;
+	display: block;
+	text-align: right;
+}
+.contAdquisicionTodas
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	color: #7777CC;
+}
+
+.contError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFE3E3;
+	border: 1px #FF0000;
+	border-style: solid none;
+	padding: 5px;
+	font-size: 13px;
+	font-weight: bold;
+	color: #FF0000;
+}
+.contError img
+{
+	vertical-align: middle;
+}
+.contAdvertencia
+{
+	background-color: #FFFFCC;
+	border: 1px #FF0000;
+	border-style: solid none;
+	padding: 5px;
+	font-size: 13px;
+	color: #FF0000;
+}
+.contMensajeExito
+{
+	background-color: #DFFFD5;
+	border: 1px #26B100;
+	border-style: solid none;
+	padding: 5px;
+	font-size: 18px;
+	color: #26B100;
+	font-weight: bold;
+}
+.contMensajeExito img
+{
+	vertical-align: middle;
+}
+
+
+
+
+
+
+/* ========================================================= */
+
+.contSeparador10
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 5px;
+	height: 10px;
+}
+.contContenedorBorde
+{
+	border-bottom: 1px solid #DADADA;
+}
+
+.contAdquisicion
+{
+	background-color: #F2F2F2;
+	padding: 5px 10px;
+	border-bottom: 1px solid #D1D1D1;
+}
+.contAdquisicion label
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	font-weight: bold;
+	color: #1D4D9E;
+	display: block;
+	text-align: right;
+}
+.contAdquisicion label.contAdquisicionError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FF0000;
+	display: block;
+	text-align: right;
+}
+.contAdquisicionTodas
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	color: #7777CC;
+}
+
+.contError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFE3E3;
+	border: 1px #FF0000;
+	border-style: solid none;
+	padding: 5px;
+	font-size: 13px;
+	font-weight: bold;
+	color: #FF0000;
+}
+.contError img
+{
+	vertical-align: middle;
+}
+.contAdvertencia
+{
+	background-color: #FFFFCC;
+	border: 1px #FF0000;
+	border-style: solid none;
+	padding: 5px;
+	font-size: 13px;
+	color: #FF0000;
+}
+.contMensajeExito
+{
+	background-color: #DFFFD5;
+	border: 1px #26B100;
+	border-style: solid none;
+	padding: 5px;
+	font-size: 18px;
+	color: #26B100;
+	font-weight: bold;
+}
+.contMensajeExito img
+{
+	vertical-align: middle;
+}
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PARA REGISTRO --------------- */
+
+/* ========================================================= */
+
+
+#registroContenedor
+{
+	width: 756px;
+	margin: 0;
+	background-color: #FFFFFF;
+	text-align: left;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+}
+#aprobacionflujo
+{
+	width: 756px;
+	margin: 0;
+	background-color: #FFFFFF;
+	text-align: left;
+}
+.registroCuadroDestacado
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFFFCC;
+	padding: 10px;
+	border-top: 1px solid #8495CA;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.registroCuadroDestacadoSinBorde
+{
+	background-color: #FFFFCC;
+	padding: 10px;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.registroCuadroDestacadoBordeGris
+{
+	background-color: #FFFFCC;
+	padding: 10px;
+	border-bottom: 1px solid #DADADA;
+	border-top: 1px solid #DADADA;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.registroTabla
+{
+	margin: 5px 0;
+	border-collapse: collapse;
+}
+.registroTabla td
+{
+	padding: 1px 5px;
+	font-size: 11px;
+	color: #1D4D9E;
+	border: 1px solid #C9C9C9;
+}
+.registroTabla caption
+{
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	text-align: left;
+	padding: 1px 5px;
+}
+.registroTablaFila td
+{
+	background-color: #E2E2E2;
+	font-weight: bold;
+}
+
+.registroError
+{
+	background-color: #FFE3E3;
+	border-top: 1px solid #FF0000;
+	border-bottom: 1px solid #FF0000;
+	padding: 5px;
+	margin: 5px 0;
+	font-size: 13px;
+	font-weight: bold;
+	color: #FF0000;
+}
+.registroError img
+{
+	vertical-align: middle;
+}
+
+
+
+
+
+/* ========================================================= */
+
+#registroContenedor
+{
+	width: 756px;
+	margin: 0;
+	background-color: #FFFFFF;
+	text-align: left;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+}
+#aprobacionflujo
+{
+	width: 756px;
+	margin: 0;
+	background-color: #FFFFFF;
+	text-align: left;
+}
+.registroCuadroDestacado
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFFFCC;
+	padding: 10px;
+	border-top: 1px solid #8495CA;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.registroCuadroDestacadoSinBorde
+{
+	background-color: #FFFFCC;
+	padding: 10px;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.registroCuadroDestacadoBordeGris
+{
+	background-color: #FFFFCC;
+	padding: 10px;
+	border-bottom: 1px solid #DADADA;
+	border-top: 1px solid #DADADA;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.registroTabla
+{
+	margin: 5px 0;
+	border-collapse: collapse;
+}
+.registroTabla td
+{
+	padding: 1px 5px;
+	font-size: 11px;
+	color: #1D4D9E;
+	border: 1px solid #C9C9C9;
+}
+.registroTabla caption
+{
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	text-align: left;
+	padding: 1px 5px;
+}
+.registroTablaFila td
+{
+	background-color: #E2E2E2;
+	font-weight: bold;
+}
+
+.registroError
+{
+	background-color: #FFE3E3;
+	border-top: 1px solid #FF0000;
+	border-bottom: 1px solid #FF0000;
+	padding: 5px;
+	margin: 5px 0;
+	font-size: 13px;
+	font-weight: bold;
+	color: #FF0000;
+}
+.registroError img
+{
+	vertical-align: middle;
+}
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PARA ADQUISICIONES --------------- */
+
+/* ========================================================= */
+
+
+.adquisicionSubtitulo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 18px;
+	color: #1D4D9E;
+	margin: 5px 0;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+.adquisicionSubtituloNumero
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	float: left;
+	background: url(../Imagenes/Portal/bullet_gde_fondo.gif) no-repeat left top;
+	width: 24px;
+	height: 24px;
+	font-size: 18px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-align: center;
+}
+.adquisicionSubtituloNumeroVerde
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	float: left;
+	background: url(../Imagenes/Portal/bullet_gde_verde_fondo.gif) no-repeat left top;
+	width: 24px;
+	height: 24px;
+	font-size: 18px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-align: center;
+}
+.adquisicionSubtituloNumeroAzul
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	float: left;
+	background: url(../Imagenes/Portal/bullet_gde_azul_fondo.gif) no-repeat left top;
+	width: 24px;
+	height: 24px;
+	font-size: 18px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-align: center;
+}
+.adquisicionPaso
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #505050;
+}
+.adquisicionPasoDest
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	color: #F47532;
+	font-weight: bold;
+}
+.adquisicionDatos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background: #F3F3F3 url(../Imagenes/Portal/adquisicion_datos_fondo.gif) repeat-x left top;
+}
+.adquisicionDatosTabla, .adquisicionDatosTabla2
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-collapse: collapse;
+}
+.adquisicionDatosTabla td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border: 1px solid #C9C9C9;
+	border-style: solid none;
+	font-size: 11px;
+	color: #505050;
+	vertical-align: top;
+	padding: 5px;
+}
+.adquisicionDatosTabla2 td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border: 1px solid #C9C9C9;
+	border-style: solid none;
+	font-size: 13px;
+	color: #505050;
+	vertical-align: top;
+	padding: 5px;
+}
+.adquisicionDatosTablaNombre
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-right: 1px solid #C9C9C9 !important;
+	font-weight: bold;
+}
+.aquisicionDatosTablaNombreBlanco
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-right: 1px solid #C9C9C9 !important;
+	font-weight: bold;
+	background-color: #FFFFFF !important;
+}
+.adquisicionDatosTablaNombre2
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-right: 1px solid #C9C9C9 !important;
+	font-weight: bold;
+	color: #1D4D9E !important;
+}
+.adquisicionBloqueDescrip
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-top: 1px solid #C9C9C9;
+	background-color: #F2F2F2;
+	padding: 10px 5px;
+	line-height: 1em;
+}
+.adquisicionBloqueDescrip2
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-bottom: 1px solid #C9C9C9;
+	background-color: #F2F2F2;
+	padding: 10px 5px;
+	line-height: 1em;
+}
+.adquisicionBloqueDuplaBorde
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-bottom: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+	background-color: #F2F2F2;
+	padding: 10px 5px;
+	line-height: 1em;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.adquisicionOferta
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+.adquisicionOferta .adquisicionOfertaCab
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border: 1px solid #E2E2E2;
+}
+.adquisicionOferta .adquisicionOfertaCabNro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	width: 35px;
+	height: 45px;
+	font-size: 30px;
+	font-weight: bold;
+	color: #FFFFFF;
+	vertical-align: middle;
+	text-align: center;
+	background-color: #1D4D9E;
+}
+.adquisicionOferta .adquisicionOfertaCabCelda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #EFF6FF;
+	font-size: 11px;
+	color: #000000;
+	padding: 2px 10px;
+}
+.adquisicionOferta .adquisicionOfertaCabTit
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 16px;
+	font-weight: bold;
+	color: #1D4D9E;
+}
+.adquisicionOferta .adquisicionOfertaCabSepara
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	margin-left: 25px;
+}
+.adquisicionOferta .adquisicionOfertaBody
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFFFF3;
+	border: 1px #E2E2E2;
+	border-style: none solid solid solid;
+}
+.adquisicionOferta .adquisicionOfertaBodyCelda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #505050;
+	text-align: left;
+}
+.adquisicionOferta .adquisicionOfertaBodyTit
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	font-weight: bold;
+	color: #1D4D9E;
+}
+.adquisicionOferta .adquisicionOfertaBodyLabel
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #1D4D9E;
+	text-align: left;
+}
+.adquisicionOferta .adquisicionOfertaBodyLabelError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #FF0000;
+}
+.adquisicionOferta .adquisicionOfertaBodyLabelSubr
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	display: block;
+	border-bottom: 1px solid #E2E2E2;
+	margin-right: 15px;
+}
+.adquisicionOferta .adquisicionOfertaBodyValue
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #7A7A7A;
+	text-align: left;
+}
+.adquisicionOferta .adquisicionOfertaBodyObliga
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	color: #FF0000;
+	font-weight: bold;
+}
+.adquisicionOferta .adquisicionOfertaBodyTexto
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	color: #505050;
+}
+.adquisicionOferta .adquisicionOfertaBodyTextoCh
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #505050;
+	text-align: left;
+}
+.adquisicionOferta .adquisicionOfertaBodyOferto
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #505050;
+	text-align: left;
+}
+.adquisicionOferta .adquisicionOfertaBodyOfertoSi
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	color: #12C400;
+}
+.adquisicionOferta .adquisicionOfertaBodyOfertoNo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	color: #FF0000;
+}
+.adquisicionOfertaOff
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+.adquisicionOfertaOff .adquisicionOfertaCab
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border: 1px solid #E2E2E2;
+}
+.adquisicionOfertaOff .adquisicionOfertaCabNro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	width: 35px;
+	height: 45px;
+	font-size: 30px;
+	font-weight: bold;
+	color: #9D9D9D;
+	vertical-align: middle;
+	text-align: center;
+	background-color: #5D5D5D;
+}
+.adquisicionOfertaOff .adquisicionOfertaCabCelda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #E5E5E5;
+	font-size: 11px;
+	color: #848484;
+	padding: 2px 10px;
+}
+.adquisicionOfertaOff .adquisicionOfertaCabTit
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 16px;
+	font-weight: bold;
+	color: #848484;
+}
+.adquisicionOfertaOff .adquisicionOfertaCabSepara
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	margin-left: 25px;
+}
+.adquisicionOfertaOff .adquisicionOfertaBody
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #F9F9F9;
+	border: 1px #E2E2E2;
+	border-style: none solid solid solid;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyCelda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #848484;
+	text-align: left;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyTit
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	font-weight: bold;
+	color: #848484;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyLabel
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #848484;
+	text-align: left;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyLabelError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #FF0000;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyLabelSubr
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	display: block;
+	border-bottom: 1px solid #E2E2E2;
+	margin-right: 15px;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyValue
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #7A7A7A;
+	text-align: left;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyObliga
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	color: #848484;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyTexto
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	color: #848484;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyTextoCh
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #848484;
+	text-align: left;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyOferto
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #505050;
+	text-align: left;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyOfertoSi
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	color: #12C400;
+}
+.adquisicionOfertaOff .adquisicionOfertaBodyOfertoNo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	color: #FF0000;
+}
+.adquisicionOfertaAdj
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+.adquisicionOfertaAdj .adquisicionOfertaCab
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border: 1px solid #E2E2E2;
+}
+.adquisicionOfertaAdj .adquisicionOfertaCabNro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	width: 35px;
+	height: 45px;
+	font-size: 30px;
+	font-weight: bold;
+	color: #FFFFFF;
+	vertical-align: middle;
+	text-align: center;
+	background-color: #35A000;
+}
+.adquisicionOfertaAdj .adquisicionOfertaCabCelda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #DAFFD6;
+	font-size: 11px;
+	color: #000000;
+	padding: 2px 10px;
+}
+.adquisicionOfertaAdj .adquisicionOfertaCabTit
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 16px;
+	font-weight: bold;
+	color: #1D4D9E;
+}
+.adquisicionOfertaAdj .adquisicionOfertaCabSepara
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	margin-left: 25px;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBody
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFFFF3;
+	border: 1px #E2E2E2;
+	border-style: none solid solid solid;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyCelda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #505050;
+	text-align: left;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyTit
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 12px;
+	font-weight: bold;
+	color: #1D4D9E;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyLabel
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #1D4D9E;
+	text-align: left;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyLabelError
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #FF0000;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyLabelSubr
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	display: block;
+	border-bottom: 1px solid #E2E2E2;
+	margin-right: 15px;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyValue
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #7A7A7A;
+	text-align: left;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyObliga
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	color: #FF0000;
+	font-weight: bold;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyTexto
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	color: #505050;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyTextoCh
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #505050;
+	text-align: left;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyOferto
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	color: #505050;
+	text-align: left;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyOfertoSi
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	color: #12C400;
+}
+.adquisicionOfertaAdj .adquisicionOfertaBodyOfertoNo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	color: #FF0000;
+}
+
+.adquisicionConfirmarDatos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	color: #000000;
+	font-weight: bold;
+	border-top: 1px solid #E2E2E2;
+	margin-right: 8px;
+}
+.adquisicionCeldaTotal
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	width: 130px;
+	border-left: 1px solid #C9C9C9;
+	padding: 0;
+	vertical-align: bottom;
+	font-size: 13px;
+	font-weight: bold;
+	color: #000000;
+}
+.adquisicionTotalLinea
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #868686;
+	border-top: 1px solid #E2E2E2;
+	padding: 8px 10px 8px 3px;
+	color: #FFFFFF;
+	text-align: right;
+}
+.adquisicionTotalLabel
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #DDECFF;
+	font-size: 18px;
+	font-weight: bold;
+	text-align: right;
+	padding-right: 10px;
+	color: #1D6ECD;
+}
+.adquisicionTotal
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #1D6ECD;
+	padding: 8px 5px 8px 3px;
+	color: #FFFFFF;
+	text-align: right;
+}
+.adquisicionPasoSigDest
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFFE8F;
+}
+.adquisicionPasoSigDest div div div
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	padding: 10px;
+	font-size: 13px;
+	color: #000000;
+}
+.adquisicionImprimirSubtitulos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 18px;
+	font-weight: bold;
+	color: #1D4D9E;
+	margin: 10px 0 5px 0;
+}
+.adquisicionCuadroDestacado
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFFFCC;
+	padding: 10px;
+	border-bottom: 1px solid #E2E2E2;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.adquisicionTablaResultados
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-collapse: collapse;
+}
+.adquisicionTablaResultados td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	padding: 3px 5px;
+	border: 1px solid #C9C9C9;
+	border-style: solid none;
+	vertical-align: top;
+}
+
+.adquisicionConfirmarDatos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+	color: #000000;
+	font-weight: bold;
+	border-top: 1px solid #E2E2E2;
+	margin-right: 8px;
+}
+.adquisicionCeldaTotal
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	width: 130px;
+	border-left: 1px solid #C9C9C9;
+	padding: 0;
+	vertical-align: bottom;
+	font-size: 13px;
+	font-weight: bold;
+	color: #000000;
+}
+.adquisicionTotalLinea
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #868686;
+	border-top: 1px solid #E2E2E2;
+	padding: 8px 10px 8px 3px;
+	color: #FFFFFF;
+	text-align: right;
+}
+.adquisicionTotalLabel
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #DDECFF;
+	font-size: 18px;
+	font-weight: bold;
+	text-align: right;
+	padding-right: 10px;
+	color: #1D6ECD;
+}
+.adquisicionTotal
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #1D6ECD;
+	padding: 8px 5px 8px 3px;
+	color: #FFFFFF;
+	text-align: right;
+}
+.adquisicionPasoSigDest
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFFE8F;
+}
+.adquisicionPasoSigDest div div div
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	padding: 10px;
+	font-size: 13px;
+	color: #000000;
+}
+.adquisicionImprimirSubtitulos
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 18px;
+	font-weight: bold;
+	color: #1D4D9E;
+	margin: 10px 0 5px 0;
+}
+.adquisicionCuadroDestacado
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFFFCC;
+	padding: 10px;
+	border-bottom: 1px solid #E2E2E2;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.adquisicionTablaResultados
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-collapse: collapse;
+}
+.adquisicionTablaResultados td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	padding: 3px 5px;
+	border: 1px solid #C9C9C9;
+	border-style: solid none;
+	vertical-align: top;
+}
+
+.adquisicionTablaAgregados
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-collapse: collapse;
+}
+.adquisicionTablaAgregados td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+	padding: 3px 6px 3px 6px;
+	border: 1px solid #C9C9C9;
+	border-style: solid none;
+	vertical-align: middle;
+}
+
+.adquisicionTablaRechazoOfertas td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #E5E5E5;
+	color: #737373;
+	border-right: 1px solid #C9C9C9;
+	font-size: 12px;
+	text-decoration: line-through;
+}
+.adquisicionTablaRechazoOfertasColFin
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #E5E5E5;
+	color: #737373;
+	font-size: 12px;
+	text-decoration: line-through;
+	border-right: 0 none !important;
+}
+.adquisicionTablaRechazoOfertas table tr td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	text-decoration: none;
+}
+
+.adquisicionTablaAgregadosFila1 td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #F4F7FC;
+	color: #000000;
+	border-right: 1px solid #C9C9C9;
+	font-size: 12px;
+}
+.adquisicionTablaAgregadosFila2 td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #FFFFFF;
+	color: #000000;
+	border-right: 1px solid #C9C9C9;
+	font-size: 12px;
+}
+.adquisicionTablaAgregadosCabezal td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #12319E;
+	font-weight: bold;
+	color: #FFFFFF;
+	border-top: 0 none;
+	border-right: 1px solid #C9C9C9;
+	padding-bottom: 2px;
+	font-size: 12px;
+	vertical-align: top;
+}
+.adquisicionTablaAgregadosCabezalColFin
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #12319E;
+	font-weight: bold;
+	color: #FFFFFF;
+	border-top: 0 none;
+	border-right: 0 none !important;
+	padding-bottom: 2px;
+	font-size: 12px;
+}
+.adquisicionTablaAgregadosCabezal td a
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	color: #FFFFFF;
+}
+.adquisicionTablaAgregadosColFin
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-right: 0 none #FFFFFF !important;
+}
+.adquisicionTablaAgregadosFila1 img
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+}
+.adquisicionTablaAgregadosFila2 img
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+}
+.adquisicionTablaAgregadosFilaFinal
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #12319E;
+	height: 2px;
+	font-size: 2px;
+}
+
+.adquisicionTablaResultadosCabezal td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #12319E;
+	font-weight: bold;
+	color: #FFFFFF;
+	border-top: 0 none;
+	border-right: 1px solid #C9C9C9 !important;
+}
+.adquisicionTablaResultadosCabezal td a
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	color: #FFFFFF;
+}
+.adquisicionTablaResultadosColFin
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-right: 0 none #FFFFFF !important;
+}
+.adquisicionTablaResultadosOfertasCab
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #F47331 !important;
+}
+.adquisicionTablaResultadosFila1 .adquisicionTablaResultadosOfertas
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	padding: 0;
+	background-color: #F8FAEE;
+	border-right: 0 none #FFFFFF;
+}
+.adquisicionTablaResultadosFila2 .adquisicionTablaResultadosOfertas
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	padding: 0;
+	background-color: #FFFFF0;
+	border-right: 0 none #FFFFFF;
+}
+.adquisicionTablaResultadosOfertas table
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-collapse: collapse;
+}
+.adquisicionTablaResultadosOfertas td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: transparent;
+	padding: 2px;
+	border-style: solid none none none;
+	vertical-align: middle;
+}
+.adquisicionTablaResultadosOfertas td img
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: middle;
+}
+.adquisicionTablaResultadosOfertasPrimCelda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-top: 0 none !important;
+	padding-left: 5px !important;
+}
+
+.adquisicionMostrarOpciones
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	margin-left: 20px;
+	padding-top: 5px;
+	padding-bottom: 3px;
+	text-align: left;
+}
+.adquisicionHeadBlueLabel
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	width: 36px;
+	height: 60px;
+	float: left;
+	background-color: #12319E;
+	color: white;
+	font-size: 24px;
+	font-weight: bold;
+	text-align: center;
+	margin-right: 10px;
+}
+
+
+
+.adquisicionTablaResultadosCabezal td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #12319E;
+	font-weight: bold;
+	color: #FFFFFF;
+	border-top: 0 none;
+	border-right: 1px solid #C9C9C9 !important;
+}
+.adquisicionTablaResultadosCabezal td a
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	color: #FFFFFF;
+}
+.adquisicionTablaResultadosColFin
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-right: 0 none #FFFFFF !important;
+}
+.adquisicionTablaResultadosOfertasCab
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #F47331 !important;
+}
+.adquisicionTablaResultadosFila1 .adquisicionTablaResultadosOfertas
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	padding: 0;
+	background-color: #F8FAEE;
+	border-right: 0 none #FFFFFF;
+}
+.adquisicionTablaResultadosFila2 .adquisicionTablaResultadosOfertas
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	padding: 0;
+	background-color: #FFFFF0;
+	border-right: 0 none #FFFFFF;
+}
+.adquisicionTablaResultadosOfertas table
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-collapse: collapse;
+}
+.adquisicionTablaResultadosOfertas td
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: transparent;
+	padding: 2px;
+	border-style: solid none none none;
+	vertical-align: middle;
+}
+.adquisicionTablaResultadosOfertas td img
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: middle;
+}
+.adquisicionTablaResultadosOfertasPrimCelda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-top: 0 none !important;
+	padding-left: 5px !important;
+}
+
+.adquisicionMostrarOpciones
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	margin-left: 20px;
+	padding-top: 5px;
+	padding-bottom: 3px;
+	text-align: left;
+}
+.adquisicionHeadBlueLabel
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	width: 36px;
+	height: 60px;
+	float: left;
+	background-color: #12319E;
+	color: white;
+	font-size: 24px;
+	font-weight: bold;
+	text-align: center;
+	margin-right: 10px;
+}
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PARA ANEXOS --------------- */
+
+/* ========================================================= */
+
+
+.Anexostablaingresados
+{
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #12319E;
+}
+
+.Anexosfila1 td
+{
+	background-color: #006696;
+	color: #FFFFFF;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCD8FF;
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-right-color: #CCD8FF;
+	height: 20px;
+	padding-left: 7px;
+}
+.Anexosfila2 td
+{
+	background-color: #F1F6FF;
+	color: #000000;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCD8FF;
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-right-color: #CCD8FF;
+	height: 20px;
+	padding-left: 7px;
+}
+.Anexosfila3 td
+{
+	background-color: #E4EEFF;
+	color: #000000;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #CCD8FF;
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-right-color: #CCD8FF;
+	height: 20px;
+	padding-left: 7px;
+}
+
+
+.adquisicionOfertaBodyLabelSubr
+{
+	display: block;
+	border-bottom: 1px solid #E2E2E2;
+	margin-right: 15px;
+}
+.adquisicionOfertaValue
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFF3;
+	font-size: 11px;
+	color: #7A7A7A;
+	text-align: left;
+}
+.ofertaAdquisiscionCabecera
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFF3;
+	font-size: 11px;
+	color: #1D4D9E;
+	text-align: left;
+}
+.adquisicionOfertaBodyTextoEjemplo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10px;
+	color: #505050;
+	text-align: left;
+}
+.adquisicionOfertaBodyTextoMoneda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 14px;
+	color: #505050;
+}
+.adquisicionOfertaBodyCeldaOff
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #F9F9F9;
+	font-size: 11px;
+	color: #848484;
+	text-align: left;
+}
+#ContenedorPopup
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	margin: 0;
+	background-color: #FFFFFF;
+	text-align: left;
+	border-left: 0px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+}
+#gralComprobante
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	width: 500px;
+	margin: 0;
+	background-color: #FFFFFF;
+	text-align: left;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+}
+
+.adquisicionOfertaBodyLabelSubr
+{
+	display: block;
+	border-bottom: 1px solid #E2E2E2;
+	margin-right: 15px;
+}
+.adquisicionOfertaValue
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFF3;
+	font-size: 11px;
+	color: #7A7A7A;
+	text-align: left;
+}
+.ofertaAdquisiscionCabecera
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFF3;
+	font-size: 11px;
+	color: #1D4D9E;
+	text-align: left;
+}
+.adquisicionOfertaBodyTextoEjemplo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10px;
+	color: #505050;
+	text-align: left;
+}
+.adquisicionOfertaBodyTextoMoneda
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 14px;
+	color: #505050;
+}
+.adquisicionOfertaBodyCeldaOff
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #F9F9F9;
+	font-size: 11px;
+	color: #848484;
+	text-align: left;
+}
+#ContenedorPopup
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	margin: 0;
+	background-color: #FFFFFF;
+	text-align: left;
+	border-left: 0px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+}
+#gralComprobante
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	width: 500px;
+	margin: 0;
+	background-color: #FFFFFF;
+	text-align: left;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+}
+
+/* --------------- ACTUALIZACION 27-10-2005 --------------- */
+.adquisicionCrearTdGris
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 11px;
+	color: #000000;
+	padding: 10px;
+	background-color: #F2F2F2;
+	border-top: 1px solid #cccccc;
+}
+.adquisicionCrearTdVerde
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	border-top: 1px solid #cccccc;
+	font-size: 11px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background-color: #f4fbf2;
+}
+.adquisicionCrearTdBlanca
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	border-top: 1px solid #cccccc;
+	font-size: 11px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background-color: #FFFFFF;
+}
+.adquisicionCrearTdDescripcion
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	padding-left: 15px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-size: 12px;
+	color: #505050;
+}
+.adquisicionCrearTdTitulo
+{
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.adquisicionCrearDivTitulo
+{
+	margin-left: 20px;
+}
+.adquisicionCrearTdDescripcionBorde
+{
+	border-left: 1px solid #cccccc;
+}
+.texto16Negro
+{
+	font-size: 16px;
+	color: #000000;
+}
+.adquisicionCuadroLlamada
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFCC;
+	padding: 5px;
+	font-size: 11px;
+	color: #5e5e5e;
+}
+.texto14NaranjaClaro
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 14px;
+	color: #fbae08;
+}
+.adquisicionDescripcionAnexo
+{
+	border-bottom: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+	background-color: #F2F2F2;
+	padding: 5px;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+
+
+
+
+/* =================================================================================== */
+
+/* --------------- ESTILOS PARA APLICACIONES PARTICULARES --------------- */
+
+/* =================================================================================== */
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: asp:LinkButton
+DESCRIPCIÓN: Se utiliza en los
+            links de menu.aspx
+*/
+.cssLinkButton
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-weight: bold;
+	font-size: 12px;
+	color: #0000FF;
+}
+/*CONTROL A APLICAR: asp:LinkButton
+DESCRIPCIÓN: Se utiliza en los
+            links de las paginas de procurement
+AUTOR: DFalzoi
+FECHA: 20/04/2007
+*/
+
+
+.cssLinkButtonProcurement
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	cursor: pointer;
+	text-decoration: underline;
+	font-size: 13px;
+	font-weight: normal;
+	color: #0000FF;
+}
+
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: SPAN
+DESCRIPCIÓN: Se utiliza en el span
+			que contiene el texto
+			que señala un campo como
+			obligatorio
+AUTOR: Vega, Daniel
+FECHA: 16/04/2007
+*/
+.cssRequiredSymbol
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	color: #FF0000;
+	font-weight: bold;
+	font-size: 15pt;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: TD
+DESCRIPCIÓN: Se utiliza en la celda que 
+			muestra el campo
+			a editar en un formulario
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssDataItem
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	border-bottom: 1px solid #C9C9C9;
+	font-weight: lighter;
+	font-size: 12pt;
+	color: #000000;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #f2f2f2;
+	text-align: left;
+}
+
+/*----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: TD
+DESCRIPCIÓN: Se utiliza en la celda que 
+			muestra el nombre del campo
+			a editar en un formulario
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssDataTitle
+{
+	border-bottom: 1px solid #C9C9C9;
+	width: 30%;
+	background-color: Transparent;
+}
+.cssDataTitleII
+{
+	border-bottom: 1px solid #C9C9C9;
+	background-color: Transparent;
+}
+.cssDataTitleDynamic
+{
+	background-color: Silver;
+	border-bottom: 1px solid #C9C9C9;
+	border-left: 1px solid #C9C9C9;
+	border-right: 1px solid #C9C9C9;
+	border-top: 1px solid #c9c9c9;
+}
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: TD
+DESCRIPCIÓN: Se utiliza en la celda que muestra el validator del campo a editar en un formulario
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssDataValidator
+{
+	border-bottom: 1px solid #C9C9C9;
+	width: 50%;
+	font-weight: lighter;
+	font-size: 12pt;
+	color: #000000;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #f2f2f2;
+	text-align: left;
+}
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: Table
+DESCRIPCIÓN: Se utiliza en las Tablas que contienen los campos de edicion en un formulario. Dentro de esta tabla las celdas(TD) usarían las clases "cssDataItem", "cssDataTitle", "cssDataValidator"
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssEditTable
+{
+	border-top: 1px solid #C9C9C9;
+	border-collapse: collapse;
+	font-weight: bold;
+	font-size: 10px;
+	color: #666666;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: transparent;
+}
+.cssEditTable tr td
+{
+	vertical-align: top;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: Table
+DESCRIPCIÓN: Se utiliza en las Tablas que 
+			contienen los campos de edicion
+			en un formulario. Dentro de esta tabla
+			las celdas(TD) usarían las clases 
+			"cssDataItem", "cssDataTitle", "cssDataValidator"
+AUTOR: Falzoi, Diego
+FECHA: 16/04/2007
+*/
+.cssEditTableDynamic
+{
+	border-style: solid;
+	font-weight: bold;
+	font-size: 10px;
+	color: #666666;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+.cssEditTable tr td
+{
+	vertical-align: top;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	padding-left: 7px;
+	padding-right: 7px;
+}
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: asp:TextBox
+DESCRIPCIÓN: Se utiliza en los TextBox que 
+			muestra el campo
+			a editar en un formulario
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssInputData
+{
+	font-weight: bold;
+	font-size: 10px;
+	color: #666666;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #ffffff;
+}
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utiliza en los Labels que 
+			muestra el campo
+			en un formulario
+AUTOR: DFalzoi
+FECHA: 16/04/2007
+*/
+.cssLabelsInputData
+{
+	font-weight: bold;
+	font-size: 10px;
+	color: #666666;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent;
+}
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utiliza en los Labels que 
+			muestra el campo
+			en un formulario
+AUTOR: DFalzoi
+FECHA: 16/04/2007
+*/
+.cssLabelsItemData
+{
+	font-size: 11px;
+	color: #666666;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent;
+}
+
+.cssLabelsItemDisponibilidad
+{
+	font-size: 11px;
+	color: #1D4D9E;
+	font-weight: bold;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent;
+}
+
+/*CONTROL A APLICAR: asp:RadioButtonList
+DESCRIPCIÓN: Se utiliza en los option que 
+			muestra el campo
+			en un formulario
+AUTOR: DFalzoi
+FECHA: 16/04/2007
+*/
+.cssOptionList
+{
+	font-size: 11px;
+	color: #666666;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent;
+}
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utiliza en los Labels que 
+			muestra el nombre del campo
+			a editar en un formulario
+AUTOR: Verme, David
+FECHA: 16/04/2007
+MODIFICADOR: Melania Omonte
+FECHA: 16/10/2007
+
+*/
+.cssLabelsData
+{
+	/*font-weight: bold; 	font-size: 13px; 	color: #1D4D9E; 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif,Verdana,  Sans; 	text-align: left; 	background-color:Transparent;*/
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+	width: 170px;
+}
+
+/*  ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: TR
+DESCRIPCIÓN: Se utiliza en las filas
+			que componen el formulario 
+			de inicio de sesíon
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssLoginTable
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+
+/*  ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: TD
+DESCRIPCIÓN: Se utiliza en la celda que
+			contiene el boton de inicio
+			en el formulario 
+			de inicio de sesíon
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssLoginTableBottom
+{
+	width: 177px;
+	height: 15px;
+	background-image: url(../Images/caja_ingreso_bottom.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+/*  ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: TD
+DESCRIPCIÓN: Se utiliza la celda que contiene 
+			el título del formulario de 
+			inicio de sesíon
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssLogintitle
+{
+	width: 177px;
+	height: 33px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 16px;
+	color: #FFFFFF;
+	background-color: Transparent;
+	background-image: url(../Images/login_title.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+}
+
+.cssValidators
+{
+	font-weight: bolder;
+	font-size: 10px;
+	color: red;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	height: 20px;
+	background-color: #f3f3f3;
+	text-align: left;
+	font-size: 11px;
+	font-weight: bold;
+	color: #FF0000;
+}
+
+
+
+
+/* ===================================================================================== */
+
+/* --------------- ESTILOS PARA MENÚ CONTEXTUAL --------------- */
+
+/* ===================================================================================== */
+
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: DIV
+DESCRIPCIÓN: Se utiliza en el DIV que contiene
+			la tabla con los item de un 
+			menú contextual
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.tipo0
+{
+	border-right: black 2px solid;
+	border-top: black 0px solid;
+	border-left: black 0px solid;
+	border-bottom: black 0px solid;
+	padding-right: 3px;
+	padding-left: 3px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	visibility: hidden;
+	width: 150px;
+	cursor: default;
+	line-height: 20px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	position: absolute;
+	background-color: #B5C7DE;
+}
+
+/*  ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: DIV
+DESCRIPCIÓN: Se utiliza en el DIV que contiene
+			la tabla con los item de un 
+			menú contextual
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.tipo1
+{
+	border-right: buttonhighlight 0px outset;
+	border-top: buttonhighlight 0px outset;
+	border-left: buttonhighlight 0px outset;
+	border-bottom: buttonhighlight 0px outset;
+	padding-right: 3px;
+	padding-left: 3px;
+	padding-bottom: 3px;
+	padding-top: 3px;
+	visibility: hidden;
+	width: 130px;
+	cursor: default;
+	color: menutext;
+	position: absolute;
+	background-color: #B5C7DE /*menu*/;
+}
+
+/*  ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utiliza en los Labels 
+			que contienes la descripcón
+			de los items de un menú
+			contextual
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.menuitem
+{
+	font-size: 12px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	text-decoration: none;
+	color: #294D9C;
+}
+
+
+
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PARA ESCRITORIO --------------- */
+
+/* ========================================================= */
+
+
+.cssLabelsDesktopInputData
+{
+	font-weight: bold;
+	font-size: 10px;
+	color: #333366;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent;
+}
+
+.cssMenuDesktop
+{
+	background-image: url(../../Includes/images/FondoEscritorioVerdeCentro.png);
+	background-repeat: repeat-y;
+}
+
+.cssSearchDesktop
+{
+	background-image: url(../../Includes/images/FondoEscritorioVerdeArriba.png);
+	background-repeat: repeat-y;
+}
+
+.cssInformationDesktop
+{
+	background-image: url(../../Includes/images/FondoEscritorioVerdeAbajo.png);
+	background-repeat: repeat-y;
+}
+
+.cssInformationRigthDesktop
+{
+	background-image: url(../../Includes/images/FondoEscritorioVerdeDerecha.png);
+	background-repeat: repeat-y;
+}
+
+.cssTreeDesktopRootNode
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: x-large;
+	font-weight: bold;
+	color: #333366;
+}
+
+.cssTreeDesktopNode
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: medium;
+	color: #333366;
+}
+
+
+
+/* ================================================================================= */
+
+/* --------------- ESTILOS PARA MENU Y RELOJ --------------- */
+
+/* ================================================================================= */
+
+
+
+.cssMenu
+{
+	margin: 0;
+	padding: 0;
+	background-color: #EEEEEE;
+}
+
+.cssMenuItem
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 8pt;
+	cursor: hand;
+	font-weight: bold;
+	background-color: #2F4A8F;
+}
+
+.cssMenuItemStatic
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	color: #FFFFFF;
+	text-align: center;
+	padding-bottom: 3px;
+	padding-top: 3px;
+	padding-left: 1px;
+	padding-right: 1px;
+	margin-right: auto;
+}
+
+.cssMenuItemHover
+{
+	color: #fefea7;
+}
+
+.cssSubMenuItem
+{
+	background-color: #EAF2FF;
+	color: #2F4A8F;
+	padding: 2px 3px 2px 10px;
+}
+
+.cssSubMenuItemHover
+{
+	background-color: #C9DDFF;
+	color: #2F4A8F;
+}
+
+.texto11Azul
+{
+	font-size: 11px;
+	color: #1D4D9E;
+}
+.cssLinkSession
+{
+	font-size: 11px;
+	color: #F47532;
+	font-weight: bold;
+}
+.texto11Negro
+{
+	font-size: 11px;
+	color: #000000;
+}
+
+
+.texto12GrisO
+{
+	font-size: 12px;
+	color: #505050;
+}
+.gralSubtitulos .texto12GrisO
+{
+	font-size: 12px;
+	color: #505050;
+	font-weight: normal !important;
+}
+.texto12
+{
+	font-size: 12px !important;
+}
+.texto11Link
+{
+	font-size: 11px;
+	color: #0000FF;
+}
+/* ========================================================= */
+
+/*A PARTIR DE AQUI LOS NUEVOS ESTILOS QUE SE NECESITEN PARA EL RELEASE 1*/
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: DIV
+DESCRIPCIÓN: Se utiliza en los DIV que muestran
+			el número de paso en un wizard.
+			Es un circulo de color.
+AUTOR: Verme, David
+FECHA: 11/05/2007
+*/
+.cssRFBSubtitleNumber
+{
+	float: left;
+	background: url(../images/Step.gif) no-repeat left top;
+	width: 24px;
+	height: 24px;
+	font-size: 18px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-align: center;
+}
+
+/*  ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: DIV
+DESCRIPCIÓN: Se utiliza en los DIV que muestran
+			el número de paso en un wizard.
+			Es un circulo de color.
+AUTOR: Verme, David
+FECHA: 11/05/2007
+*/
+
+.cssRFBSubtitleLevel2Number
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	float: left;
+	background: url(../images/BlueStep.gif) no-repeat left top;
+	width: 24px;
+	height: 24px;
+	font-size: 18px;
+	font-weight: bold;
+	color: #FFFFFF;
+	text-align: center;
+}
+
+.cssWarningDiv
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFCC;
+	padding: 10px;
+	border-bottom: 1px solid #DADADA;
+	border-top: 1px solid #DADADA;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+.cssTotalCell
+{
+	width: 130px;
+	vertical-align: bottom;
+	text-align: right;
+	background-color: #0066ff;
+}
+
+.cssTotalText
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 18px;
+	font-weight: bold;
+	color: #ffffff;
+}
+
+.cssFilterTableRow
+{
+	border-top: #c9c9c9 1px solid;
+	border-bottom: #c9c9c9 1px solid;
+	background-color: #f2f2f2;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-weight: lighter;
+	font-size: 12pt;
+}
+
+.cssFilterTableRowTop
+{
+	border-top: #c9c9c9 1px solid;
+	background-color: #f2f2f2;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-weight: lighter;
+	font-size: 12pt;
+}
+
+.cssFilterTable
+{
+	background-color: #f2f2f2;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-weight: lighter;
+	font-size: 12pt;
+}
+
+.cssFilterTableWhiteTop
+{
+	border-top: #c9c9c9 1px solid;
+	background-color: White;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-weight: lighter;
+	font-size: 12pt;
+}
+
+.cssFilterTableWhiteBottom
+{
+	border-bottom: #c9c9c9 1px solid;
+	background-color: White;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-weight: lighter;
+	font-size: 12pt;
+}
+
+.cssFilterTableWhite
+{
+	border-bottom: #c9c9c9 1px solid;
+	background-color: White;
+	border-top: #c9c9c9 1px solid;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-weight: lighter;
+	font-size: 12pt;
+}
+
+.cssFilterTableRowBottom
+{
+	border-bottom: #c9c9c9 1px solid;
+	background-color: #f2f2f2;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-weight: lighter;
+	font-size: 12pt;
+}
+
+.cssFilterTableRowbeta
+{
+	border-bottom: #c9c9c9 1px solid;
+	background-color: #f2f2f2;
+}
+
+.cssBIDRedText
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 13px;
+	color: #FF0000;
+}
+
+/*adquisicionCuadroDestacado*/
+.cssBIDHighlightSquare
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFCC;
+	padding: 10px;
+	border-bottom: 1px solid #E2E2E2;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+/*adquisicionCuadroDestacado con borde*/
+.cssBIDHighlightSquare1
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFCC;
+	padding: 10px;
+	border-bottom: 1px solid #E2E2E2;
+	font-size: 13px;
+	color: #1D4D9E;
+	border-bottom: 1px solid #C9C9C9;
+}
+/*adquisicionDescripcionAnexo */
+.cssBIDAttachmentDescription
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	border-bottom: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+	background-color: #F2F2F2;
+	padding: 5px;
+	font-size: 13px;
+	color: #1D4D9E;
+}
+
+.cssBIDAttachmentButton
+{
+	cursor: hand;
+	border-style: none;
+	width: 170px;
+	height: 49px;
+	background-color: transparent; /*background-image: url(../../Includes/images/button_medium.gif); */
+	background-image: url(../../Includes/images/botonAttachment.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssBIDAttachmentButton:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+.cssBIDAttachmentMediumButton
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/images/green_button_medium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssBIDAttachmentMediumButton:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+.cssSuccessDiv
+{
+	background-color: #DFFFD5;
+	border: 1px #26B100;
+	border-style: solid none;
+	padding: 5px;
+	font-size: 18px;
+	color: #26B100;
+	font-weight: bold;
+}
+
+.cssSuccessBullet
+{
+	padding: 0px;
+	margin: 0px 0px;
+	float: left;
+	background-image: url(../../Includes/images/ic_ok.gif);
+	background-position: left;
+	background-repeat: no-repeat;
+	width: 15px;
+	height: 15px;
+	vertical-align: bottom;
+	text-align: center;
+}
+
+.cssSuccessText
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	cursor: default;
+	font-size: 16px;
+	font-weight: bold;
+	color: #336600;
+}
+
+/*  ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: Table
+DESCRIPCIÓN: Se utiliza en las tablas
+            que muestran la imagen de la
+			cabecera de los popUps
+AUTOR: Verme, David
+FECHA: 06/06/2006
+*/
+.cssPopUpsHeader
+{
+	padding-left: 10px;
+	background: url(../images/cabezal_ch_fondo.gif) repeat-x left top;
+	vertical-align: middle;
+	height: 34px;
+}
+
+.cssPopUpsMessageText
+{
+	background-color: #F2F2F2;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+}
+
+/*
+DESCRIPCION:Estilos Agregados de la clase AuxDavid.css
+AUTOR:Melania Omonte
+FECHA:03/06/2007
+*/
+
+.cssBIDSubtitle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 18px;
+	color: #1D4D9E;
+	margin: 5px 0;
+}
+
+.cssBIDDescriptionBlockTable
+{
+	border-top: 1px solid #C9C9C9;
+	background-color: #F2F2F2;
+	line-height: 1em;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+}
+
+.cssBIDDescriptionBlockTable TD
+{
+	padding: 7px 10px;
+}
+
+.cssBIDBidsBlockTable
+{
+	background-color: #FFFFF3;
+	border-top: 1px solid #C9C9C9;
+	border-bottom: 1px solid #C9C9C9;
+	margin: 10px 0 5px 0;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+.cssBIDBidsHeaderTable
+{
+	font-size: 12px;
+	color: #000000;
+	background-color: #EFF6FF;
+}
+/*modificar cssBIDBlackText por este*/
+.cssBIDHigthLabel
+{
+	font-weight: bold;
+	font-size: 12px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif; /*color: #000000;*/
+	color: Red;
+	border: 0px;
+	width: 500px;
+	vertical-align: top;
+}
+
+.cssBIDBidNumber
+{
+	width: 35px;
+	height: 45px;
+	background-color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 30px;
+	font-weight: bold;
+	color: #FFFFFF;
+	vertical-align: middle;
+	text-align: center;
+}
+/*
+CONTROL A APLICAR: Boton
+DESCRIPCIÓN: Se utiliza para generar
+una declaracion desierta
+AUTOR: Omonte, Melania
+FECHA: 04/07/2007
+*/
+
+
+.cssFwkButtonMediumB
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../Images/blue_medium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 9pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssFwkButtonMediumB:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+/*
+CONTROL A APLICAR: Boton
+DESCRIPCIÓN: 
+AUTOR: Omonte, Melania
+FECHA: 04/07/2007
+*/
+.cssFwkButtonMediumR
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../Images/Button_medium1.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 9pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssFwkButtonMediumR:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+/*
+CONTROL A APLICAR: Boton
+DESCRIPCIÓN: Boton verde que contiene una frase larga
+AUTOR: Omonte, Melania
+FECHA: 04/07/2007
+*/
+.cssFwkButtonExtraLarge
+{
+	cursor: hand;
+	border-style: none;
+	width: 250px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../Images/button_extra_large.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssFwkButtonExtraLarge:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+/*
+CONTROL A APLICAR: Boton Pequeño
+DESCRIPCIÓN: Este boton sirve para la descripcion Ver
+AUTOR: Omonte, Melania
+FECHA: 04/07/2007
+*/
+.cssFwkButtonMini
+{
+	cursor: hand;
+	border-style: none;
+	width: 45px;
+	height: 25px;
+	background-color: transparent;
+	background-image: url(../Images/Button_mini.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 9pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssFwkButtonMini:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+/* ----------------------------------------------------------------------------------------------------------
+CONTROL A APLICAR: asp:Button
+DESCRIPCIÓN: Se utilizan en los botones
+			de tamaño estandar de color rojo
+AUTOR: Ramira, Mariano
+FECHA: 26/12/2007
+*/
+.cssFwkButtonRed
+{
+	cursor: pointer;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../Images/button_small_red.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssFwkButtonRed:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+/*
+CONTROL A APLICAR: Letra
+DESCRIPCIÓN: Letra Verde en negrita
+AUTOR: Omonte, Melania
+FECHA: 04/07/2007
+*/
+
+.cssGreenTextTitle
+{
+	font-weight: bolder;
+	font-size: 20px;
+	color: #00C000;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	height: 20px;
+	text-align: left;
+}
+
+/*
+CONTROL A APLICAR: Link
+DESCRIPCIÓN: Link con letras medianas q no estan en negrita
+AUTOR: Omonte, Melania
+FECHA: 04/07/2007
+*/
+.cssLinkButtonGrande
+{
+	font-size: 13px;
+	color: #0000FF;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+
+/*
+CONTROL A APLICAR: Link
+DESCRIPCIÓN: Link con letras chicas sin negrita
+AUTOR: Omonte, Melania
+FECHA: 04/07/2007
+*/
+.cssLinkButtonChico
+{
+	font-size: 12px;
+	color: #0000FF;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+
+/*
+CONTROL A APLICAR: RadioButon
+DESCRIPCIÓN: Letras verdes para el radio buton
+AUTOR: Omonte, Melania
+FECHA: 04/07/2007
+*/
+.cssGreenTextTitleRadio
+{
+	font-weight: bolder;
+	font-size: 10px;
+	color: #00C000;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	height: 20px;
+	text-align: left;
+}
+/*
+CONTROL A APLICAR: Link
+DESCRIPCIÓN: Letras rojas
+AUTOR: Omonte, Melania
+FECHA: 04/07/2007
+*/
+.cssBIDRedTextBold
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 13px;
+	color: red;
+}
+/* 
+CONTROL A APLICAR: Label en negrita
+DESCRIPCIÓN: Label para el pie, en las observaciones
+AUTOR: Omonte, Melania
+FECHA: 11/07/2007
+*/
+.cssObservacionesTextBold
+{
+	font-weight: bold;
+	font-size: 11px;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	text-align: left;
+	background-color: Transparent;
+}
+/* 
+CONTROL A APLICAR: Label
+DESCRIPCIÓN: Label para el pie, en las observaciones
+AUTOR: Omonte, Melania
+FECHA: 11/07/2007
+*/
+.cssObservacionesText
+{
+	font-size: 11px;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	text-align: left;
+	background-color: Transparent;
+}
+.cssObservacionesTextBlack
+{
+	font-size: 11px;
+	color: #000000;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	text-align: left;
+	background-color: Transparent;
+}
+/* 
+CONTROL A APLICAR: Label Titulo
+DESCRIPCIÓN: Label para los titulos azules SIN subrayado
+AUTOR: Omonte, Melania
+FECHA: 11/07/2007
+*/
+.cssFwkLabelTitleAzulSinUnderLine
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 18px;
+	font-weight: bold;
+	color: #1D4D9E;
+	margin: 0px;
+}
+/* 
+CONTROL A APLICAR: Label Titulo
+DESCRIPCIÓN: Label para los titulos azules con subrayado
+AUTOR: Omonte, Melania
+FECHA: 11/07/2007
+*/
+.cssFwkLabelTitleAzul
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 14px;
+	font-weight: bold;
+	color: #1D4D9E;
+	border-bottom: 1px solid #C9C9C9; /*#8495CA; */
+	margin: 20px 0 10px 0;
+}
+
+/* 
+CONTROL A APLICAR: Label Titulo
+DESCRIPCIÓN: Label para los titulos negros sin subrayado
+AUTOR: Omonte, Melania
+FECHA: 11/07/2007
+*/
+.cssLabelTitleLarge
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 22px;
+	font-weight: bold;
+	color: #000000;
+}
+/* 
+CONTROL A APLICAR: Label
+DESCRIPCIÓN: Label transparente
+AUTOR: Omonte, Melania
+FECHA: 12/07/2007
+*/
+.cssInputDataTransparent
+{
+	font-weight: bold;
+	font-size: 10px;
+	color: #666666;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent;
+}
+
+.cssInputDataGrande
+{
+	font-size: 13px;
+	color: #000006;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent;
+}
+.cssLabelItem
+{
+	border-bottom: 1px solid #C9C9C9;
+	font-weight: lighter;
+	font-size: 13pt;
+	color: #000006;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: #f2f2f2;
+}
+/* 
+CONTROL A APLICAR: Label
+DESCRIPCIÓN: Label transparente para combos y txt
+AUTOR: Omonte, Melania
+FECHA: 12/07/2007  
+*/
+.cssInputDataComboTxt
+{
+	font-size: 13px;
+	color: #000006;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: white;
+}
+/* 
+CONTROL A APLICAR: TreeView, fondo
+DESCRIPCIÓN: Label transparente para combos y txt
+AUTOR: Omonte, Melania 
+FECHA: 12/07/2007 
+*/
+.cssTreeView
+{
+	cursor: hand;
+	font-size: 12px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-image: url(../Images/FondoTreeView1.jpg);
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.cssTreeView:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+/* 
+CONTROL A APLICAR: Nodo
+DESCRIPCIÓN: Label transparente para combos y txt
+AUTOR: Omonte, Melania 
+FECHA: 12/07/2007 
+*/
+.cssTreeViewNodo
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	font-size: 12px;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+/* 
+CONTROL A APLICAR: NodoHijo
+DESCRIPCIÓN: Label transparente para combos y txt
+AUTOR: Omonte, Melania 
+FECHA: 12/07/2007 
+*/
+.cssTreeViewChildNodo
+{
+	font-size: 12px;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+/*
+CONTROL A APLICAR: Boton ExtraLarge
+DESCRIPCIÓN: 
+AUTOR: Omonte, Melania
+FECHA: 24/07/2007
+*/
+.cssButtonExtraLarge
+{
+	cursor: hand;
+	border-style: none;
+	width: 250px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../Images/blue_large02.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssButtonExtraLarge:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+/*
+CONTROL A APLICAR: Boton Large
+DESCRIPCIÓN: 
+AUTOR: Omonte, Melania
+FECHA: 24/07/2007
+*/
+.cssButtonLarge
+{
+	cursor: hand;
+	border-style: none;
+	width: 200px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../Images/BlueLarge.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssButtonLarge:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+/*
+CONTROL A APLICAR: Boton Small
+DESCRIPCIÓN: 
+AUTOR: Omonte, Melania
+FECHA: 24/07/2007
+*/
+.cssButtonSmall
+{
+	cursor: hand;
+	border-style: none;
+	width: 69px;
+	height: 22px;
+	background-color: transparent;
+	background-image: url(../Images/BtnChico.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssButtonSmall:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+.gralSubtitulosExtra
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	float: right;
+	font-size: 13px;
+	font-weight: normal;
+	color: #7777CC;
+	cursor: hand;
+	text-decoration: underline;
+}
+
+
+.gralSubtitulos2
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	float: right;
+	font-size: 13px;
+	font-weight: normal;
+	color: #7777CC;
+	cursor: hand;
+	text-decoration: underline;
+}
+
+.adquisicionTablaResultadosOfertas table
+{
+	border-collapse: collapse;
+}
+.adquisicionTablaResultadosOfertas td
+{
+	background-color: transparent;
+	padding: 2px;
+	border-style: solid none none none;
+	vertical-align: middle;
+}
+.adquisicionTablaResultadosOfertasPrimCelda
+{
+	border-top: 0 none !important;
+	padding-left: 5px !important;
+}
+.adquisicionTablaResultadosFila1
+{
+	padding: 0;
+	background-color: #F8FAEE;
+	border-right: 0 none #FFFFFF;
+	text-align: left;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+}
+.adquisicionTablaResultadosFila2
+{
+	padding: 0;
+	background-color: #FFFFF0;
+	border-right: 0 none #FFFFFF;
+	text-align: left;
+}
+.adquisicionTablaResultadosFila3
+{
+	border-right: none;
+	text-align: left;
+	border-top: none;
+	border-bottom: none;
+	border-right: none;
+}
+
+.adquisicionTablaResultadosOfertasCab
+{
+	background-color: #F47331;
+}
+
+.cssFwkItemStyleOferta td
+{
+	/*Border-Style: None;*/
+	border-color: #404040;
+	padding: 1pt 5pt 1pt 5pt;
+	font-size: 11px;
+	vertical-align: top;
+	text-align: left;
+	border-top: 1px solid #C9C9C9;
+	border-bottom: 1px solid #C9C9C9;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFFF;
+}
+
+
+
+.cssFwkItemStyleOferta2 td
+{
+	/*Border-Style: None;*/
+	border-color: #404040;
+	padding: 1pt 5pt 1pt 5pt;
+	font-size: 11px;
+	vertical-align: top;
+	text-align: left;
+	border-top: 1px solid #C9C9C9;
+	border-bottom: 1px solid #C9C9C9;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #F2F2F2;
+}
+.cssFwkHeaderBidDetail
+{
+	/*Border-Style: None;*/
+	border-color: #404040;
+	padding: 1pt 5pt 1pt 5pt;
+	font-size: 11px;
+	vertical-align: top;
+	text-align: left;
+	border-top: 1px solid #C9C9C9;
+	border-bottom: 1px solid #C9C9C9;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #F2F2F2;
+}
+
+.cssFwkHeaderTableRow1
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 13px;
+	color: #FFFFFF;
+	background-color: #006699;
+}
+.cssFwkHeaderTableRow2
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 13px;
+	color: #1C4A94;
+	text-align: center;
+	background-color: #FAF7DB;
+}
+
+
+/* ========================================================= */
+
+/* --------------- ESTILOS PROCUREMENT --------------- */
+
+/* ========================================================= */
+
+
+
+
+
+/*--Estilos de Grillas--*/
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:GridView
+DESCRIPCIÓN: Se utiliza en las grillas
+COMENTARIO:El apartado opcional, son posibles variaciones dentro los estilos que combinan. 
+AUTOR: Ramira, Mariano
+FECHA: 06/06/2007
+*/
+.cssPRCGridView
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal;
+	font-size: 11px;
+	background-color: #f5f2f2;
+	border-style: None;
+	padding: 0px;
+	margin: 0px; /*border: solid 1px #404040; /* Opcionales: #FFFFFF;*/
+}
+
+
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:GridView
+DESCRIPCIÓN: Se utiliza en el encabezado (HeaderStyle)
+COMENTARIO:El apartado opcional, son posibles variaciones dentro los estilos que combinan. 
+AUTOR: Ramira, Mariano
+FECHA: 06/06/2007
+*/
+.cssPRCGridViewHeader
+{
+	border-style: None;
+	background-color: #8b8dbb; /* Opcionales: #006696; #5D7B9D; #8b8dbb;*/
+	border-color: #404040;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	font-size: 13px;
+	text-align: left;
+	color: #ffffff; /* Opcionales: White; */
+	text-indent: 3pt;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:GridView
+DESCRIPCIÓN: Se utiliza en las filas de las grillas
+COMENTARIO:El apartado opcional, son posibles variaciones dentro los estilos que combinan. 
+AUTOR: Ramira, Mariano
+FECHA: 06/06/2007
+*/
+.cssPRCGridViewRow
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal;
+	font-size: 11px;
+	vertical-align: middle;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	background-color: #f9fcff; /* Opcionales: #F4F7FC; #F7F6F3; #f5f2f2; #f9fcff; */
+	border-style: None; /*border-color: #404040;*/
+	color: #284775; /* Opcionales: #333333; */
+}
+
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:GridView
+DESCRIPCIÓN: Se utiliza en las filas alternas
+COMENTARIO:El apartado opcional, son posibles variaciones dentro los estilos que combinan. 
+AUTOR: Ramira, Mariano
+FECHA: 06/06/2007
+*/
+.cssPRCGridViewAltRow
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal;
+	font-size: 11px;
+	vertical-align: middle;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	background-color: #f5fbfe; /* Opcionales:  #f5fbfe; White; #dddddd; #e6e6e6; */
+	border-style: None; /*border-color: #404040;*/
+	color: #284775; /* Opcionales: #333333; */ /*word-break: break-all;*/
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:GridView
+DESCRIPCIÓN: Se utiliza en las filas seleccionadas
+COMENTARIO:El apartado opcional, son posibles variaciones dentro los estilos que combinan. 
+AUTOR: Ramira, Mariano
+FECHA: 07/06/2007
+*/
+.cssPRCGridViewSelectedRow
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	font-size: 11px;
+	vertical-align: middle;
+	background-color: #f5f2f2;
+	color: #666666; /*word-break: break-all;*/
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:GridView
+DESCRIPCIÓN: Se utiliza en las filas en modo de edición
+COMENTARIO:El apartado opcional, son posibles variaciones dentro los estilos que combinan. 
+AUTOR: Ramira, Mariano
+FECHA: 07/06/2007
+*/
+.cssPRCGridViewEditRow
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	font-size: 11px;
+	vertical-align: middle;
+	background-color: #f5f2f2;
+	color: #666666; /*word-break: break-all;*/
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:GridView
+DESCRIPCIÓN: Se utiliza cuando la grilla no contiene datos
+COMENTARIO: El apartado opcional, son posibles variaciones dentro los estilos que combinan. 
+AUTOR: Serra, Agustin
+FECHA: 24/07/2007
+
+*/
+.cssPRCGridViewEmptyRow
+{
+	clear: inherit;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	font-size: 13px;
+	text-align: center;
+	background-color: #ffffcc;
+	color: #3399ff; /*word-break: break-all;*/
+}
+
+/* Estilos Wizard Pages*/
+/*  -----------------------------------------------------
+CONTROL A APLICAR: Tabla HTML
+DESCRICIÓN: Se utiliza en la tabla
+            principal del user control
+            ucProcurement
+AUTOR: Ramira, Mariano
+FECHA: 05/06/2007
+*/
+.cssPRCucDataTable
+{
+	background: #F3F3F3;
+	border-collapse: collapse;
+	padding: 0px;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: Renglón HTML
+DESCRICIÓN: Se utiliza en los renglones
+            de la tabla principal del
+            user control ucProcurement
+AUTOR: Ramira, Mariano
+FECHA: 05/06/2007
+*/
+.cssPRCucDataTableTDR
+{
+	/*border: 1px solid #C9C9C9; 	border-style: solid none;*/
+	font-size: 10px;
+	color: #666666;
+	vertical-align: top;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent;
+	padding: 0px;
+	word-break: break-all;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: Celda HTML
+DESCRICIÓN: Se utiliza en las celdas
+            de la tabla principal del
+            user control ucProcurement
+AUTOR: Ramira, Mariano
+FECHA: 05/06/2007
+*/
+.cssPRCucDataTableTDL
+{
+	/*border-right: 1px solid #C9C9C9;  	border: 1px solid #C9C9C9;*/
+	font-weight: bold;
+	font-size: 10px;
+	color: #666666;
+	vertical-align: top;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	padding-right: 0px;
+	padding-left: 5px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: Celda HTML
+DESCRICIÓN: Se utiliza en las celdas
+            de la tabla principal del
+            user control ucProcurement
+AUTOR: Ramira, Mariano
+FECHA: 05/06/2007
+*/
+.cssPRCucDataTableTDLTitle
+{
+	/*border-right: 1px solid #C9C9C9;*/
+	font-weight: bold;
+	font-size: 11px;
+	color: #696969;
+	vertical-align: top;
+	padding: 0px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+}
+
+
+/*
+CONTROL A APLICAR: Validators
+DESCRICIÓN: Se utiliza en los validadores
+AUTOR: Ramira, Mariano
+FECHA: 08/06/2007
+*/
+
+.cssPRCValidator
+{
+	font-weight: bolder;
+	font-size: 10px;
+	color: red;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	height: 20px;
+	background-color: transparent;
+	text-align: left;
+}
+/* -----------------------------------------------------
+CONTROL A APLICAR: TD
+DESCRICIÓN: Se utiliza en la celda que 
+			muestra el validator del campo
+			a editar en un formulario
+AUTOR: Ramira, Mariano
+FECHA: 08/06/2007
+*/
+.cssPRCDataValidator
+{
+	border-bottom: 1px solid #C9C9C9;
+	width: 50%;
+	background-color: transparent;
+	text-align: left;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utiliza en los labels que muestran 
+			ejemplos de datos a introducir
+AUTOR: Ramira, Mariano
+FECHA: 07/06/2007
+*/
+.cssPRCLabelExample
+{
+	/*font-weight: bold; 	font-size: 10px; 	color:#666666; 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif,Verdana,  Sans; 	background-color:Transparent; 	padding:0;*/
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+	color: #484848;
+	padding-left: 10px;
+	padding-right: 20px;
+	background-color: #F2F2F2;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utiliza en los labels que muestran 
+			indicaciones de los datos a introducir
+AUTOR: Ramira, Mariano
+FECHA: 07/06/2007
+*/
+.cssPRCLabelInstruction
+{
+	font-size: 10px;
+	color: #666666;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent;
+	font-style: italic;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: ItemStyle
+DESCRIPCIÓN: Se debe agregar este estilo a las grillas que
+				necesiten Word-Wrap con Break-Word. Por ej:
+				class="cssFwkItemStyle cssPRCWordWrapBreak"
+AUTOR: Serra, Agustín
+FECHA: 10/01/2008
+*/
+.cssPRCWordWrapBreak
+{
+	word-break: break-all;
+}
+
+.cssPRCWordWrapBreak td
+{
+	word-break: break-all;
+}
+
+
+
+
+/* ========================================================= */
+
+/* --------------- VATES FRAMEWORK --------------- */
+
+/* ========================================================= */
+
+
+
+/*---------------- Vates FrameWork -----------------*/
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: Table
+DESCRIPCIÓN: Se utiliza en la tabla 
+			principal que se utiliza 
+			en una master page.
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkTableBase
+{
+	padding-right: 0px;
+	padding-left: 0px;
+	font-weight: bold;
+	font-size: 14px;
+	padding-bottom: 0px;
+	color: #666666;
+	padding-top: 0px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	background-color: Transparent; /*#F1F6FF;*/
+	width: 100%;
+}
+
+/*BEGIN --ESTILOS RELATIVOS A LA APARIENCIA DE LA GRILLA DE DATOS--*/
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:Table
+DESCRIPCIÓN: Se utilizan en la tabla que se
+			genera dinamicamente con el 
+			encabezado de la grilla
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkGridHeaderStyle
+{
+	margin: 20pt 0 10px o;
+	padding: 1 1 1 1;
+	border: 0;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: TR
+DESCRIPCIÓN: Se utilizan en la filas de una
+			tabla. En aquellas filas donde se
+			encuentran los textBox de filtro
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkFilterTableRow
+{
+}
+.cssFwkFilterTableRow td
+{
+	border-top: #c9c9c9 1px solid;
+	border-bottom: #c9c9c9 1px solid;
+	border-left: #000000 0px none;
+	border-right: #000000 0px none;
+	padding-top: 5pt;
+	padding-bottom: 10pt;
+	background-color: #f2f2f2;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: TR
+DESCRIPCIÓN: Se utilizan en la filas de una
+			tabla. En aquellas filas donde se
+			encuentran las cabeceras de las
+			columnas
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkHeaderTableRow
+{
+}
+.cssFwkHeaderTableRow td, th
+{
+	/*padding: 1pt 5pt 1pt 5pt; 	font-size: 13px; 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif,Verdana,  Sans; 	background-color: #006696;  	font-weight: bold;  	color: #FFFFFF;  	border-right: 2px solid White; 	border-left: 2px solid White;*/
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 13px;
+	background-color: #006696;
+	font-weight: bold;
+	color: #FFFFFF;
+	border-top: 0 none;
+	border-right: 1px solid #C9C9C9;
+	text-align: center;
+}
+
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:datagrid
+DESCRIPCIÓN: Se utilizan en las grillas
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkGrid
+{
+	font-weight: normal;
+	font-size: 13px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	border-style: None;
+	border-color: #404040;
+	border-collapse: collapse;
+	table-layout: fixed; /*word-break: break-all;*/ /*word-wrap: break-word;*/
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: ItemStyle
+DESCRIPCIÓN: Se utilizan en las grillas
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkItemStyle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #F4F7FC;
+	color: #000000;
+	font-size: 12px;
+}
+
+.cssFwkItemStyle td
+{
+	/*Border-Style: None;*/
+	border-color: #404040; /*padding: 1pt 5pt 1pt 5pt;*/
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	vertical-align: top;
+	border-right: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+	text-align: center;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: AlternatingItemStyle
+DESCRIPCIÓN: Se utilizan en las grillas
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkAlternatingItemStyle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFFF;
+	color: #000000;
+	font-size: 12px;
+}
+
+.cssFwkAlternatingItemStyle td
+{
+	/*Border-Style: None;*/
+	border-color: #404040; /*padding: 1pt 5pt 1pt 5pt;*/
+	vertical-align: top;
+	border-right: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+	text-align: center;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: SelectedItemStyle
+DESCRIPCIÓN: Se utilizan en las grillas
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkSelectedItemStyle
+{
+	background-color: #FFFFCC;
+	color: #000000;
+	font-size: 12px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+}
+
+.cssFwkSelectedItemStyle td
+{
+	/*Border-Style: None;*/
+	border-color: #404040; /*padding: 1pt 5pt 1pt 5pt;*/
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	vertical-align: top;
+	border-right: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+	text-align: center;
+}
+
+/*END --ESTILOS RELATIVOS A LA APARIENCIA DE LA GRILLA DE DATOS--*/
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:Button
+DESCRIPCIÓN: Se utilizan en los botones
+			de tamaño estandar
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkButton
+{
+	cursor: pointer;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../Images/button_small1.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssFwkButton:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+.cssFwkButtonLarge
+{
+	cursor: hand;
+	border-style: none;
+	width: 160px;
+	height: 25px;
+	background-color: transparent;
+	background-image: url(../Images/button_large.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssFwkButtonLarge:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:Button
+DESCRIPCIÓN: Se utilizan en los botones
+			de tamaño mediano (más 
+			grande que el estandar)
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkButtonMedium
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../Images/button_medium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssFwkButtonMedium:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:Panel
+DESCRIPCIÓN: Se utilizan en los Panel
+			que contienen la grilla
+			que muestra el resultado
+			de una búsqueda (por ejemplo
+			la grilla de la MasterPage)
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkDivScroll
+{
+	overflow: auto;
+	background-color: #FFFFFF /*#F1F6FF;*/ /*overflow: auto; 	background-color: #f8f8f8;*/;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: asp:TextBox
+DESCRIPCIÓN: Se utilizan en los textBox 
+			que se usan para los filtros
+			que están arriba de la grilla
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkFilterControl
+{
+	font-weight: normal;
+	font-size: 11px;
+	color: black;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	height: auto;
+	text-align: left;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: asp:Table
+DESCRIPCIÓN: Se utilizan en la tabla que se
+			genera dinamicamente con la
+			pagianción de la grilla
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkGridPagerStyle
+{
+	font-size: 10px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	color: white;
+	background-color: #006696;
+	text-align: left;
+	table-layout: fixed;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utilizan en los Labels 
+			que muestran mensajes de 
+			error
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkLabelAlert
+{
+	font-weight: bolder;
+	font-size: 10px;
+	color: red;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	height: 20px;
+	text-align: left;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: asp:TextBox
+DESCRIPCIÓN: Se utiliza en el Label que 
+			muestra el Título de la página
+AUTOR: Verme, David
+FECHA: 16/04/2007
+MODIFICADOR:Melania Omonte
+FECHA:16/10/2007
+*/
+.cssFwkLabelTitle
+{
+	/*font-size: 22px;  	font-weight: bold;  	color: #000000;  	border-bottom: 1px solid #8495CA;  	margin: 20px 0 10px 0;*/
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 22px;
+	font-weight: bold;
+	color: #000000;
+	border-bottom: 1px solid #8495CA;
+	margin: 5px 0 10px 0;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utiliza en el Label que 
+			muestra el Subtítulo de la página
+AUTOR: Verme, David
+FECHA: 16/04/2007
+MODIFICADO: Melania Omonte
+FECHA: 16/10/07
+*/
+.cssFwkLabelSubTitle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 18px;
+	font-weight: bold;
+	color: #1D4D9E;
+	margin: 5px 0 0 0;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utiliza en el Label que 
+			muestra el Subtítulo de segundo nivel de la página
+AUTOR: Ramira, Mariano
+FECHA: 05/06/2007
+*/
+.cssFwkLabelSmallTitle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	font-size: 10pt;
+	background-color: Transparent;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: asp:Label
+DESCRIPCIÓN: Se utiliza en el Label que 
+			muestra la cantidad de 
+			registros que devuelve una
+			búsqueda
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkLabelRecordCount
+{
+	font-weight: bolder;
+	font-size: 10px;
+	color: black;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	height: 20px;
+	text-align: left;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: asp:LinkButton
+DESCRIPCIÓN: Se utiliza en los linkButtons 
+			que muestran los números de 
+			la paginación y las cabeceras
+			de la grilla para ordenarlas
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkLinkButtonOrden
+{
+	font-size: 10px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: bold;
+	color: white;
+	background-color: #006696;
+	text-align: left;
+}
+
+/*  -----------------------------------------------------
+CONTROL A APLICAR: asp:ValidationSummary
+DESCRIPCIÓN: Se utiliza en todos los 
+			validatorsSummary.
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkValidatorSummary
+{
+	font-weight: bolder;
+	font-size: 10px;
+	color: red;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	height: 20px; /*background-color: #f3f3f3;*/
+	text-align: left;
+}
+
+/*agregados*/
+.cssFwkWizNode
+{
+	color: #000099;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 10px;
+}
+
+.cssDataTitleRequiredSymbol
+{
+	border-bottom: 1px solid #C9C9C9;
+	width: 1px;
+	background-color: Transparent;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	color: Red;
+}
+
+.GoodAndServicesStepText
+{
+	font-size: 9px;
+	line-height: 12px;
+	vertical-align: top;
+	color: #330099;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+}
+
+.GoodAndServicesHeader
+{
+	border-right: #d3ded3 thin solid;
+	border-top: #d3ded3 thin solid;
+	border-left: #d3ded3 thin solid;
+	border-bottom: #d3ded3 thin solid;
+	background-color: #fbfbff;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+}
+
+#toolTipBox
+{
+	display: none;
+	padding: 1;
+	font-size: 9px;
+	border: black solid 1px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	position: absolute;
+	background-color: #FFFFCC;
+	color: #000000;
+}
+.cssFwkLabelTitleAzulSinUnderLine
+{
+	font-size: 18px;
+	font-weight: bold;
+	color: #1D4D9E;
+	margin: 0px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+}
+
+.cssFwkWizBtnNext
+{
+	cursor: hand;
+	border-style: none;
+	width: 121px;
+	height: 25px;
+	background-color: transparent;
+	background-image: url(../Images/wizard/botonAZUL.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssFwkWizBtnSave
+{
+	cursor: hand;
+	border-style: none;
+	width: 121px;
+	height: 25px;
+	background-color: transparent; /*background-image: url(../Images/button_small1.gif); */
+	background-image: url(../Images/wizard/botonVERDE.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssFwkWizBtnFinalize
+{
+	cursor: hand;
+	border-style: none;
+	width: 121px;
+	height: 25px;
+	background-color: transparent;
+	background-image: url(../Images/wizard/botonVERDE.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssHelpDiv
+{
+	border: solid 1px #000000;
+	background-color: #FFFBAD;
+	padding: 5px;
+	font-size: 10px;
+}
+
+.cssInputTxtSize
+{
+	width: 380px; /*font-size: 13px;  color:#000006;  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif,Verdana,  Sans;  background-color: white;*/
+}
+
+.cssDataOptional
+{
+	/*border-bottom: 1px solid #C9C9C9; */
+	font-weight: lighter;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #000000;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans; /*background-color: #f2f2f2;*/
+	width: 100px;
+	text-align: left;
+}
+
+.cssBtnAgregar
+{
+	cursor: hand;
+	border-style: none;
+	width: 121px;
+	height: 25px;
+	background-color: transparent;
+	background-image: url(../Images/wizard/botonAZUL.jpg); /*background-image: url(../../Includes/Images/btnPurple.gif); */
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.grdSuperAdministrador
+{
+	font-size: 12px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: White;
+	color: #1D4D9E;
+	text-align: left;
+}
+
+.grdSuperAdministradorAlternative
+{
+	font-size: 12px;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #F2F2F2;
+	color: #1D4D9E;
+	text-align: left;
+}
+.gralTitulos
+{
+	font-size: 22px;
+	font-weight: bold;
+	color: #1D4D9E;
+	margin: 5px 0 10px 0;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+}
+.gralSubtitulosAzul
+{
+	font-size: 18px;
+	font-weight: bold;
+	color: #1D4D9E;
+	margin: 5px 0 0 0;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+}
+.BorderRight
+{
+	border-right: 1px solid #C9C9C9;
+}
+.BorderLeft
+{
+	border-left: 1px solid #C9C9C9;
+}
+/*.grdSuperAdministrador_tr td  { background-color: #F4F7FC; color: #1D4D9E; border-right: 1px solid #C9C9C9; font-size: 12px;}
+.grdSuperAdministrador_tr12 td  { background-color: #12319E; font-weight: bold; color: #FFFFFF; border-top: 0 none; border-right: 1px solid #C9C9C9; font-size: 12px; background-image: url(images/menu_fondo.gif); font-size: 10px;}
+.grdSuperAdministrador_tr2 td { background-color: #FFFFFF; color: #1D4D9E; border-right: 1px solid #C9C9C9; font-size: 12px; }
+.grdSuperAdministrador_tr_encabe tr { background-color: #12319E; font-weight: bold; color: #FFFFFF; border-top: 0 none; border-right: 1px solid #C9C9C9; font-size: 12px; background-image: url(images/menu_fondo.gif); }*/
+
+.cssIconos
+{
+	padding-right: 5px;
+}
+
+.cssCellIconos
+{
+	text-align: left;
+}
+
+/*cambio insertado por Alejandro González 
+Fecha: 05 Abril 2008*/
+
+.calendar
+{
+	position: relative;
+	display: none;
+	border-top: 2px solid #fff;
+	border-right: 2px solid #000;
+	border-bottom: 2px solid #000;
+	border-left: 2px solid #fff;
+	font-size: 11px;
+	color: #000;
+	cursor: default;
+	background: ghostwhite;
+	font-family: tahoma,verdana,sans-serif;
+}
+
+.calendar table
+{
+	border-top: 1px solid #000;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+	border-left: 1px solid #000;
+	font-size: 11px;
+	color: #000;
+	cursor: default;
+	background: aliceblue;
+	font-family: tahoma,verdana,sans-serif;
+}
+
+/* Header part -- contains navigation buttons and day names. */
+
+.calendar .button
+{
+	/* "<<", "<", ">", ">>" buttons have this class */
+	text-align: center;
+	padding: 1px;
+	background-color: #5588cc;
+	color: #ffffff;
+}
+
+.calendar .nav
+{
+	/*background: transparent url(menuarrow.gif) no-repeat 100% 100%;*/
+	background-color: #5588cc;
+	color: #ffffff;
+}
+
+.calendar thead .title
+{
+	/* This holds the current "month, year" */
+	font-weight: bold;
+	padding: 1px;
+	background: #0066cc;
+	color: #fff;
+	text-align: center;
+}
+
+.calendar thead .headrow
+{
+	/* Row <TR> containing navigation buttons */
+}
+
+.calendar thead .daynames
+{
+	/* Row <TR> containing the day names */
+}
+
+.calendar thead .name
+{
+	/* Cells <TD> containing the day names */
+	border-bottom: 1px solid #0066cc;
+	padding: 2px;
+	text-align: center;
+	background: #ddeeff;
+	color: #000000;
+}
+
+.calendar thead .weekend
+{
+	/* How a weekend day name shows in header */
+	color: #cc6666;
+}
+
+.calendar thead .hilite
+{
+	/* How do the buttons in header appear when hover */
+	padding: 0px;
+	background-color: #5588cc;
+	color: #ffffff;
+}
+
+.calendar thead .active
+{
+	/* Active (pressed) buttons in header */
+	padding: 2px 0px 0px 2px;
+	background-color: #5588cc;
+}
+
+/* The body part -- contains all the days in month. */
+
+.calendar tbody .day
+{
+	/* Cells <TD> containing month days dates */
+	width: 2em;
+	text-align: right;
+	padding: 2px 4px 2px 2px;
+}
+
+.calendar tbody .day .othermonth
+{
+	font-size: 80%;
+	color: #aaa;
+}
+.calendar tbody .day .othermonth .oweekend
+{
+	color: #faa;
+}
+
+.calendar table .wn
+{
+	padding: 2px 3px 2px 2px;
+	border-right: 1px solid #000;
+	background: #e8f4f0;
+}
+
+.calendar tbody .rowhilite td
+{
+	background: #d8e4e0;
+}
+
+.calendar tbody .rowhilite td.wn
+{
+	background: #c8d4d0;
+}
+
+.calendar tbody td.hilite
+{
+	/* Hovered cells <TD> */
+	padding: 1px 3px 1px 1px;
+	border: 1px solid;
+	border-color: #000 #000 #000 #000;
+}
+
+.calendar tbody td.active
+{
+	/* Active (pressed) cells <TD> */
+	padding: 2px 2px 0px 2px;
+	border: 1px solid;
+	border-color: #000 #000 #000 #000;
+}
+
+.calendar tbody td.selected
+{
+	/* Cell showing selected date */
+	font-weight: bold;
+	padding: 2px 2px 0px 2px;
+	border: 1px solid;
+	border-color: #000 #000 #000 #000;
+	background: #ffffff;
+}
+
+.calendar tbody td.weekend
+{
+	/* Cells showing weekend days */
+	color: #cc6666;
+}
+
+.calendar tbody td.today
+{
+	/* Cell showing today date */
+	font-weight: bold;
+	color: #f00;
+}
+
+.calendar tbody .disabled
+{
+	color: #999;
+}
+
+.calendar tbody .emptycell
+{
+	/* Empty cells (the best is to hide them) */
+	visibility: hidden;
+}
+
+.calendar tbody .emptyrow
+{
+	/* Empty row (some months need less than 6 rows) */
+	display: none;
+}
+
+/* The footer part -- status bar and "Close" button */
+
+.calendar tfoot .footrow
+{
+	/* The <TR> in footer (only one right now) */
+}
+
+.calendar tfoot .ttip
+{
+	/* Tooltip (status bar) cell <TD> */
+	background: #0066cc;
+	padding: 1px;
+	color: #fff;
+	text-align: center;
+}
+
+.calendar tfoot .hilite
+{
+	/* Hover style for buttons in footer */
+	border-top: 1px solid #fff;
+	border-right: 1px solid #000;
+	border-bottom: 1px solid #000;
+	border-left: 1px solid #fff;
+	padding: 1px;
+	background: #d8e0e4;
+}
+
+.calendar tfoot .active
+{
+	/* Active (pressed) style for buttons in footer */
+	padding: 2px 0px 0px 2px;
+	border-top: 1px solid #000;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+	border-left: 1px solid #000;
+}
+
+/* Combo boxes (menus that display months/years for direct selection) */
+
+.calendar .combo
+{
+	position: absolute;
+	display: none;
+	width: 4em;
+	top: 0px;
+	left: 0px;
+	cursor: default;
+	border-top: 1px solid #fff;
+	border-right: 1px solid #000;
+	border-bottom: 1px solid #000;
+	border-left: 1px solid #fff;
+	background: #d8e0e4;
+	font-size: 90%;
+	padding: 1px;
+	z-index: 100;
+}
+
+.calendar .combo .label, .calendar .combo .label-IEfix
+{
+	text-align: center;
+	padding: 1px;
+}
+
+.calendar .combo .label-IEfix
+{
+	width: 4em;
+}
+
+.calendar .combo .active
+{
+	background: #c8d0d4;
+	padding: 0px;
+	border-top: 1px solid #000;
+	border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+	border-left: 1px solid #000;
+}
+
+.calendar .combo .hilite
+{
+	background: #048;
+	color: #aef;
+}
+
+.calendar td.time
+{
+	border-top: 1px solid #000;
+	padding: 1px 0px;
+	text-align: center;
+	background-color: #e8f0f4;
+}
+
+.calendar td.time .hour, .calendar td.time .minute, .calendar td.time .ampm
+{
+	padding: 0px 3px 0px 4px;
+	border: 1px solid #889;
+	font-weight: bold;
+	background-color: #fff;
+}
+
+.calendar td.time .ampm
+{
+	text-align: center;
+}
+
+.calendar td.time .colon
+{
+	padding: 0px 2px 0px 3px;
+	font-weight: bold;
+}
+
+.calendar td.time span.hilite
+{
+	border-color: #000;
+	background-color: #667;
+	color: #fff;
+}
+
+.calendar td.time span.active
+{
+	border-color: #f00;
+	background-color: #000;
+	color: #0f0;
+}
+
+.procurementDataTable
+{
+	background: #F3F3F3;
+	border-collapse: collapse;
+}
+
+.cssCollapsiblePanelHeader
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans- serif,Verdana, Sans;
+	font-weight: bold;
+	font-size: 10pt;
+	color: #666666;
+}
+/*-------------------------------------------------------*/
+/*cambio insertado por Alejandro González 
+Fecha: 07 Abril 2008*/
+/*Cambios que vienen de WizardStyleSheet.css*/
+.cssFwkWizDIVTreeView
+{
+	overflow: auto;
+	width: 100%;
+	height: 100%;
+}
+
+.cssFwkWizMainTable
+{
+	border-right: 0px outset;
+	border-top: 0px outset;
+	border-left: 0px outset;
+	border-bottom: 1px inset; /*table-layout:fixed;*/
+	width: 100%;
+}
+.cssFwkWizTDTop
+{
+	width: 100%;
+}
+.cssFwkWizTDTreeView
+{
+	border-right: 1px inset;
+	width: 300px;
+}
+
+.cssFwkWizTDPage
+{
+	width: 100%;
+}
+
+.cssFwkWizTDBottom
+{
+	width: 100%;
+}
+.cssFwkWizTDNavigationBtn
+{
+	width: 50%;
+	text-align: center;
+}
+.cssFwkWizTDNoNavigationBtn
+{
+	width: 50%;
+	text-align: center;
+}
+.cssFwkWizTDMessage
+{
+	width: 100%;
+}
+.cssFwkWizSelectedNode
+{
+	font-weight: bold;
+	background-color: #ECF0F6;
+	color: #000033;
+}
+.cssFwkWizTreeView
+{
+	background-color: Transparent;
+}
+.cssFwkWizLblMessage
+{
+	color: Red;
+}
+.cssFwkWizLblBottomTreeView
+{
+	color: Green;
+	font-size: small;
+}
+.cssFwkWizBtnPrevious
+{
+	cursor: hand;
+	border-style: none;
+	width: 121px;
+	height: 25px;
+	background-color: transparent;
+	background-image: url(../Images/wizard/botonVERDE.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssTreeBorderTop
+{
+	background-image: url(../../Includes/images/wizard/fondo-superior.jpg);
+	background-repeat: no-repeat;
+}
+.cssTreeBorderCenter
+{
+	background-image: url(../../Includes/images/wizard/fondo-centro.jpg);
+	background-repeat: repeat-y;
+}
+.cssTreeBorderBotton
+{
+	background-image: url(../../Includes/images/wizard/fondo-inferior.jpg);
+	background-repeat: no-repeat;
+}
+.cssTreeTitleAzul
+{
+	font-size: 18px;
+	font-weight: bold;
+	color: #1D4D9E;
+	margin: 0px;
+	background-image: url(../../Includes/images/wizard/fondo-centro.jpg);
+	background-repeat: no-repeat;
+}
+/*----*/
+.cssFwkButtonLargeAzul
+{
+	cursor: hand;
+	border-style: none;
+	width: 160px;
+	height: 25px;
+	background-color: transparent;
+	background-image: url(../Images/blue_large01.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssFwkButtonLargeAzul:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+/*----*/
+.tipodeletra11
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+}
+/*--------------------------------------------------------------------*/
+/******************************* ESTILOS BOTONES EVERIS *******************************/
+.cssbtnMedium
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnAceptar
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnAceptar:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+.cssBtnAgregar:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+.cssBtnBuscar
+{
+	cursor: hand;
+	border-style: none;
+	width: 100px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnBuscar:hover
+{
+	color: white;
+	background-color: transparent;
+	text-decoration: none;
+}
+.cssBtnCancelar
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnDetalle
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnEnviar
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnExcel
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnLimpiar
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnGuardar
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnGuardar2
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenLarge.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnSiguientePaso
+{
+	cursor: hand;
+	border-style: none;
+	width: 180px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenExtraLarge.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnVer
+{
+	cursor: hand;
+	border-style: none;
+	width: 80px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenShort.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnVolver
+{
+	cursor: hand;
+	border-style: none;
+	width: 80px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnCerrar
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnComparar
+{
+	cursor: hand;
+	border-style: none;
+	width: 150px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenMedium.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnImprimirComprobante
+{
+	cursor: hand;
+	border-style: none;
+	width: 200px;
+	height: 60px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenExtraLarge.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+
+.cssBtnExtraExtraLarge
+{
+	cursor: hand;
+	border-style: none;
+	width: 200px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenExtraExtraLarge.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnExtraLarge
+{
+	cursor: hand;
+	border-style: none;
+	width: 200px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenExtraLarge.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnGreenLarge
+{
+	cursor: hand;
+	border-style: none;
+	width: 200px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnGreenLarge.gif);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssBtnPurpleLarge
+{
+	cursor: hand;
+	border-style: none;
+	width: 200px;
+	height: 30px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/btnPurpleExtraLarge.GIF);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssDivSeparator
+{
+	width: 95%;
+}
+/******************************* FIN ESTILOS BOTONES EVERIS *******************************/
+
+/*----------*/
+/*Cambios realizados el día 09 de Abril del 2008*/
+/*Origen de los datos; \Web.Procurement\Includes\styles\WizardStyleSheet.css*/
+.cssFwkWizDIVTreeView
+{
+	overflow: auto;
+	width: 100%;
+	height: 100%;
+}
+.cssFwkWizMainTable
+{
+	border-right: 0px outset;
+	border-top: 0px outset;
+	border-left: 0px outset;
+	border-bottom: 1px inset; /*table-layout:fixed;*/
+	width: 100%;
+}
+.cssFwkWizTDTop
+{
+	width: 100%;
+}
+
+.cssFwkWizTDTreeView
+{
+	border-right: 1px inset;
+	width: 300px;
+}
+
+.cssFwkWizTDPage
+{
+	width: 100%;
+}
+.cssFwkWizTDBottom
+{
+	width: 100%;
+}
+
+.cssFwkWizTDNavigationBtn
+{
+	width: 50%;
+	text-align: center;
+}
+
+.cssFwkWizTDNoNavigationBtn
+{
+	width: 50%;
+	text-align: center;
+}
+.cssFwkWizTDMessage
+{
+	width: 100%;
+}
+
+.cssFwkWizSelectedNode
+{
+	font-weight: bold;
+	background-color: #9DD8FF /*lightsteelblue*/;
+	color: #000033;
+}
+.cssFwkWizTreeView
+{
+	background-color: Transparent;
+}
+.cssFwkWizLblMessage
+{
+	color: Red;
+}
+
+.cssFwkWizLblBottomTreeView
+{
+	color: Green;
+	font-size: small;
+}
+
+.cssFwkWizBtnPrevious
+{
+	cursor: hand;
+	border-style: none;
+	width: 121px;
+	height: 25px;
+	background-color: transparent;
+	background-image: url(../Images/wizard/botonVERDE.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+.cssTreeBorderTop
+{
+	background-image: url(../../Includes/images/wizard/fondo-superior.jpg);
+	background-repeat: no-repeat;
+}
+.cssTreeBorderCenter
+{
+	background-image: url(../../Includes/images/wizard/fondo-centro.jpg);
+	background-repeat: repeat-y;
+}
+
+.cssTreeBorderBotton
+{
+	background-image: url(../../Includes/images/wizard/fondo-inferior.jpg);
+	background-repeat: no-repeat;
+}
+
+.cssTreeTitleAzul
+{
+	font-size: 18px;
+	font-weight: bold;
+	color: #1D4D9E;
+	margin: 0px;
+	background-image: url(../../Includes/images/wizard/fondo-centro.jpg);
+	background-repeat: no-repeat;
+}
+/*----------*/
+/*Origen de los Cambios: \Web.Procurement\Includes\styles\wsintegracionla\invitado.css*/
+#destacadohome .tituloseccion
+{
+	font-size: 13px;
+	color: #1A3886;
+}
+#destacadohome .titulonoticia
+{
+	font-size: 12px;
+	color: #1A3886;
+}
+#destacadohome .titulodestcadoinvitado
+{
+	font-size: 12px;
+	color: #F26201;
+}
+#destacadohome .titulonoticiabajada
+{
+	font-size: 11px;
+	color: #505050;
+}
+#destacadohome .titulonoticiaadicional
+{
+	font-size: 11px;
+	color: #7f7f7f;
+}
+a.enlacenoticia:link
+{
+	font-size: 11px;
+	text-decoration: underline;
+	color: #1A3886;
+}
+a.enlacenoticia:visited
+{
+	font-size: 11px;
+	text-decoration: underline;
+	color: #1A3886;
+}
+a.enlacenoticia:hover
+{
+	font-size: 11px;
+	color: #ffffff;
+	background-color: #0066CC;
+}
+
+/*Origen de los Cambios: \Web.Procurement\Includes\styles\wsintegracionla\chilecompra.css*/
+#gralContenedorAP
+{
+	width: 577px;
+	margin: 0;
+	background-color: #FFFFFF;
+	text-align: left;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+}
+
+/*----------*/
+/**Cambias para la pagina de Busqueda de Autorizaciones/
+/*Fecha: 23 de Abril 2008*/
+.cssGrillaAutorizaciones
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal;
+	font-size: 12px;
+	background-color: #F4F7FC;
+	border-style: None;
+	padding: 0px;
+	margin: 0px;
+	border-left: 1px inset;
+	border-right: 0px inset;
+	border-top: 0px outset;
+	border-bottom: 1px inset;
+}
+.cssGrillaAutorizaciones2
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal;
+	font-size: 12px;
+	background-color: #ffffff;
+	border-style: None;
+	padding: 0px;
+	margin: 0px;
+	border-left: 1px inset;
+	border-right: 0px inset;
+	border-top: 0px outset;
+	border-bottom: 1px inset;
+}
+
+/*----------*/
+.TitulosPasos-OC /*titulos de las disitintas paginas de OC*/
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 18px;
+	color: #1D4D9E;
+	padding-bottom: 10px; /*da espacios*/
+	font-weight: bold;
+}
+.Mensajes_advertencias /*Mensajes de advertencias varios, por ejemplo de cuando no hay archivos asociados*/
+{
+	background-color: #FFE5E5;
+	border-bottom: 1px outset;
+	border-bottom-color: #FF4B4B;
+	border-top: 1px outset;
+	border-top-color: #FF4B4B;
+}
+/*----------*/
+.TitulosPasos-Licitacion /*titulos de las disitintas paginas de Licitacion*/
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 18px;
+	color: #1D4D9E;
+	padding-bottom: 10px; /*da espacios*/
+	font-weight: bold;
+}
+.SubTitulosPasos-Licictacion /*titulos de las disitintas paginas de Licitacion*/
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 16px;
+	color: #1D4D9E;
+	padding-bottom: 6px; /*da espacios*/
+	font-weight: bold;
+}
+.SubSubTitulosPasos-Licictacion /*titulos de las disitintas paginas de Licitacion*/
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 15px;
+	color: #1D4D9E;
+	padding-bottom: 6px; /*da espacios*/
+	font-weight: normal;
+}
+/*----------*/
+/**Tip´s de ayuda*/
+.cssHelpDiv
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	color: #000000; /*#1D4D9E;*/
+	border: solid 1px #000000;
+	background-color: #F7F4C2;
+	padding: 2px;
+	font-size: 10px;
+}
+/*----------*/
+
+/*Agregado por Seidor/Juan Licanqueo 23.04.2012 - Task9313 */
+ .cssBorderAcquisition {
+    border: solid 1px #B2B2B2;
+    border-radius: 8px 8px 8px 8px;
+    -moz-border-radius: 8px 8px 8px 8px;
+    -webkit-border-radius:  8px 8px 8px 8px;
+    -khtml-border-radius: 8px 8px 8px 8px;
+    background-color: #F2F2F2;
+    padding-top:10px;
+    padding-bottom:8px;
+    padding-right:1px;
+    padding-left:1px;
+}
+/*Fin por Seidor/Juan Licanqueo 23.04.2012 - Task9313 */
+.cssBorderLeftAcquisition
+{
+	background-image: url(../../Includes/images/Wizard/BordesAdquisicion/izquierda.jpg);
+	background-repeat: no-repeat;
+}
+
+.cssBorderRightAcquisition
+{
+	background-image: url(../../Includes/images/Wizard/BordesAdquisicion/derecha.jpg);
+	background-repeat: no-repeat;
+}
+
+.cssBorderCenterAcquition
+{
+	background-image: url(../../Includes/images/Wizard/BordesAdquisicion/centro.jpg);
+	background-repeat: repeat-x;
+}
+/*--Algunos Faltantes--*/
+.SearchGoodAndService-Letra
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 13px;
+}
+.tipodeletra11
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-size: 11px;
+}
+/*----*/
+.grdSuperAdministrador_tr_encabe_10 tr
+{
+	background-color: #12319E;
+	font-weight: bold;
+	color: #FFFFFF;
+	border-top: 0 none;
+	border-right: 1px solid #C9C9C9;
+	font-size: 12px;
+	background-image: url(images/menu_fondo.gif);
+}
+
+.grdSuperAdministrador_tr_encabe_10
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	background-color: #12319E;
+	font-weight: bold;
+	color: #FFFFFF;
+	border-top: 0 none;
+	border-right: 1px solid #C9C9C9;
+	font-size: 12px;
+	background-image: url(images/menu_fondo.gif);
+}
+.grdSuperAdministrador_tr_encabe_10
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+	background-color: #12319E;
+	font-weight: bold;
+	color: #FFFFFF;
+	border-top: 0 none;
+	border-right: 1px solid #C9C9C9;
+	font-size: 12px;
+	background-image: url(images/menu_fondo.gif);
+}
+
+.cssGridAdvancedSearch_10
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal;
+	font-size: 12px;
+	background-color: #F4F7FC;
+	border-style: None;
+	padding: 0px;
+	margin: 0px;
+	border-left: 1px inset;
+	border-right: 0px inset;
+	border-top: 0px outset;
+	border-bottom: 1px inset;
+}
+.cssGridAdvancedSearch2_10
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal;
+	font-size: 12px;
+	background-color: #ffffff;
+	border-style: None;
+	padding: 0px;
+	margin: 0px;
+	border-left: 1px inset;
+	border-right: 0px inset;
+	border-top: 0px outset;
+	border-bottom: 1px inset;
+}
+
+.cssLabelImageButton
+{
+	/*font-weight:  bold; */
+	font-size: 9px;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans; /*vertical-align:top; 	text-align:center; */
+}
+
+.cssSubTableInGridView
+{
+	border-right: 0px solid #C9C9C9;
+	border-top: 0px solid #C9C9C9;
+}
+
+.cssBorderUP
+{
+	border-right: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+	border-left: 1px solid #C9C9C9;
+}
+
+.cssBorderDown
+{
+	border-top: 1px solid #C9C9C9;
+}
+
+.cssFwkItemStyle2
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #F2F2F2 /*#F4F7FC*/;
+	color: #000000;
+	font-size: 12px;
+}
+
+.cssFwkItemStyle2 td
+{
+	/*Border-Style: None;*/
+	border-color: #404040; /*padding: 1pt 5pt 1pt 5pt;*/
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	vertical-align: top;
+	border-right: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+	margin-left: 20px; /*text-align:center;*/
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: AlternatingItemStyle
+DESCRIPCIÓN: Se utilizan en las grillas
+AUTOR: Verme, David
+FECHA: 16/04/2007
+*/
+.cssFwkAlternatingItemStyle2
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFFF;
+	color: #000000;
+	font-size: 12px;
+}
+
+.cssFwkAlternatingItemStyle2 td
+{
+	/*Border-Style: None;*/
+	border-color: #404040; /*padding: 1pt 5pt 1pt 5pt;*/
+	vertical-align: top;
+	border-right: 1px solid #C9C9C9;
+	border-top: 1px solid #C9C9C9;
+	margin-left: 20px; /*text-align:center;*/
+}
+
+.cssButtonInform
+{
+	cursor: pointer;
+	border-style: none;
+	width: 150px;
+	height: 41px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/Inform/boton-buscarproveedor3.jpg);
+	background-repeat: repeat-x;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 11px;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssButtonInformSave
+{
+	cursor: pointer;
+	border-style: none;
+	width: 108px;
+	height: 41px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/Inform/botonSubirAnexos2.jpg);
+	background-repeat: repeat-x;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 11px;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.cssButtonInformNext
+{
+	cursor: pointer;
+	border-style: none;
+	width: 123px;
+	height: 41px;
+	background-color: transparent;
+	background-image: url(../../Includes/Images/Inform/botonSiguiente2.jpg);
+	background-repeat: repeat-x;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 11px;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+
+
+.cssLabelSilver
+{
+	font-size: 12px;
+	font-weight: bold;
+	color: #B2B2B2;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+}
+
+
+.cssFondoHelpInform
+{
+	background-color: #F5F5F5; /*Silver;*/
+}
+
+.cssBackgroundSilver
+{
+	background-color: #F5F5F5; /*Silver;*/
+}
+
+.cssLabelsMessageSave
+{
+	/*font-weight: bold; 	font-size: 13px;  	color: #1D4D9E; 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif,Verdana,  Sans; 	text-align: left; 	background-color:Transparent;*/
+	font-size: 15px;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+}
+
+.cssLabelsInformar
+{
+	font-size: 13px;
+	font-weight: bold;
+	color: #FF6633;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+}
+
+.cssLabelsLinkInformar
+{
+	font-size: 13px;
+	font-weight: bold;
+	color: #0099FF;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+}
+
+
+.cajaRedonda
+{
+	background-color: #F5F5F5;
+	width: 100%;
+	margin: auto;
+}
+
+.contenido
+{
+	padding: 20px;
+	margin: auto;
+}
+
+
+
+.superiorIz
+{
+	background: url(../images/inform/SuperiorIzquierdo.gif) no-repeat top left;
+	width: 12px;
+	height: 12px;
+}
+
+
+.superiorDer
+{
+	background: url(../images/inform/SuperiorDerecho.gif) no-repeat top right;
+	width: 100%;
+	height: 12px;
+}
+
+.inferiorIz
+{
+	background: url(../images/inform/InferiorIzquierdo.gif) no-repeat top left;
+	width: 12px;
+	height: 12px;
+}
+
+
+.inferiorDer
+{
+	background: url(../images/inform/InferiorDerecho.gif) no-repeat top right;
+	width: 100%;
+	height: 12px;
+}
+
+.vineta
+{
+	font-family: Wingdings 3;
+	color: #FF6633;
+}
+
+
+/*este es para el nombre del proveedor*/
+.csslblNameInformar
+{
+	color: #3A00FF;
+	font-family: "Trebuchet MS";
+	font-size: 15px;
+}
+
+/*este para el campo de texto*/
+.cssTxtInformar
+{
+	border: #809DB9 1px solid;
+	height: 20px;
+	width: 128px;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+}
+
+.cssLabelsDataInformar
+{
+	font-size: 15px;
+	font-weight: bold;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+}
+
+.cssTableMsj
+{
+	/*border-style:dashed;*/
+	border: #FF6633 2px dashed;
+}
+
+
+/*--------------------------------------------------------------------*/
+
+/* ========================================================= */
+
+/* --------------- SERVICIO CONTRATOS        --------------- */
+
+/* ========================================================= */
+
+.texto13Td
+{
+	vertical-align: middle;
+	border-top: 1px solid #C9C9C9;
+	width: 288px;
+}
+.bgTr
+{
+	background-color: #F2F2F2;
+}
+.lineaSupInf
+{
+	height: 35px;
+	background-color: #F2F2F2;
+	border-top: 1px solid #C9C9C9;
+	border-bottom: 1px solid #C9C9C9;
+}
+
+.cssFwkButtonLargeVerde
+{
+	cursor: hand;
+	border-style: none;
+	width: 160px;
+	height: 25px;
+	background-color: transparent;
+	background-image: url(../Images/button_extra_large_xl.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 10pt;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.celdas
+{
+	width: 120px;
+}
+.tablaResumen
+{
+	border: 1px solid #012B5D;
+}
+.rows
+{
+	border-bottom: 1px solid #012B5D;
+}
+.rowsConborde
+{
+	border-bottom: 1px solid #012B5D;
+	border-right: 1px solid #012B5D;
+}
+.cssGrillaAutorizaciones
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	font-weight: normal;
+	font-size: 12px;
+	background-color: #F4F7FC;
+	border-style: None;
+	padding: 0px;
+	margin: 0px;
+	border-left: 1px inset;
+	border-right: 0px inset;
+	border-top: 0px outset;
+	border-bottom: 1px inset;
+}
+.cssLabelImageButton
+{
+	/*font-weight:  bold; */
+	font-size: 9px;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans; /*vertical-align:top; 	text-align:center; */
+}
+
+.cssCheckBoxList
+{	
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif,Verdana,  Sans;
+	font-weight:normal;
+	font-size: 13px;
+ 	border-style: none;
+ 	margin-left: 11px;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: RowStyle
+DESCRIPCIÓN: Se utiliza en la grilla de la evaluacion del proveedor
+			cuando la licitación esta en estado cerrado
+AUTOR: Alejandro Miranda Ho
+FECHA: 08/02/2010
+*/
+.cssFwkRowStyle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #F4F7FC;
+	color: #000000;
+	font-size: 12px;
+}
+
+.cssFwkRowStyle td
+{
+	border-color: #404040;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	vertical-align: top;
+	border: 1px solid #FFFFFF;
+	text-align: left;
+}
+
+
+/* ---------------------everis 02-2011 Mejora a la sabana-----------------------
+CONTROL A APLICAR: AlternatingRowStyle
+DESCRIPCIÓN: Se utiliza en la grilla de la evaluacion del proveedor
+			cuando la licitación esta en estado cerrado
+AUTOR: Alejandro Miranda Ho
+FECHA: 08/02/2010
+*/
+.cssFwkAlternatingRowStyle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFFF;
+	color: #000000;
+	font-size: 12px;
+}
+
+.cssFwkAlternatingRowStyle td
+{
+	border-color: #404040;
+	vertical-align: top;
+	border: 1px solid #FFFFFF;
+	text-align: left;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: RowStyle
+DESCRIPCIÓN: Se utiliza en la grilla del cuadro de evaluación de ofertas
+			cuando la licitación esta en estado cerrado
+AUTOR: Alejandro Miranda Ho
+FECHA: 08/02/2010
+*/
+.cssFwkRowEvaluationStyle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #F4F7FC;
+	color: #000000;
+	font-size: 12px;
+}
+
+.cssFwkRowEvaluationStyle td
+{
+	border-color: #404040;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	vertical-align: top;
+	border-top: 1px solid #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+	border-left: none;
+	border-right: none;
+	text-align: left;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: AlternatingRowStyle
+DESCRIPCIÓN: Se utiliza en la grilla del cuadro de evaluación de ofertas
+			cuando la licitación esta en estado cerrado
+AUTOR: Alejandro Miranda Ho
+FECHA: 08/02/2010
+*/
+.cssFwkAlternatingRowEvaluationStyle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	background-color: #FFFFFF;
+	color: #000000;
+	font-size: 12px;
+}
+
+.cssFwkAlternatingRowEvaluationStyle td
+{
+	border-color: #404040;
+	vertical-align: top;
+	border-top: 1px solid #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+	border-left: none;
+	border-right: none;
+	text-align: left;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: blanket
+DESCRIPCIÓN: es el estilo que utilizara la capa inferior del popup
+AUTOR: Alejandro Miranda Ho
+FECHA: 18/02/2010
+*/
+
+#blanket
+{
+	background-color: #111;
+	opacity: 0.65;
+	filter: alpha(opacity=65);
+	position: absolute;
+	z-index: 9001;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+}
+
+/* -----------------------------------------------------
+CONTROL A APLICAR: popUpDiv
+DESCRIPCIÓN: es el estilo que utilizara la capa del popup
+AUTOR: Alejandro Miranda Ho
+FECHA: 18/02/2010
+*/
+#popUpDiv
+{
+	position: absolute;
+	background-color: #eeeeee;
+	width: 500px;
+	height: 300px;
+	z-index: 9002;
+}
+
+
+/* -----------------------------------------------------
+DESCRIPCIÓN: es el estilo que utilizara para los titulos 
+			 con numeros de la sabana
+AUTOR: Alejandro Miranda Ho
+FECHA: 25/02/2010
+*/
+.cssDetailAdquisitionSubtitle
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-size: 13px;
+	color: #1D4D9E;
+	margin: 5px 0;
+	font-weight: bold;
+}
+
+
+.clsFormDetailAdquisition
+{
+	font-size: 12px;
+	color: #484848;
+	padding-left: 10px;
+	padding-right: 20px;
+	/*background-color: #F2F2F2;*/
+}
+
+.TableDetailAdquisition
+{ 
+	background-color: #f2f2f2; 
+	padding: 10px; 
+	border-left: 1px solid #DADADA; 
+	border-right: 1px solid #DADADA; 
+	font-size: 13px; 
+	color: #1D4D9E; }
+
+/*----------------------- LIght Box-----------------------------*/
+
+#contenedor_00{
+	   width:520px; height:520px;
+	  
+ background:#FFF;
+ 	   -webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+padding:15px;
+	}
+	
+.caja_preguntas{
+	width:520px;
+	min-height:55px;
+}
+.separacion{
+	width:520px;
+	height:1px;
+	background:url(../images/linea.png);
+}
+.num00{
+	font-size:12px;
+	color:#BF0000;
+	font-weight:bolder;
+}
+.num01{
+	font-size:12px;
+	color:#003366;
+	font-weight:bolder;
+}
+.texto01{
+	color:#333333;
+	font-size:16px;
+	font-weight:bolder;
+}
+.texto05{
+	font-size:12px;
+	color:#666666;
+	font-weight:bolder;
+}
+
+/* ---------------------Fin everis 02-2011 Mejora a la sabana-----------------------*/
+
+.error {
+    border: 1px solid;
+    margin: 10px 0px;
+    padding:15px 10px 15px 50px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    color: #D8000C;
+    background-color: #FFBABA;
+    background-image: url('../images/cancel.png');
+    font-family: Verdana;
+    font-size: 15px;
+    
+}
+
+.reloadBullet
+{
+	display: inline-block;
+	width:21px;
+	height: 22px;  
+	background-image: url('../../Captcha/img/actualizar.png');
+	background-repeat: no-repeat;
+	background-position: 0 0;   
+	bottom: -4px; 
+}
+
+
+
+
+.alertaModal
+{
+    position: fixed; 
+    width: 350px;
+    left:37%;
+    top:25%; 
+    height: 230px; 
+    font-family:Trebuchet MS ; 
+    font-size: 13px; 
+    text-align:justify;
+    font-weight: normal;  
+    background-color: #FAFAFA; 
+    color: #000000; 
+    z-index:10001;
+    text-align:justify;
+    -moz-border-radius: 10px; 
+    -webkit-border-radius: 10px; 
+     border-radius: 10px;
+    -khtml-border-radius: 10px;
+}
+
+.alertaModalFechas {
+	position: fixed;
+	width: 350px;
+	left: 37%;
+	top: 25%;
+	height: 220px;
+	font-family: Trebuchet MS;
+	font-size: 13px;
+	text-align: justify;
+	font-weight: normal;
+	background-color: #FAFAFA;
+	color: #000000;
+	z-index: 10001;
+	text-align: justify;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 3px;
+	-khtml-border-radius: 3px;
+}
+
+
+
+/*Nuevo*/
+/*
+.cssLabelsDataFA
+{
+	font-size: 13px;
+	font-weight: bold;
+	color: #1D4D9E;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	vertical-align: top;
+	width: 170px;
+}*/
+.cssLabelsDataFA-Titulo
+{
+    font-size: 17px;
+}
+
+/*Nuevo*/
+.cssDataItemFA span
+{
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif, Verdana, Sans;
+	font-weight: lighter;
+	font-size: 10.5pt;
+	color: #000000;
+	font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif,Verdana, Sans;
+	text-align: left;
+}
+
+.cssDataItem-FA-subtitulo
+{
+  font-family: Verdana, Arial, Helvetica, sans-serif; 
+  font-size: 10pt; 
+}
+
+.cssDataItem-FA
+{
+	font-weight:normal;
+	font-size: 10pt;
+	color: #000000;
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	text-align: left;
+	text-transform:uppercase;
+}
+.margin-top-md 
+{
+    margin-top: 20px;
+    }
+.btn-pri 
+{
+    background-color:#0667b4;
+    color:White;
+    }
+.btn-pri:hover
+{
+    background-color:#034C87;
+    color:White;
+    }
+.btn-pri, .btn-default 
+{
+    border-radius:0;
+    }
+    
+[class^="icon-"], [class*=" icon-"] {
+    height: 32px;
+    width: 32px;
+    display: inline-block; 
+    fill: currentColor; 
+}
+#modalConfirm .modal-backdrop 
+{
+    display: none;
+    }
+#modalConfirm .modal-content
+{
+    box-shadow: none;
+    }
+    

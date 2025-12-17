@@ -1,3 +1,4 @@
+import argparse
 import tkinter as tk
 from tkinter import ttk, messagebox
 import os
@@ -18,11 +19,16 @@ import descarga_lici
 import genera_xls_lici
 import genera_ficha_proveedor
 import flujo_licitacion
+import scrape_cuadro
 
 class DescargadorLicitacionesApp:
-    def __init__(self, root):
+    def __init__(self, root, modo="debug"):
         self.root = root
-        self.root.title("Descargador de Licitaciones - MercadoPublico.cl")
+        self.modo = modo or "debug"
+        titulo = "Descargador de Licitaciones - MercadoPublico.cl"
+        if self.modo == "test":
+            titulo += " [TEST]"
+        self.root.title(titulo)
         
         # Configurar ventana para que se vea completa
         self.root.geometry("700x650")
@@ -40,8 +46,16 @@ class DescargadorLicitacionesApp:
         self.token_guardado = False
         self._token_poll_after_id = None
         self._compra_agil_clicked = False
+        self.continuar_sin_login = tk.BooleanVar(value=self.modo == "test")
+        self.test_lici_url_directa = tk.BooleanVar(value=self.modo == "test")
+        self.test_lici_desde_url = tk.BooleanVar(value=False)
+        self.test_lici_url_valor = tk.StringVar(
+            value="https://mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=lMJBTBVx1W3Vzd7cnoBDUw=="
+        )
         
         self.setup_ui()
+        if self.modo == "test":
+            self.status_var.set("Modo test activo: continuar sin login esta habilitado por defecto.")
     
     def centrar_ventana(self):
         """Centra la ventana en la pantalla"""
@@ -129,6 +143,13 @@ class DescargadorLicitacionesApp:
             style='Custom.TButton',
         )
         self.btn_cerrar_navegador.pack(anchor='w', pady=(10, 0))
+
+        self.chk_sin_login = ttk.Checkbutton(
+            nav_frame,
+            text="Continuar sin login (solo pruebas, no captura token)",
+            variable=self.continuar_sin_login
+        )
+        self.chk_sin_login.pack(anchor='w', pady=(10, 0))
         
         # Separador
         separator2 = ttk.Separator(main_frame, orient='horizontal')
@@ -231,12 +252,34 @@ class DescargadorLicitacionesApp:
 
         self.btn_test_flujo_lici = ttk.Button(
             buttons_frame,
-            text="🧪 Testear flujo licitación",
+            text="🧪 Testear descarga adjuntos (licitación)",
             command=self.testear_flujo_licitacion,
             state='disabled',
             style='Custom.TButton'
         )
         self.btn_test_flujo_lici.pack(side='left', padx=(15, 0))
+
+        self.chk_test_lici_directo = ttk.Checkbutton(
+            buttons_frame,
+            text="Usar enlace directo (evita login)",
+            variable=self.test_lici_url_directa
+        )
+        self.chk_test_lici_directo.pack(side='left', padx=(10, 0))
+
+        self.chk_test_lici_desde_url = ttk.Checkbutton(
+            buttons_frame,
+            text="Testear licitación desde URL",
+            variable=self.test_lici_desde_url
+        )
+        self.chk_test_lici_desde_url.pack(side='left', padx=(10, 0))
+
+        self.entry_test_lici_url = ttk.Entry(
+            action_frame,
+            textvariable=self.test_lici_url_valor,
+            font=('Segoe UI', 9),
+            width=65
+        )
+        self.entry_test_lici_url.pack(anchor='w', pady=(6, 0))
         
         # Status bar
         self.status_var = tk.StringVar(value="Listo - Inicie el navegador para comenzar")
@@ -288,6 +331,12 @@ class DescargadorLicitacionesApp:
             self.btn_cerrar_navegador.configure(state='normal')
             
             self.status_var.set("Navegador iniciado - Ingrese a su cuenta y presione 'Continuar'")
+
+            # Si el usuario marcó continuar sin login, habilitar acciones de inmediato
+            if self.continuar_sin_login.get():
+                print("[DEBUG] iniciar_navegador: modo sin login activo, habilitando acciones sin token")
+                self._detener_poll_token()
+                self._habilitar_acciones_sin_login()
             
             # Iniciar monitoreo automático del token de Compra Ágil
             print("[DEBUG] iniciar_navegador: iniciando monitoreo automático de token")
@@ -335,6 +384,13 @@ class DescargadorLicitacionesApp:
         if not self.navegador_iniciado:
             print("[DEBUG] continuar_proceso: navegador no iniciado")
             messagebox.showwarning("Advertencia", "Debe iniciar el navegador primero")
+            return
+
+        if self.continuar_sin_login.get():
+            # Modo rápido: no esperamos token ni login
+            print("[DEBUG] continuar_proceso: modo 'continuar sin login' activado, se omite captura de token")
+            self._detener_poll_token()
+            self._habilitar_acciones_sin_login()
             return
         
         # Intentar una captura final del token si aún no se ha guardado
@@ -664,6 +720,9 @@ class DescargadorLicitacionesApp:
         if not self.driver:
             print("[DEBUG] _iniciar_monitoreo_token_automatico: no hay driver, no se programa monitoreo")
             return
+        if self.continuar_sin_login.get():
+            print("[DEBUG] _iniciar_monitoreo_token_automatico: modo sin login, no se programa monitoreo de token")
+            return
         self.token_guardado = False
         print("[DEBUG] _iniciar_monitoreo_token_automatico: programando primer poll de token en 3000ms")
         self._programar_poll_token(3000)
@@ -688,6 +747,9 @@ class DescargadorLicitacionesApp:
         """Intento periódico de captura automática del token mientras el navegador está abierto."""
         if not self.driver or self.token_guardado:
             print(f"[DEBUG] _poll_token_automatico: cancelado (driver={bool(self.driver)}, token_guardado={self.token_guardado})")
+            return
+        if self.continuar_sin_login.get():
+            print("[DEBUG] _poll_token_automatico: modo sin login, se detiene el monitoreo de token")
             return
 
         print("[DEBUG] _poll_token_automatico: intentando captura automática de token...")
@@ -763,6 +825,24 @@ class DescargadorLicitacionesApp:
     # =========================
     # Sesión / cookies
     # =========================
+    def _habilitar_acciones_sin_login(self):
+        self.token_guardado = False
+        self.status_var.set("Modo sin login: acciones habilitadas (token no capturado)")
+        self.btn_flujo_completo.configure(state='normal')
+        self.btn_descargar.configure(state='normal')
+        self.btn_generar_excel.configure(state='normal')
+        self.btn_ficha_proveedor.configure(state='normal')
+        self.btn_test_flujo_lici.configure(state='normal' if self.tipo_proceso.get() == "licitacion" else 'disabled')
+        self.btn_continuar.configure(state='disabled')
+
+    def _detener_poll_token(self):
+        if self._token_poll_after_id is not None:
+            try:
+                self.root.after_cancel(self._token_poll_after_id)
+            except Exception:
+                pass
+            self._token_poll_after_id = None
+
     def _ruta_sesion_dir(self):
         ruta = os.path.join(os.getcwd(), "sesion")
         os.makedirs(ruta, exist_ok=True)
@@ -995,40 +1075,73 @@ class DescargadorLicitacionesApp:
         thread.start()
 
     def testear_flujo_licitacion(self):
-        """Abre la licitación, navega al Cuadro de Ofertas y abre Anexos Administrativos (prueba)."""
-        if not self.validar_codigo():
-            return
-        if self.tipo_proceso.get() != "licitacion":
-            messagebox.showwarning("Solo licitación", "Esta prueba aplica solo para licitación.")
-            return
+        """Descarga adjuntos de licitación usando la lógica de scrape_cuadro.py (debug)."""
         if not self.navegador_iniciado or not self.driver:
             messagebox.showwarning("Advertencia", "Debe iniciar el navegador primero")
             return
 
+        # En debug, permitir probar con URL directa sin exigir código.
+        if not self.test_lici_desde_url.get() and self.tipo_proceso.get() != "licitacion":
+            messagebox.showwarning("Solo licitación", "Seleccione 'Licitación' para testear la descarga.")
+            return
+        if not self.test_lici_desde_url.get() and not self.validar_codigo():
+            return
+
         codigo = self.codigo.get().strip()
-        self.status_var.set(f"Testeando flujo licitación: {codigo}...")
+        self.status_var.set(f"Testeando descarga de adjuntos: {codigo or 'URL directa'}...")
         self._set_estado_botones_accion('disabled')
 
         def proceso_test():
             try:
-                resultado = flujo_licitacion.test_flujo_licitacion(codigo, self.driver)
-                ok = bool(resultado.get("ok"))
-                descargados = sum(
-                    (p.get("total_descargados") or 0) for p in resultado.get("proveedores", [])
+                url_directa = None
+                if self.test_lici_desde_url.get():
+                    url_directa = self.test_lici_url_valor.get().strip()
+                    if not url_directa:
+                        messagebox.showwarning(
+                            "URL requerida",
+                            "Ingrese la URL de la licitación a probar o desmarque la opción 'Testear licitación desde URL'."
+                        )
+                        return
+                elif self.test_lici_url_directa.get():
+                    url_directa = "https://mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=JjO5zKqb+2R21IMjm8Gxkg=="
+
+                # Construir URL si viene de código
+                if not url_directa:
+                    url_directa = flujo_licitacion.obtener_url_licitacion(codigo, self.driver)
+                    if not url_directa:
+                        messagebox.showerror(
+                            "No se encontró licitación",
+                            "No se pudo obtener la URL de la licitación desde el código ingresado."
+                        )
+                        self.status_var.set("No se pudo obtener URL de licitación")
+                        return
+
+                destino = os.path.join("Descargas", "Licitaciones", codigo or "sin_codigo")
+                # Descargar usando el mismo flujo que scrape_cuadro.py, pero guardando en la estructura de Descargas/Licitaciones/{codigo}
+                resultado = scrape_cuadro.descargar_adjuntos_desde_url(
+                    url_directa,
+                    self.driver,
+                    codigo=codigo or None,
+                    download_dir=destino
                 )
+                ok = bool(resultado.get("ok"))
+                descargados = resultado.get("descargados", 0)
+                carpeta_destino = resultado.get("download_dir", "adjuntos")
                 if ok:
                     messagebox.showinfo(
                         "Test licitación",
-                        f"Se abrió la licitación, el Cuadro de Ofertas y se descargaron anexos.\n\n"
-                        f"Archivos descargados: {descargados}"
+                        f"Descarga de adjuntos completada.\n\n"
+                        f"Archivos descargados: {descargados}\n"
+                        f"Carpeta: {carpeta_destino}"
                     )
-                    self.status_var.set(f"Test licitación OK para {codigo}")
+                    self.status_var.set("Test licitación OK")
                 else:
+                    errores = "\n".join(resultado.get("errores") or [])
                     messagebox.showerror(
                         "Test licitación",
-                        "No se pudo completar el flujo de anexos. Revise consola/log."
+                        f"No se pudieron descargar los adjuntos.\n{errores}"
                     )
-                    self.status_var.set(f"Fallo test licitación para {codigo}")
+                    self.status_var.set("Fallo test licitación")
             except Exception as e:
                 messagebox.showerror("Error", f"Error en test licitación: {e}")
                 self.status_var.set("Error en test licitación")
@@ -1180,9 +1293,27 @@ class DescargadorLicitacionesApp:
             pass
         self.root.destroy()
 
+def _parse_args():
+    parser = argparse.ArgumentParser(description="Frontend de debug/test para descargas MercadoPublico.")
+    parser.add_argument(
+        "--modo",
+        choices=["debug", "test"],
+        default="debug",
+        help="Selecciona el modo de arranque de la interfaz (debug por defecto).",
+    )
+    parser.add_argument(
+        "--test",
+        action="store_true",
+        help="Atajo para iniciar en modo test (equivalente a --modo test).",
+    )
+    return parser.parse_args()
+
+
 def main():
+    args = _parse_args()
+    modo = "test" if getattr(args, "test", False) else args.modo
     root = tk.Tk()
-    app = DescargadorLicitacionesApp(root)
+    app = DescargadorLicitacionesApp(root, modo=modo)
     root.protocol("WM_DELETE_WINDOW", app.on_closing)
     root.mainloop()
 

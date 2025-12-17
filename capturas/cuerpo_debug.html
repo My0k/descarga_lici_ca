@@ -1,0 +1,558 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head id="Head1"><title>
+
+</title><link type="text/css" rel="Stylesheet" href="../../../Includes/styles/ChileCompra.css">
+    <script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=G-83DNLS44VH&amp;cx=c&amp;gtm=4e5ca1"></script><script type="text/javascript" language="javascript" src="../../../Includes/scripts/chilecompra.js"></script>
+    <script src="../../Includes/scripts/fancybox/v2.1.1/jquery.fancybox.pack.js" type="text/javascript"></script>
+    <link href="../../Includes/scripts/fancybox/v2.1.1/jquery.fancybox.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .disabled
+        {
+            color: Black;
+        }
+    
+    </style>
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-51338325-2"></script>
+    <script src="../../../Includes/scripts/analytics.js" type="text/javascript"></script>
+    <script src="../../../Includes/scripts/hotjar.js" type="text/javascript"></script><script async="" src="//static.hotjar.com/c/hotjar-637179.js?sv=5"></script>
+    <script src="../../../Scripts/jquery-2.1.1.js"></script><script async="" src="https://script.hotjar.com/modules.ce37dfc81afa6fcb9f03.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        
+        function EnvioVariables(rfbCode, bidID, orgCode) {
+            debugger;
+             
+            var winURL = 'https://www.mercadopublico.cl/SuministroGarantia/Home/index';
+
+            var winName = 'MyWindow';
+            var windowoption = '';
+            var params = { 'rfbCode': rfbCode, 'bidID': bidID, 'orgCode': orgCode };
+            var form = document.createElement("form");
+            form.setAttribute("method", "post");
+            form.setAttribute("action", winURL);
+            form.setAttribute("target", winName);
+            for (var i in params) {
+                if (params.hasOwnProperty(i)) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = i;
+                    input.value = params[i];
+                    form.appendChild(input);
+                }
+            }
+            document.body.appendChild(form);
+            window.open('', winName, windowoption);
+            form.target = winName;
+            form.submit();
+            document.body.removeChild(form);
+        }
+
+        function ver_declaracion(rutempresa, licitacion) {
+            var urlFicha = $("#UrlDj").val() + "callback?access_token=tokenPrivado&expires_in=28800&rbhCode=" + licitacion + "&rut=" + rutempresa; 
+            var url = "/Autenticacion/";
+            $.ajax({
+                type: "GET",
+                url: "/Autenticacion/",
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                success: function (result) {
+                    urlFicha = urlFicha.replace("tokenPrivado", result.access_token);
+                },
+                error: function (xhr, status, error) {
+                    alert('Ha ocurrido un error. Favor intente nuevamente.');
+                }
+            });
+
+            window.open(urlFicha, '_blank');
+            return false;
+        }
+
+        function ver_declaracionUTP(rutempresa, licitacion, bid, utp) {
+            var urlFicha = $("#UrlDj").val() + "callback?access_token=tokenPrivado&expires_in=28800&rbhCode=" + licitacion + "&rut=" + rutempresa + "&bidID=" + bid + "&idUTP=" + utp;
+            var url = "/Autenticacion/";
+            $.ajax({
+                type: "GET",
+                url: "/Autenticacion/",
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                success: function (result) {
+                    urlFicha = urlFicha.replace("tokenPrivado", result.access_token);
+                },
+                error: function (xhr, status, error) {
+                    alert('Ha ocurrido un error. Favor intente nuevamente.');
+                }
+            });
+
+            window.open(urlFicha, '_blank');
+            return false;
+        }
+
+        function verFicha(rutProveedor) {
+            
+            var url = "/Autenticacion/Registro";
+            
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                success: function (result) {
+                    urlFicha = 'https://proveedor.mercadopublico.cl/ficha/callback?access_token={0}&rut={1}&expires_in=28800'.format(result.access_token, rutProveedor);
+                    console.log(urlFicha);
+                },
+                error: function (xhr, status, error) {
+                    alert('Ha ocurrido un error. Favor intente nuevamente.');
+                }
+            });
+
+            window.open(urlFicha, '_blank').focus();
+            
+            return false;
+
+        }
+
+        if (!String.prototype.format) {
+            String.prototype.format = function () {
+                var args = arguments;
+                return this.replace(/{(\d+)}/g, function (match, number) {
+                    return typeof args[number] != 'undefined'
+                        ? args[number]
+                        : match
+                        ;
+                });
+            };
+        }
+    </script>
+</head>
+<body marginwidth="0" marginheight="0">
+    <form name="form1" method="post" action="./SupplySummary.aspx?enc=fnEwM7PJyggRzN3VnKHCwwq5Y6AIaSvSiGF6MQ%2b1uHM4DH3qjeRuASZRcyLkVn32D5Y520mouNW42a4fLc1Uv6F8G835rMpOZgd9HMm9Nbet83CeH1Fbnn0%2fdpVrhajfIxoNEMyN8HZN8miGUuSMnLb4Ghh4ryMz0kc0vF4D38gn0ssQF94aXbAcPvH%2fXIX%2bV7h4ZBekLRJopelRdrv0KPN9B6t5w%2ffUcW%2bZHFczIJ7LvsRQqv5MdgFf5ApqENpN" id="form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTU5MTM2MTI1Mw8WBh4LcHJvY2Vzc1R5cGVkHgxTdGF0dXNEb2NUZWMCAR4TVmFsaWRhdGVSZXF1ZXN0TW9kZQIBFgICAw9kFgZmD2QWBmYPZBYCZg9kFgICAQ8PFgIeBFRleHQFElJlc3VtZW4gZGUgb2ZlcnRhc2RkAgIPZBYCZg9kFgICAQ88KwARAwAPFgQeC18hRGF0YUJvdW5kZx4LXyFJdGVtQ291bnQCBWQBEBYJZgIBAgICAwIEAgUCBgIHAggWCTwrAAUBABYCHgpIZWFkZXJUZXh0BQ1SdXQgUHJvdmVlZG9yPCsABQEAFgIfBgUJUHJvdmVlZG9yPCsABQEAFgIfBgUNTm9tYnJlIE9mZXJ0YTwrAAUBABYCHwYFDFRvdGFsIE9mZXJ0YTwrAAUBABYCHwYFBkVzdGFkbzwrAAUBABYEHwYFB1JhbmtpbmceB1Zpc2libGVoPCsABQEAFgQfBgUITmVnb2NpYXIfB2g8KwAFAQAWAh8GBQZBbmV4b3M8KwAFAQAWAh8GBQZBbmV4b3MWCQIGAgYCBgIGAgYCBgIGAgYCBgwUKwAAFgJmD2QWDgIBD2QWFmYPZBYCAgEPDxYKHwMFDDc2LjQzNC4wNzItOB4ORm9udF9VbmRlcmxpbmVoHglGb3JlQ29sb3IKIx4NT25DbGllbnRDbGlja2QeBF8hU0IChEAWBB4EaHJlZgUBIx4Fc3R5bGUFD2N1cnNvcjpkZWZhdWx0O2QCAQ9kFgQCAQ8PFgofAwUOQUxMVFJBQ0sgTFREQS4fCGgfCQojHwpkHwsChEAWBB8MBQEjHw0FD2N1cnNvcjpkZWZhdWx0O2QCAw8PFgIfA2VkZAICD2QWBmYPDxYCHwMFDkFMTFRSQUNLIExUREEuZGQCAQ8PFgQfAwUOQUxMVFJBQ0sgTFREQS4fB2hkZAICDw8WAh8DBQ5BTExUUkFDSyBMVERBLmRkAgMPZBYCAgEPDxYCHwNlZGQCBA9kFgICAQ8PFgIfAwUJUmVjaGF6YWRhZGQCBQ9kFgICAQ8PFgIfA2VkZAIGD2QWBAIBDw8WBB8KBb4DcGFyZW50LkN1ZXJwby5sb2NhdGlvbj0nUHJvY2Vzb05lZ29jaWFjaW9uLmFzcHg/ZW5jPVlFQ25LdmJNeWkzOW9QQUg5NDNqV21zaEJpa2dlSGZFek94NHdoemQxWHJnR2UxdUprOVp1VzhaMTY2dnVIcm1pJTJienNVRUs1M2hFY0tibUV0TzJ0d3FRWTdjenJzRlpnYXljaHJWNzNzN3FzRGdIaGp6OE85SmElMmJ0SWRSQ3FOblpOWlhEeUhoaXliaGhqRmdzOWtDM0FKcUczWnlpekNBUHVwSlA0U2owbjViczBEVERhSVNQWDFxTVolMmZJN0hhZHJPVzk3YWRoN2VSOTF6UVQlMmYzakFJUG9XciUyZkdBJTJiV3VhdVElMmZhJTJmajRqYzg0eW9PYUklMmZHREtUbEtMR1d3Q256Z2ZONGJNSkklMmY1RUNZcXlnU2xXa0UlMmZiSU5EU3ZQTE1kWFdUeUxyczBkdWV2MGtjQlg5JTJmVER2JTJmT0ZTTXR4ZnZNJTJicTJldiUyYmE0WGpiTEtZUTJqSDRRRmtFUSUzZCUzZCc7IHJldHVybiBmYWxzZTsfB2gWAh8NBQxjdXJzb3I6aGFuZDtkAgMPDxYCHwdoZGQCBw9kFgICAQ8PFgIfAwUTMDUtMTItMjAyNSAxMDo1NzoyOWRkAggPZBYkAgEPDxYCHwdnFgIeB29uY2xpY2sFMXZlcl9kZWNsYXJhY2lvbignNzYuNDM0LjA3Mi04JyAsICc1MDY3LTI0My1MMTI1JylkAgMPDxYEHgdUb29sVGlwBRZJbmZvcm1hY2nDs24gUHJvdmVlZG9yHwdnFgIfDgUndmVyRmljaGEoJzc2LjQzNC4wNzItOCcpOyByZXR1cm4gZmFsc2U7ZAIHDw8WBB8PBRZBbmV4b3MgQWRtaW5pc3RyYXRpdm9zHwdoZGQCCQ8PFgQfDwUQQW5leG9zIFTDqWNuaWNvcx8HaGRkAgsPDxYEHw8FGUFuZXhvcyBUw6ljbmljb3MgUMO6YmxpY28fB2hkZAINDw8WBB8PBRhBbmV4b3MgVMOpY25pY29zIFByaXZhZG8fB2hkZAIPDw8WBB8PBRJBbmV4b3MgZWNvbsOzbWljb3MfB2hkZAIRDw8WBh8PBRlWZXIgQ29tcHJvYmFudGUgZGUgb2ZlcnRhHwoFrAJvcGVuUG9wVXAoJy4uLy4uLy4uLy4uL2JpZC9tb2R1bGVzL2JpZC9TdXBwb3J0aW5nT2ZTdXBwbHkuYXNweD9lbmM9UDRiWkFsU3d5SGUlMmZLRDNRRlVBOHZXdTZKeklCR0x0WXFMNm1YUWU5UnVxSWNXUEYlMmJpVlJjRkIxSyUyYnJoVnhUajA0VVFtNHclMmJlamFuQlNKYmpUTXJwek40cFJBdURmSWtCYVExY3RvYU1Wb0V6MnklMmZydkFxRlRaclBZQzN0YUIlMmZWNUFlcDYwVzFESkNRdUdaZDM4WjFwdE5QUlpid2tSd0p4bnhRN1dCU21zbHpycCUyZjJxc21sYng0TVc0RnB1RFAnLCA2MjAsIDYwMCk7IHJldHVybiBmYWxzZTsfB2gWAh8NBQxjdXJzb3I6aGFuZDtkAhUPDxYGHw8FM0kxOG4gZW50cnkgbm90IGZvdW5kOiBPcGVuaW5nU3VwcGx5LmRpc2FibGUuVG9vbFRpcB4HRW5hYmxlZGgfB2hkZAIXDw8WAh8HZ2RkAhkPDxYCHwMFFkluZm9ybWFjacOzbiBQcm92ZWVkb3JkZAIdDw8WBB8DBRZBbmV4b3MgQWRtaW5pc3RyYXRpdm9zHwdoZGQCHw8PFgQfAwUQQW5leG9zIFTDqWNuaWNvcx8HaGRkAiEPDxYEHwMFGkFuZXhvcyBUw6ljbmljb3MgUMO6YmxpY29zHwdoZGQCIw8PFgQfAwUZQW5leG9zIFTDqWNuaWNvcyBQcml2YWRvcx8HaGRkAiUPDxYEHwMFEUFuZXhvcyBFY29uw7NtaWNvHwdoZGQCJw8PFgQfAwUVQ29tcHJvYmFudGUgZGUgb2ZlcnRhHwdoZGQCKQ8PFgIfB2hkZAIKD2QWBAIBDw8WAh8DBQg3NzgzMTM4M2RkAgMPDxYCHwMFBzEzOTQ5NzdkZAILD2QWAgIBDw8WAh8DBQNDTFBkZAICD2QWFmYPZBYCAgEPDxYCHwMFDDc2LjY4MS41NjEtOBYCHw4F8QFvcGVuUG9wVXAoJy9CSUQvTW9kdWxlcy9Qb3BVcHMvSW5mb3JtYXRpb25Qcm92aWRlci5hc3B4P2VuYz0zc2UzR0EwVDMwdVAwekJpQ04xaXNVMFFpV2Z4VDJwVHpuUHhXOWF5NGclMmJkZk1hVkkzSFlnYkxTeThteWEzdW1MYVZLaU92RWV6aXpGSksyZ0xwJTJidnBpUVBQRWVsbWc2QTE2SVNBSkplMU04WTY2dW1MQTJ3ZHVtaHJOJTJicFVUblR0JTJmRG1MTlFVNGJ4aDA5YzZqMGU3USUzZCUzZCcpOyByZXR1cm4gZmFsc2U7ZAIBD2QWBAIBDw8WAh8DBRJDaGlsZUNvbXByYUV4cHJlc3MWAh8OBfcBb3BlblBvcFVwKCcvQklEL01vZHVsZXMvUG9wVXBzL0luZm9ybWF0aW9uUHJvdmlkZXIuYXNweD9lbmM9U2R3d1pXUzBKTkIlMmZsaHNhQ0g3ZG0lMmJqVm0lMmJKZCUyZkpnQVclMmYwa2lpUDY4b0hqbVlZZlJvNlppRXNzTnhoNExteWRIMVVSUGNoNjZPNmlXWWEzNjdKNTYycEhENUM4UGNjWHFHeVQ5S29Cc3g2WUh4b0szTlF3a0hESGJXUm5UQldReSUyZnhScUtHbSUyZmN6NEJ6RVpER0FJOFElM2QlM2QnKTsgcmV0dXJuIGZhbHNlO2QCAw8PFgIfA2VkZAICD2QWBmYPDxYCHwMFC1NFR1VOIEFORVhPZGQCAQ8PFgQfAwULU0VHVU4gQU5FWE8fB2hkZAICDw8WAh8DBQtTRUdVTiBBTkVYT2RkAgMPZBYCAgEPDxYCHwMFCyQgMS41ODAuMDAwZGQCBA9kFgICAQ8PFgIfAwUIQWNlcHRhZGFkZAIFD2QWAgIBDw8WAh8DZWRkAgYPZBYEAgEPDxYEHwoFugNwYXJlbnQuQ3VlcnBvLmxvY2F0aW9uPSdQcm9jZXNvTmVnb2NpYWNpb24uYXNweD9lbmM9ZENTJTJmVWRUWkRyckxNTjlzVmVDQ0MzN1VITEdQMEQ1dHdqdHdtYU9xNUNneW5ycXdpNk9BOEtmQWNGSWhLUmt6RXoyejU0QThTemtzWmMwYTdqZVdDUWxZZ0x3VzNHMjVDTkUlMmJBN3BEMmxpUERWZ2Q0ZU16dVJReFZMT2VPMHNQUHIxUHlwa3hrJTJmRFVUQm1XYlRYNXRqY1FUSXZGJTJiVXN2WklFdHZKVTljU1J6JTJmNjJkSFhKRE9iaUZ0JTJiTjkxa0RkJTJiUCUyYmlkRGJRQ1pWRGZVbnZsTyUyYk1MTGdnNlVVaVE0JTJmJTJmMlloOWFnd0VsZnM5NjRER0o5eWg2V1VtWkhGNlNrS3RIcU0xQnBVRHNOQkVQZldLRW1OT3ppVHplZGg2Y1ZaNEJSWnROM1duQ1RLJTJiRGVpSiUyYlI0VVp4WkhTZTN6b0RpVnlqVGxrVGJWVlBQN0RQSFhJS0oxdFElM2QlM2QnOyByZXR1cm4gZmFsc2U7HwdoFgIfDQUMY3Vyc29yOmhhbmQ7ZAIDDw8WAh8HaGRkAgcPZBYCAgEPDxYCHwMFEzA0LTEyLTIwMjUgMTM6MzE6MTFkZAIID2QWJAIBDw8WAh8HZxYCHw4FMXZlcl9kZWNsYXJhY2lvbignNzYuNjgxLjU2MS04JyAsICc1MDY3LTI0My1MMTI1JylkAgMPDxYEHw8FFkluZm9ybWFjacOzbiBQcm92ZWVkb3IfB2cWAh8OBSd2ZXJGaWNoYSgnNzYuNjgxLjU2MS04Jyk7IHJldHVybiBmYWxzZTtkAgcPDxYCHw8FFkFuZXhvcyBBZG1pbmlzdHJhdGl2b3MWAh8OBfsBb3BlblBvcFVwKCcvQklEL01vZHVsZXMvUE9QVVBTL1ZpZXdCaWRBdHRhY2htZW50LmFzcHg/ZW5jPTZxSWFzYmZjUnhycHhXVHlIUTRoU0QzT0Y0RDZVMTNCdGxhNyUyZnkyRlBRanZGWEUxdWRHUDRkazFqYkZnUE5IRnFyOHRXY0UlMmZDa0JGYVJZUkZNYnB0WnZyaUNoaVJvUFNoSWJHb3JyZE85NiUyZk42NjJiM3RNJTJiVHd0bXo2a1VUJTJiN1Y1U2RSUm1pb2VoeG9NWnRSeEoxRnclM2QlM2QnLCA4MDAsIDUyMCk7IHJldHVybiBmYWxzZTtkAgkPDxYEHw8FEEFuZXhvcyBUw6ljbmljb3MfB2hkZAILDw8WBB8PBRlBbmV4b3MgVMOpY25pY29zIFDDumJsaWNvHwdoZGQCDQ8PFgQfDwUYQW5leG9zIFTDqWNuaWNvcyBQcml2YWRvHwdoZGQCDw8PFgQfDwUSQW5leG9zIGVjb27Ds21pY29zHwdoZGQCEQ8PFgYfDwUZVmVyIENvbXByb2JhbnRlIGRlIG9mZXJ0YR8KBf8Bb3BlblBvcFVwKCcuLi8uLi8uLi8uLi9iaWQvbW9kdWxlcy9iaWQvdm91Y2hlcnZpZXcuYXNweD9lbmM9bks3UU9mUVY1eVNiVmNWaXhwNG9pblVXZndvMkM1NUFWVnhuVnRzZDBHZUR4RkVPNFFmeSUyZnlNWnQ1cyUyYmRINyUyYnpiOFVrNCUyYkFJcSUyYlBZN1A2aEtmM3VrZlVrUk10WmtTR1RtaUxaJTJmZzhGalgwWGx0R2w4U2duaHZFQjVBWnBCaUtWaHdvelpLRVNCM3JKVjBueTkydWpnJTNkJTNkJywgNjIwLCA2MDApOyByZXR1cm4gZmFsc2U7HwdoFgIfDQUMY3Vyc29yOmhhbmQ7ZAIVDw8WBB8PBQlHYXJhbnRpYXMfB2gWAh8OBSpFbnZpb1ZhcmlhYmxlcyg5NjEyOTQ4LCA3NzgzMDAzOSwgMTAwMDczNylkAhcPDxYCHwdnZGQCGQ8PFgIfAwUWSW5mb3JtYWNpw7NuIFByb3ZlZWRvcmRkAh0PDxYCHwMFFkFuZXhvcyBBZG1pbmlzdHJhdGl2b3NkZAIfDw8WBB8DBRBBbmV4b3MgVMOpY25pY29zHwdoZGQCIQ8PFgQfAwUaQW5leG9zIFTDqWNuaWNvcyBQw7pibGljb3MfB2hkZAIjDw8WBB8DBRlBbmV4b3MgVMOpY25pY29zIFByaXZhZG9zHwdoZGQCJQ8PFgQfAwURQW5leG9zIEVjb27Ds21pY28fB2hkZAInDw8WBB8DBRVDb21wcm9iYW50ZSBkZSBvZmVydGEfB2hkZAIpDw8WAh8HaGRkAgoPZBYEAgEPDxYCHwMFCDc3ODMwMDM5ZGQCAw8PFgIfAwUHMjE0MzIyNmRkAgsPZBYCAgEPDxYCHwMFA0NMUGRkAgMPZBYWZg9kFgICAQ8PFgIfAwUMNzcuNjQ2LjA5OS0wFgIfDgXxAW9wZW5Qb3BVcCgnL0JJRC9Nb2R1bGVzL1BvcFVwcy9JbmZvcm1hdGlvblByb3ZpZGVyLmFzcHg/ZW5jPUo4TUpqcjVuS0Z6cmVvc2JCb2NTWmlPcW5aUjh1YTBMJTJmMUtjNzFnMHIlMmY1czliYzZROHMzcG9zWVFNJTJiaHc3WW9LV1BQQlgwSiUyYlNJUHc0WkM5UE8ybkhqeGZaNXRRMkREUjFrWFFDazdCaXA4bW1EMERzVmtwQTJCUmRlWHB5bUNZd0lUNXY2enhzUkY4SVozbFg5M2hBJTNkJTNkJyk7IHJldHVybiBmYWxzZTtkAgEPZBYEAgEPDxYCHwMFFUNvbWVyY2lhbGl6YWRvcmEgTWFweRYCHw4F9wFvcGVuUG9wVXAoJy9CSUQvTW9kdWxlcy9Qb3BVcHMvSW5mb3JtYXRpb25Qcm92aWRlci5hc3B4P2VuYz02NnZGNkNsUm1JSG8lMmZvbDROMzB6N2JlcDAlMmZNNlhzVCUyYmp0V3VNVjQlMmI1ciUyYkwzNWhDemZia21XNW5OQWZ1QXBsMEhnTUUlMmZ3WkZkcGtjeUlLWUNac3I3Y1FQblJkTk5KTTNkQkJ2YmlvYVhWbXV1TDFKSjJkTzhkcHo2STk0NCUyYlYxRngxVUZHd0NDMnF6ZHA4Y3FkNFpMZyUzZCUzZCcpOyByZXR1cm4gZmFsc2U7ZAIDDw8WAh8DZWRkAgIPZBYGZg8PFgIfAwV1QUxBTiBBZHF1aXNpY2nDs24gZGUgTW9uaXRvciBJbnRlcmFjdGl2byBkZSBMw6FwaXogR3LDoWZpY28gcGFyYSBEZXBhcnRhbWVudG8gZGUgQWRtaXNpw7NuIFVTQUNIICBDRFAgODgyNjcgLSBDQzoxMTEJZGQCAQ8PFgQfAwV1QUxBTiBBZHF1aXNpY2nDs24gZGUgTW9uaXRvciBJbnRlcmFjdGl2byBkZSBMw6FwaXogR3LDoWZpY28gcGFyYSBEZXBhcnRhbWVudG8gZGUgQWRtaXNpw7NuIFVTQUNIICBDRFAgODgyNjcgLSBDQzoxMTEJHwdoZGQCAg8PFgIfAwV1QUxBTiBBZHF1aXNpY2nDs24gZGUgTW9uaXRvciBJbnRlcmFjdGl2byBkZSBMw6FwaXogR3LDoWZpY28gcGFyYSBEZXBhcnRhbWVudG8gZGUgQWRtaXNpw7NuIFVTQUNIICBDRFAgODgyNjcgLSBDQzoxMTEJZGQCAw9kFgICAQ8PFgIfAwULJCAxLjU1MC4wMDBkZAIED2QWAgIBDw8WAh8DBQhBY2VwdGFkYWRkAgUPZBYCAgEPDxYCHwNlZGQCBg9kFgQCAQ8PFgQfCgW8A3BhcmVudC5DdWVycG8ubG9jYXRpb249J1Byb2Nlc29OZWdvY2lhY2lvbi5hc3B4P2VuYz12cmNWcFRaR3hFQ1VaRmZKangzJTJmZTRQeEJzTmJrOFFGVjFzYW5WN0I4eWIzc3VkaXQzem9haTdvaXUlMmZEN2ZHbkhXVDhQUjJKT2piNWtYanY0ZFYlMmZndTlYUG1QMTNza1lzaHloeEVqbzJoemI0cjklMmI4d3pJdTFrNVY0a2c2MUxEdmQwN1gydW9lbHJtZnlUQThNYXJpYjl0RSUyZlVyTklUZjEzTU1SVXI3YU56Zk1VaEpEaG9SbndPRHNEN1c5RkYzdiUyZnJjWjBzJTJmVlhyWER2MW1lYVhXJTJiUDMxVmdORFFUZzFNbThBY25ITHVFU0J5VzNXVkNpaGRiWGlRU2hpUktVTk5SUUo0ZUZUaTFYeGZxbjVLWmEwTVFWJTJiR1JFZkM4ZSUyZnVCUm9tQTdGMnJQRnE4VzdZJTJiVmZQJTJmSlFRUkpOWnV0JTJiVXBVN1JXbzklMmI2ODBYOG05dzVscXd3JTNkJTNkJzsgcmV0dXJuIGZhbHNlOx8HaBYCHw0FDGN1cnNvcjpoYW5kO2QCAw8PFgIfB2hkZAIHD2QWAgIBDw8WAh8DBRIwOS0xMi0yMDI1IDk6Mzk6MjhkZAIID2QWJAIBDw8WAh8HZxYCHw4FMXZlcl9kZWNsYXJhY2lvbignNzcuNjQ2LjA5OS0wJyAsICc1MDY3LTI0My1MMTI1JylkAgMPDxYEHw8FFkluZm9ybWFjacOzbiBQcm92ZWVkb3IfB2cWAh8OBSd2ZXJGaWNoYSgnNzcuNjQ2LjA5OS0wJyk7IHJldHVybiBmYWxzZTtkAgcPDxYCHw8FFkFuZXhvcyBBZG1pbmlzdHJhdGl2b3MWAh8OBfkBb3BlblBvcFVwKCcvQklEL01vZHVsZXMvUE9QVVBTL1ZpZXdCaWRBdHRhY2htZW50LmFzcHg/ZW5jPVlZRTZnblZLTWFrZUxHT2xYV29VcHJ0RTgxJTJmcnZNQnRZRGhxZENaaVBZWklwcnMwM0ROcWJzN3JtWU1DZzZaaG12M0hJSjladGNwejZJJTJiSlg3T1hmYVg5QnBBRiUyYnJxWWN1RnRaZmQzc2hkS01sZ2V4Z0o1b0pBam5GaHpkUTJzUyUyZnZLT2hGZkp6bGlsbmkxbDVpTHlRJTNkJTNkJywgODAwLCA1MjApOyByZXR1cm4gZmFsc2U7ZAIJDw8WAh8PBRBBbmV4b3MgVMOpY25pY29zFgIfDgX3AW9wZW5Qb3BVcCgnL0JJRC9Nb2R1bGVzL1BPUFVQUy9WaWV3QmlkQXR0YWNobWVudC5hc3B4P2VuYz1nVTFPcmxya29uRG45dXR6WDlROWw2QVBQWUVKTkU0QXBocVpmSnRyQnF5N1Z3QTdLMDRIYlM2Z3VYTnFGTnBZV2ZOeEVOSVVQeEozRVFFMkVmMW93YVR6JTJiSWhhRkF4T3p1MEk1UEl4eTVNSWJpM055SCUyZjhqY2lNRnRvRzljMzVYVjB4N00lMmJDem4xb015eW9wV1ZCc0ElM2QlM2QnLCA4MDAsIDUyMCk7IHJldHVybiBmYWxzZTtkAgsPDxYEHw8FGUFuZXhvcyBUw6ljbmljb3MgUMO6YmxpY28fB2hkZAINDw8WBB8PBRhBbmV4b3MgVMOpY25pY29zIFByaXZhZG8fB2hkZAIPDw8WAh8PBRJBbmV4b3MgZWNvbsOzbWljb3MWAh8OBfUBb3BlblBvcFVwKCcvQklEL01vZHVsZXMvUE9QVVBTL1ZpZXdCaWRBdHRhY2htZW50LmFzcHg/ZW5jPXclMmJQZ1o0bHdBQ1NkMDB0UXZXSG81UmN2bDlxZEdtTVp6enVCRGZiYzBDM2FBcTZ2T1MyOEJRdlZhNFVmbndUN1lMRnBzSk9yZ2d5SlJXbTBFcmttWHdXRmVuS1pDdFVFQU9YMEZ1MzNneFFNaGpPeG5uaDVvak9teWRsNVFsc0phSTl5RTZCR2tDenp5S1RNJTJmU1dIcFElM2QlM2QnLCA4MDAsIDUyMCk7IHJldHVybiBmYWxzZTtkAhEPDxYGHw8FGVZlciBDb21wcm9iYW50ZSBkZSBvZmVydGEfCgWBAm9wZW5Qb3BVcCgnLi4vLi4vLi4vLi4vYmlkL21vZHVsZXMvYmlkL3ZvdWNoZXJ2aWV3LmFzcHg/ZW5jPVJsJTJmdzRnckxmbGluRGpCRFlCMHg1NU1nVTJWJTJiVFJGQk43aFFianFBRGhsOVR0SDZjVm9wUFRXQjFwM0QxWTNvVzA5cVR0QnFkR25wNmoyTDRHMjNTJTJiUHBSNTFkRFJKRUFNR0RyYmFrN2lLZEclMmZQUmhKUkQ2WkhGMG12eEllVCUyZiUyYmR2YVRrVkt5WkdqUUtTUjBSJTJmN2JBJTNkJTNkJywgNjIwLCA2MDApOyByZXR1cm4gZmFsc2U7HwdoFgIfDQUMY3Vyc29yOmhhbmQ7ZAIVDw8WBB8PBQlHYXJhbnRpYXMfB2gWAh8OBSpFbnZpb1ZhcmlhYmxlcyg5NjEyOTQ4LCA3NzgzMzYzNCwgMTI2MjE3NClkAhcPDxYCHwdnZGQCGQ8PFgIfAwUWSW5mb3JtYWNpw7NuIFByb3ZlZWRvcmRkAh0PDxYCHwMFFkFuZXhvcyBBZG1pbmlzdHJhdGl2b3NkZAIfDw8WAh8DBRBBbmV4b3MgVMOpY25pY29zZGQCIQ8PFgQfAwUaQW5leG9zIFTDqWNuaWNvcyBQw7pibGljb3MfB2hkZAIjDw8WBB8DBRlBbmV4b3MgVMOpY25pY29zIFByaXZhZG9zHwdoZGQCJQ8PFgIfAwURQW5leG9zIEVjb27Ds21pY29kZAInDw8WBB8DBRVDb21wcm9iYW50ZSBkZSBvZmVydGEfB2hkZAIpDw8WAh8HaGRkAgoPZBYEAgEPDxYCHwMFCDc3ODMzNjM0ZGQCAw8PFgIfAwUHMjE5NzAxN2RkAgsPZBYCAgEPDxYCHwMFA0NMUGRkAgQPZBYWZg9kFgICAQ8PFgofAwUMNzYuODA1LjY1MC0xHwhoHwkKIx8KZB8LAoRAFgQfDAUBIx8NBQ9jdXJzb3I6ZGVmYXVsdDtkAgEPZBYEAgEPDxYKHwMFCE1lbnNzYWdlHwhoHwkKIx8KZB8LAoRAFgQfDAUBIx8NBQ9jdXJzb3I6ZGVmYXVsdDtkAgMPDxYCHwNlZGQCAg9kFgZmDw8WAh8DBQptZW5zc2FnZSBtZGQCAQ8PFgQfAwUKbWVuc3NhZ2UgbR8HaGRkAgIPDxYCHwMFCm1lbnNzYWdlIG1kZAIDD2QWAgIBDw8WAh8DZWRkAgQPZBYCAgEPDxYCHwMFCVJlY2hhemFkYWRkAgUPZBYCAgEPDxYCHwNlZGQCBg9kFgQCAQ8PFgQfCgW6A3BhcmVudC5DdWVycG8ubG9jYXRpb249J1Byb2Nlc29OZWdvY2lhY2lvbi5hc3B4P2VuYz1UMjRuckFBZWlmdlc1YnNJNUZoOGhqSHpCREhkTmtwWWR6QVZmVEVjblNpN05nWjdLVzlzRmtNUVRIJTJmRyUyYmFkY3drMUZMT0xRamVHMUVGWGRKYTN0QnZsajglMmZMVVhzdWVHd2psM2FKOGxtVDlwSUJwbDNxQWdSczNSVUI4S0llQ2p3U3VCWHhmUFElMmZMd0dzUXFxajh4MDRRYWQlMmY5MUs3dFhTeGYwJTJiQ1JNbUVYREJSTHl0R3VXJTJmcE9qZ2dPS1hFOUJ3c2pGbk5QcnJoM1lYRzRzU2hMSFpoSmJhdHM5UHhKT29vWVF1TXRNbExDY05kRlg5V08lMmZKJTJmWHV0Sm9xNWw1YzZMaXhpeXQzcDJEZGpMT2lnMnZpcjNYTk01U3pGSnQlMmJqJTJmRGx2VUJ3VCUyYlJqeGczYlhJU3pRJTJiakw1NEp3WEpja2x5SW1EaE5BQVpkVGNzRGlzamVtQSUzZCUzZCc7IHJldHVybiBmYWxzZTsfB2gWAh8NBQxjdXJzb3I6aGFuZDtkAgMPDxYCHwdoZGQCBw9kFgICAQ8PFgIfAwUTMDktMTItMjAyNSAxMzowNToxMmRkAggPZBYkAgEPDxYCHwdnFgIfDgUxdmVyX2RlY2xhcmFjaW9uKCc3Ni44MDUuNjUwLTEnICwgJzUwNjctMjQzLUwxMjUnKWQCAw8PFgQfDwUWSW5mb3JtYWNpw7NuIFByb3ZlZWRvch8HZxYCHw4FJ3ZlckZpY2hhKCc3Ni44MDUuNjUwLTEnKTsgcmV0dXJuIGZhbHNlO2QCBw8PFgIfDwUWQW5leG9zIEFkbWluaXN0cmF0aXZvcxYCHw4F8wFvcGVuUG9wVXAoJy9CSUQvTW9kdWxlcy9QT1BVUFMvVmlld0JpZEF0dGFjaG1lbnQuYXNweD9lbmM9NHJTbk5nWkFnaVh4aUtzODR0dXAlMmJQS0dGZDBVTkR3VER3Rm9Va2c4OTJlNXBET0t1NERJYWhZZHBpbjJVY3hGMmtqYTl2MHVEaUpXNUlDbnU0Nm5zYzZNREM5VHI3WTNReVh1U0t0VE9la3dQZWRDMFBNVEdWUXJBMHZNOGU4cFQ4Y0t2TEtuc2wzTkRvMTE4aXJ4ZHclM2QlM2QnLCA4MDAsIDUyMCk7IHJldHVybiBmYWxzZTtkAgkPDxYEHw8FEEFuZXhvcyBUw6ljbmljb3MfB2hkZAILDw8WBB8PBRlBbmV4b3MgVMOpY25pY29zIFDDumJsaWNvHwdoZGQCDQ8PFgQfDwUYQW5leG9zIFTDqWNuaWNvcyBQcml2YWRvHwdoZGQCDw8PFgQfDwUSQW5leG9zIGVjb27Ds21pY29zHwdoZGQCEQ8PFgYfDwUZVmVyIENvbXByb2JhbnRlIGRlIG9mZXJ0YR8KBbICb3BlblBvcFVwKCcuLi8uLi8uLi8uLi9iaWQvbW9kdWxlcy9iaWQvU3VwcG9ydGluZ09mU3VwcGx5LmFzcHg/ZW5jPUNSNHpiNWJkbDQyemhFbDZRWnhhWHBDQnolMmZndkk1NGFNRTUlMmI4YVNweFFnVWdtcXRKRnIzZnBHaG5CY1pwNmNYV2ZWbTMlMmZGTUpNNXNnNEZhN1NZSmt1U3JwUElkdTJjU1V4U05KMWREMnpieFdDcyUyZmg1ZkVBRyUyZnU2c1M0cSUyZkVZeUxYOElOaGRlZmRxeE52Y053QW43N3hSWlNxSW5FJTJiNU01VSUyZkxybWNRcFIlMmZOcnd4JTJiZ0tzUU9jSk01eVVDaGF0JywgNjIwLCA2MDApOyByZXR1cm4gZmFsc2U7HwdoFgIfDQUMY3Vyc29yOmhhbmQ7ZAIVDw8WBh8PBTNJMThuIGVudHJ5IG5vdCBmb3VuZDogT3BlbmluZ1N1cHBseS5kaXNhYmxlLlRvb2xUaXAfEGgfB2hkZAIXDw8WAh8HZ2RkAhkPDxYCHwMFFkluZm9ybWFjacOzbiBQcm92ZWVkb3JkZAIdDw8WAh8DBRZBbmV4b3MgQWRtaW5pc3RyYXRpdm9zZGQCHw8PFgQfAwUQQW5leG9zIFTDqWNuaWNvcx8HaGRkAiEPDxYEHwMFGkFuZXhvcyBUw6ljbmljb3MgUMO6YmxpY29zHwdoZGQCIw8PFgQfAwUZQW5leG9zIFTDqWNuaWNvcyBQcml2YWRvcx8HaGRkAiUPDxYEHwMFEUFuZXhvcyBFY29uw7NtaWNvHwdoZGQCJw8PFgQfAwUVQ29tcHJvYmFudGUgZGUgb2ZlcnRhHwdoZGQCKQ8PFgIfB2hkZAIKD2QWBAIBDw8WAh8DBQg3NzgzMzAzMWRkAgMPDxYCHwMFBjUxNDIyOWRkAgsPZBYCAgEPDxYCHwMFA0NMUGRkAgUPZBYWZg9kFgICAQ8PFgofAwUMNzYuMTMyLjYwMy0xHwhoHwkKIx8KZB8LAoRAFgQfDAUBIx8NBQ9jdXJzb3I6ZGVmYXVsdDtkAgEPZBYEAgEPDxYKHwMFFU1ZQk9YIENPTVBVVEFDSU9OIFNQQR8IaB8JCiMfCmQfCwKEQBYEHwwFASMfDQUPY3Vyc29yOmRlZmF1bHQ7ZAIDDw8WAh8DZWRkAgIPZBYGZg8PFgIfAwUITXlib3hfSVBkZAIBDw8WBB8DBQhNeWJveF9JUB8HaGRkAgIPDxYCHwMFCE15Ym94X0lQZGQCAw9kFgICAQ8PFgIfA2VkZAIED2QWAgIBDw8WAh8DBQlSZWNoYXphZGFkZAIFD2QWAgIBDw8WAh8DZWRkAgYPZBYEAgEPDxYEHwoFwANwYXJlbnQuQ3VlcnBvLmxvY2F0aW9uPSdQcm9jZXNvTmVnb2NpYWNpb24uYXNweD9lbmM9WnNyUmRFMCUyZkI0cHBkaGVnMWduV3dka1c1bUZBRlFrdTU1eW44ZHZhajdjJTJiUjZPa3ZNMUNHS2Q3bFhiTFRENEJoUW92ZmIlMmJ6M2VwTThMUmNqVWtPQjgyayUyYldkJTJmUXVnN0kwVWNkNjY2NnclMmZnUVYlMmZhbG1aa2pESiUyZiUyZkhlaWp6MGw5MDZ1N3I2S1FRbkcxRlJaZkl6eXhlRWJWUkh1ZXFWbFFWVWJXVkpWN3p3ZFZoQVNhTTRrcW9rYzNkJTJieWRvNjNacUp0TkhCU0FvMjdwekF5MWpJN0NIaDIwU2FaJTJid01QWmlpS2UlMmJCdWtKU0loVHduaklkSWFFTkJqRnpCcTY0WkQ5RiUyYmN0b0VqODd3byUyYnZxMG5CQ2pBeENOdTQ0TTNNbE1LJTJiRHlpM3M5NWJRMG5aJTJmVTduT2ZQM2JTcHlJRThWc3lOamYySkI4d1ZVRjdDNVpXNjI2V1ElM2QlM2QnOyByZXR1cm4gZmFsc2U7HwdoFgIfDQUMY3Vyc29yOmhhbmQ7ZAIDDw8WAh8HaGRkAgcPZBYCAgEPDxYCHwMFEzA0LTEyLTIwMjUgMTU6NTQ6MjVkZAIID2QWJAIBDw8WAh8HZxYCHw4FMXZlcl9kZWNsYXJhY2lvbignNzYuMTMyLjYwMy0xJyAsICc1MDY3LTI0My1MMTI1JylkAgMPDxYEHw8FFkluZm9ybWFjacOzbiBQcm92ZWVkb3IfB2cWAh8OBSd2ZXJGaWNoYSgnNzYuMTMyLjYwMy0xJyk7IHJldHVybiBmYWxzZTtkAgcPDxYCHw8FFkFuZXhvcyBBZG1pbmlzdHJhdGl2b3MWAh8OBfsBb3BlblBvcFVwKCcvQklEL01vZHVsZXMvUE9QVVBTL1ZpZXdCaWRBdHRhY2htZW50LmFzcHg/ZW5jPUg0Z2FyYjkxSXBDUHc5JTJiSGtyVnNYRSUyZlRteUhsVllmVVJ2a0QzSWxMRjRXOUp5MzhiJTJiWGRUeUVPWE9mZXV1ZTV3WUlnbW9rRHdqZ0k0MSUyZnQzYURpbGo2SDZDU0l6S3NVMGxSZEZJc0Q2ViUyYlNCdTFFVGNXNmUwWTVIZ0daTHZ3SnBHOFlHTVBkTTVuNmdra21kZlNlSkElM2QlM2QnLCA4MDAsIDUyMCk7IHJldHVybiBmYWxzZTtkAgkPDxYEHw8FEEFuZXhvcyBUw6ljbmljb3MfB2hkZAILDw8WBB8PBRlBbmV4b3MgVMOpY25pY29zIFDDumJsaWNvHwdoZGQCDQ8PFgQfDwUYQW5leG9zIFTDqWNuaWNvcyBQcml2YWRvHwdoZGQCDw8PFgQfDwUzSTE4biBlbnRyeSBub3QgZm91bmQ6IE9wZW5pbmdTdXBwbHkuZGlzYWJsZS5Ub29sVGlwHxBoZGQCEQ8PFgYfDwUZVmVyIENvbXByb2JhbnRlIGRlIG9mZXJ0YR8KBa4Cb3BlblBvcFVwKCcuLi8uLi8uLi8uLi9iaWQvbW9kdWxlcy9iaWQvU3VwcG9ydGluZ09mU3VwcGx5LmFzcHg/ZW5jPTM3a0JyTDRRNUhvTHdoTG5tSmpveDI1YXhvb2VJTzY2ZmlLUG1sWCUyZlc5JTJiTXFuRGVqdEI4JTJiOGhnaTE3V3BKMlVLc0o4b2c2WDVhR0slMmZiRDg1OTMzMG8wcmFnU29pYlpEZ3dFJTJiQTVPcGsxZXp0TG1HNWFyZEhXdm0zU3h4bk14bEhuSXdtUkVsJTJiMnpORElWWXUlMmZ3WGphUjBjeW1Tb3dZOTFBNTA4dWFCMEptMCUyYmhUYnBoOWk4UXBFcUp3bEpEczQnLCA2MjAsIDYwMCk7IHJldHVybiBmYWxzZTsfB2gWAh8NBQxjdXJzb3I6aGFuZDtkAhUPDxYGHw8FM0kxOG4gZW50cnkgbm90IGZvdW5kOiBPcGVuaW5nU3VwcGx5LmRpc2FibGUuVG9vbFRpcB8QaB8HaGRkAhcPDxYCHwdnZGQCGQ8PFgIfAwUWSW5mb3JtYWNpw7NuIFByb3ZlZWRvcmRkAh0PDxYCHwMFFkFuZXhvcyBBZG1pbmlzdHJhdGl2b3NkZAIfDw8WBB8DBRBBbmV4b3MgVMOpY25pY29zHwdoZGQCIQ8PFgQfAwUaQW5leG9zIFTDqWNuaWNvcyBQw7pibGljb3MfB2hkZAIjDw8WBB8DBRlBbmV4b3MgVMOpY25pY29zIFByaXZhZG9zHwdoZGQCJQ8PFgIfAwURQW5leG9zIEVjb27Ds21pY29kZAInDw8WBB8DBRVDb21wcm9iYW50ZSBkZSBvZmVydGEfB2hkZAIpDw8WAh8HaGRkAgoPZBYEAgEPDxYCHwMFCDc3ODMwMzY1ZGQCAw8PFgIfAwUHMjI3MTA5MGRkAgsPZBYCAgEPDxYCHwMFA0NMUGRkAgYPDxYCHwdoZGQCBw8PFgIfB2hkZAIED2QWAmYPZBYCAgEPDxYEHwoFhAJyZXR1cm4gY29uZmlybSgnVXN0ZWQgZXN0YSBjZXJyYW5kbyBlbCBwcm9jZXNvIGRlIG5lZ29jaWFjacOzbi4gQ29uIGVzdG8sIGxvcyBwcm92ZWVkb3JlcyBubyBwb2Ryw6FuIHJlYWxpemFyIGNhbWJpb3MgZW4gc3VzIG9mZXJ0YXMuIFxuXG5JTVBPUlRBTlRFOiBSZWFsaXphZGEgZXN0YSBhY2Npw7NuLCBubyBwb2Ryw6Egc2VndWlyIG5lZ29jaWFuZG8gY29uIGxvcyBwcm92ZWVkb3JlcyBvZmVydGFudGVzLiBcblxuIMK/RGVzZWEgQ29udGludWFyPycpOx8HaGRkAgEPZBYCAgIPZBYCZg9kFgICAQ8PFgIfAwU8SW5mb3JtYWNpw7NuIG5vIGRpc3BvbmlibGUgZW4gZXN0ZSBlc3RhZG8gZGUgbGEgbGljaXRhY2nDs24uZGQCAg8PFgQfAwUGVm9sdmVyHwdoZGQYAgUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFhYFHWdyZFN1cHBsaWVzJGN0bDAyJF9HdkltZ0Zpcm1hBShncmRTdXBwbGllcyRjdGwwMiRfR3ZJbWdiQXR0YWNobWVudE90aGVyBR1ncmRTdXBwbGllcyRjdGwwMiRfR3ZJbWdiRm9ybwUdZ3JkU3VwcGxpZXMkY3RsMDMkX0d2SW1nRmlybWEFKGdyZFN1cHBsaWVzJGN0bDAzJF9HdkltZ2JBdHRhY2htZW50T3RoZXIFMWdyZFN1cHBsaWVzJGN0bDAzJF9HdkltZ2JBZG1pbmlzdHJhdGl2ZUF0dGFjaG1lbnQFHWdyZFN1cHBsaWVzJGN0bDAzJF9HdkltZ2JGb3JvBR1ncmRTdXBwbGllcyRjdGwwNCRfR3ZJbWdGaXJtYQUoZ3JkU3VwcGxpZXMkY3RsMDQkX0d2SW1nYkF0dGFjaG1lbnRPdGhlcgUxZ3JkU3VwcGxpZXMkY3RsMDQkX0d2SW1nYkFkbWluaXN0cmF0aXZlQXR0YWNobWVudAUsZ3JkU3VwcGxpZXMkY3RsMDQkX0d2SW1nYlRlY2huaWNhbEF0dGFjaG1lbnQFK2dyZFN1cHBsaWVzJGN0bDA0JF9HdkltZ2JFY29ub21pY0F0dGFjaG1lbnQFHWdyZFN1cHBsaWVzJGN0bDA0JF9HdkltZ2JGb3JvBR1ncmRTdXBwbGllcyRjdGwwNSRfR3ZJbWdGaXJtYQUoZ3JkU3VwcGxpZXMkY3RsMDUkX0d2SW1nYkF0dGFjaG1lbnRPdGhlcgUxZ3JkU3VwcGxpZXMkY3RsMDUkX0d2SW1nYkFkbWluaXN0cmF0aXZlQXR0YWNobWVudAUdZ3JkU3VwcGxpZXMkY3RsMDUkX0d2SW1nYkZvcm8FHWdyZFN1cHBsaWVzJGN0bDA2JF9HdkltZ0Zpcm1hBShncmRTdXBwbGllcyRjdGwwNiRfR3ZJbWdiQXR0YWNobWVudE90aGVyBTFncmRTdXBwbGllcyRjdGwwNiRfR3ZJbWdiQWRtaW5pc3RyYXRpdmVBdHRhY2htZW50BStncmRTdXBwbGllcyRjdGwwNiRfR3ZJbWdiRWNvbm9taWNBdHRhY2htZW50BR1ncmRTdXBwbGllcyRjdGwwNiRfR3ZJbWdiRm9ybwULZ3JkU3VwcGxpZXMPPCsADAMGFQEHdXNyQ29kZQcUKwAFFCsAAQUHMTM5NDk3NxQrAAEFBzIxNDMyMjYUKwABBQcyMTk3MDE3FCsAAQUGNTE0MjI5FCsAAQUHMjI3MTA5MAgCAWRBIi6RErNsyiFiM6Pw/MRtXAy+Bw==">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+
+<script type="text/javascript">
+//<![CDATA[
+function ShowHideTxt(txtId, RFVId, activate){ var txt=document.getElementById(txtId); var rfv=document.getElementById(RFVId);if (activate == 'True'){txt.style.display = 'block';ValidatorEnable(rfv, true);}else{txt.style.display='none';ValidatorEnable(rfv, false);}}//]]>
+</script>
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="04495CAC">
+</div>
+        <input type="hidden" id="UrlDj" value="https://proveedor.mercadopublico.cl/dj-requisitos/">
+        <table id="tablaInformacion" style="width: 99%" cellpadding="0" cellspacing="1">
+	<tbody><tr>
+		<td class="cssFwkLabelSubTitle" style="height: 45px">            
+                    <span id="_LblTitle" class="cssFwkLabelSubTitle">Resumen de ofertas</span>
+                </td>
+	</tr>
+	<tr>
+		<td colspan="2" style="height: 45px">  
+                    <span id="Lbl_BuscarRut" class="cssFwkLabelSubTitle">Buscar por Rut:</span>                    
+                    <input name="txtBuscarPorRut" type="text" id="txtBuscarPorRut">
+                    <input type="submit" name="btnBuscarPorRut" value="Buscar" id="btnBuscarPorRut">
+                </td>
+	</tr>
+	<tr>
+		<td colspan="2">
+                   <div>
+			<table class="cssPRCGridView" cellspacing="0" rules="all" border="1" id="grdSupplies" style="width:100%;border-collapse:collapse;">
+				<tbody><tr class="cssFwkHeaderTableRow">
+					<th scope="col"><a href="javascript:__doPostBack('grdSupplies','Sort$orgTaxID')">Rut Proveedor</a></th><th scope="col"><a href="javascript:__doPostBack('grdSupplies','Sort$orgName')">Proveedor</a></th><th scope="col">Nombre Oferta</th><th scope="col">Total Oferta</th><th scope="col">Estado</th><th scope="col">Anexos</th>
+				</tr><tr class="cssFwkItemStyle" style="color:Black;">
+					<td style="width:15%;">
+                                <a id="grdSupplies_ctl02__GvLblRutProvider" href="#" style="color:Black;text-decoration:none;cursor:default;">76.434.072-8</a>
+                            </td><td style="width:15%;">
+                                <a id="grdSupplies_ctl02__GvLblProvider" href="#" style="color:Black;text-decoration:none;cursor:default;">ALLTRACK LTDA.</a><br>                                                               
+                                <span id="grdSupplies_ctl02_lblHabilChileproveedores"></span></td>                                                                
+                            <td class="cssPRCWordWrapBreak" style="width:20%;">
+                                                                                            
+                                <span id="grdSupplies_ctl02__GvLblSuppliesName">ALLTRACK LTDA.</span> 
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl02_TotalOferta"></span>
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl02_EstadoOferta">Rechazada</span>
+                            </td><td align="center" style="width:15%;">
+				                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tbody><tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl02$_GvImgFirma" id="grdSupplies_ctl02__GvImgFirma" title="Firma declaración Jurada" src="../../../Includes/images/search_sintexto.gif" onclick="ver_declaracion('76.434.072-8' , '5067-243-L125');" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl02$_GvImgbAttachmentOther" id="grdSupplies_ctl02__GvImgbAttachmentOther" title="Información Proveedor" src="../../../Includes/images/Ofertas/info-chileproveedores.gif" onclick="verFicha('76.434.072-8'); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                  
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;<span id="grdSupplies_ctl02_spaEdit"></span></td>
+                                      
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl02_lblDeclaracionJurada" class="cssLabelImageButton">Declaración Jurada </span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl02_lblChileProveedor" class="cssLabelImageButton">Información Proveedor</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                     
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                 </tr>
+                                </tbody></table>
+                            </td>
+				</tr><tr class="cssFwkAlternatingItemStyle" style="color:Black;">
+					<td style="width:15%;">
+                                <a onclick="openPopUp('/BID/Modules/PopUps/InformationProvider.aspx?enc=3se3GA0T30uP0zBiCN1isU0QiWfxT2pTznPxW9ay4g%2bdfMaVI3HYgbLSy8mya3umLaVKiOvEezizFJK2gLp%2bvpiQPPEelmg6A16ISAJJe1M8Y66umLA2wdumhrN%2bpUTnTt%2fDmLNQU4bxh09c6j0e7Q%3d%3d'); return false;" id="grdSupplies_ctl03__GvLblRutProvider" href="javascript:__doPostBack('grdSupplies$ctl03$_GvLblRutProvider','')">76.681.561-8</a>
+                            </td><td style="width:15%;">
+                                <a onclick="openPopUp('/BID/Modules/PopUps/InformationProvider.aspx?enc=SdwwZWS0JNB%2flhsaCH7dm%2bjVm%2bJd%2fJgAW%2f0kiiP68oHjmYYfRo6ZiEssNxh4LmydH1URPch66O6iWYa367J562pHD5C8PccXqGyT9KoBsx6YHxoK3NQwkHDHbWRnTBWQy%2fxRqKGm%2fcz4BzEZDGAI8Q%3d%3d'); return false;" id="grdSupplies_ctl03__GvLblProvider" href="javascript:__doPostBack('grdSupplies$ctl03$_GvLblProvider','')">ChileCompraExpress</a><br>                                                               
+                                <span id="grdSupplies_ctl03_lblHabilChileproveedores"></span></td>                                                                
+                            <td class="cssPRCWordWrapBreak" style="width:20%;">
+                                                                                            
+                                <span id="grdSupplies_ctl03__GvLblSuppliesName">SEGUN ANEXO</span> 
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl03_TotalOferta">$ 1.580.000</span>
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl03_EstadoOferta">Aceptada</span>
+                            </td><td align="center" style="width:15%;">
+				                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tbody><tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl03$_GvImgFirma" id="grdSupplies_ctl03__GvImgFirma" title="Firma declaración Jurada" src="../../../Includes/images/search_sintexto.gif" onclick="ver_declaracion('76.681.561-8' , '5067-243-L125');" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl03$_GvImgbAttachmentOther" id="grdSupplies_ctl03__GvImgbAttachmentOther" title="Información Proveedor" src="../../../Includes/images/Ofertas/info-chileproveedores.gif" onclick="verFicha('76.681.561-8'); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl03$_GvImgbAdministrativeAttachment" id="grdSupplies_ctl03__GvImgbAdministrativeAttachment" title="Anexos Administrativos" src="../../../Includes/images/Ofertas/adj-administrativos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=6qIasbfcRxrpxWTyHQ4hSD3OF4D6U13Btla7%2fy2FPQjvFXE1udGP4dk1jbFgPNHFqr8tWcE%2fCkBFaRYRFMbptZvriChiRoPShIbGorrdO96%2fN662b3tM%2bTwtmz6kUT%2b7V5SdRRmioehxoMZtRxJ1Fw%3d%3d', 800, 520); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                  
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;<span id="grdSupplies_ctl03_spaEdit"></span></td>
+                                      
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl03_lblDeclaracionJurada" class="cssLabelImageButton">Declaración Jurada </span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl03_lblChileProveedor" class="cssLabelImageButton">Información Proveedor</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl03_LblAnexoAdministrativo" class="cssLabelImageButton">Anexos Administrativos</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                     
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                 </tr>
+                                </tbody></table>
+                            </td>
+				</tr><tr class="cssFwkItemStyle" style="color:Black;">
+					<td style="width:15%;">
+                                <a onclick="openPopUp('/BID/Modules/PopUps/InformationProvider.aspx?enc=J8MJjr5nKFzreosbBocSZiOqnZR8ua0L%2f1Kc71g0r%2f5s9bc6Q8s3posYQM%2bhw7YoKWPPBX0J%2bSIPw4ZC9PO2nHjxfZ5tQ2DDR1kXQCk7Bip8mmD0DsVkpA2BRdeXpymCYwIT5v6zxsRF8IZ3lX93hA%3d%3d'); return false;" id="grdSupplies_ctl04__GvLblRutProvider" href="javascript:__doPostBack('grdSupplies$ctl04$_GvLblRutProvider','')">77.646.099-0</a>
+                            </td><td style="width:15%;">
+                                <a onclick="openPopUp('/BID/Modules/PopUps/InformationProvider.aspx?enc=66vF6ClRmIHo%2fol4N30z7bep0%2fM6XsT%2bjtWuMV4%2b5r%2bL35hCzfbkmW5nNAfuApl0HgME%2fwZFdpkcyIKYCZsr7cQPnRdNNJM3dBBvbioaXVmuuL1JJ2dO8dpz6I944%2bV1Fx1UFGwCC2qzdp8cqd4ZLg%3d%3d'); return false;" id="grdSupplies_ctl04__GvLblProvider" href="javascript:__doPostBack('grdSupplies$ctl04$_GvLblProvider','')">Comercializadora Mapy</a><br>                                                               
+                                <span id="grdSupplies_ctl04_lblHabilChileproveedores"></span></td>                                                                
+                            <td class="cssPRCWordWrapBreak" style="width:20%;">
+                                                                                            
+                                <span id="grdSupplies_ctl04__GvLblSuppliesName">ALAN Adquisición de Monitor Interactivo de Lápiz Gráfico para Departamento de Admisión USACH  CDP 88267 - CC:111	</span> 
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl04_TotalOferta">$ 1.550.000</span>
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl04_EstadoOferta">Aceptada</span>
+                            </td><td align="center" style="width:15%;">
+				                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tbody><tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl04$_GvImgFirma" id="grdSupplies_ctl04__GvImgFirma" title="Firma declaración Jurada" src="../../../Includes/images/search_sintexto.gif" onclick="ver_declaracion('77.646.099-0' , '5067-243-L125');" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl04$_GvImgbAttachmentOther" id="grdSupplies_ctl04__GvImgbAttachmentOther" title="Información Proveedor" src="../../../Includes/images/Ofertas/info-chileproveedores.gif" onclick="verFicha('77.646.099-0'); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl04$_GvImgbAdministrativeAttachment" id="grdSupplies_ctl04__GvImgbAdministrativeAttachment" title="Anexos Administrativos" src="../../../Includes/images/Ofertas/adj-administrativos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=YYE6gnVKMakeLGOlXWoUprtE81%2frvMBtYDhqdCZiPYZIprs03DNqbs7rmYMCg6Zhmv3HIJ9Ztcpz6I%2bJX7OXfaX9BpAF%2brqYcuFtZfd3shdKMlgexgJ5oJAjnFhzdQ2sS%2fvKOhFfJzlilni1l5iLyQ%3d%3d', 800, 520); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl04$_GvImgbTechnicalAttachment" id="grdSupplies_ctl04__GvImgbTechnicalAttachment" title="Anexos Técnicos" src="../../../Includes/images/Ofertas/adj-tecnicos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=gU1OrlrkonDn9utzX9Q9l6APPYEJNE4AphqZfJtrBqy7VwA7K04HbS6guXNqFNpYWfNxENIUPxJ3EQE2Ef1owaTz%2bIhaFAxOzu0I5PIxy5MIbi3NyH%2f8jciMFtoG9c35XV0x7M%2bCzn1oMyyopWVBsA%3d%3d', 800, 520); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl04$_GvImgbEconomicAttachment" id="grdSupplies_ctl04__GvImgbEconomicAttachment" title="Anexos económicos" src="../../../Includes/images/Ofertas/adj-economicos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=w%2bPgZ4lwACSd00tQvWHo5Rcvl9qdGmMZzzuBDfbc0C3aAq6vOS28BQvVa4UfnwT7YLFpsJOrggyJRWm0ErkmXwWFenKZCtUEAOX0Fu33gxQMhjOxnnh5ojOmydl5QlsJaI9yE6BGkCzzyKTM%2fSWHpQ%3d%3d', 800, 520); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                  
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;<span id="grdSupplies_ctl04_spaEdit"></span></td>
+                                      
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl04_lblDeclaracionJurada" class="cssLabelImageButton">Declaración Jurada </span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl04_lblChileProveedor" class="cssLabelImageButton">Información Proveedor</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl04_LblAnexoAdministrativo" class="cssLabelImageButton">Anexos Administrativos</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl04_LblAnextoTecnico" class="cssLabelImageButton">Anexos Técnicos</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl04_LblAnexoEconomico" class="cssLabelImageButton">Anexos Económico</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                     
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                 </tr>
+                                </tbody></table>
+                            </td>
+				</tr><tr class="cssFwkAlternatingItemStyle" style="color:Black;">
+					<td style="width:15%;">
+                                <a id="grdSupplies_ctl05__GvLblRutProvider" href="#" style="color:Black;text-decoration:none;cursor:default;">76.805.650-1</a>
+                            </td><td style="width:15%;">
+                                <a id="grdSupplies_ctl05__GvLblProvider" href="#" style="color:Black;text-decoration:none;cursor:default;">Menssage</a><br>                                                               
+                                <span id="grdSupplies_ctl05_lblHabilChileproveedores"></span></td>                                                                
+                            <td class="cssPRCWordWrapBreak" style="width:20%;">
+                                                                                            
+                                <span id="grdSupplies_ctl05__GvLblSuppliesName">menssage m</span> 
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl05_TotalOferta"></span>
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl05_EstadoOferta">Rechazada</span>
+                            </td><td align="center" style="width:15%;">
+				                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tbody><tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl05$_GvImgFirma" id="grdSupplies_ctl05__GvImgFirma" title="Firma declaración Jurada" src="../../../Includes/images/search_sintexto.gif" onclick="ver_declaracion('76.805.650-1' , '5067-243-L125');" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl05$_GvImgbAttachmentOther" id="grdSupplies_ctl05__GvImgbAttachmentOther" title="Información Proveedor" src="../../../Includes/images/Ofertas/info-chileproveedores.gif" onclick="verFicha('76.805.650-1'); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl05$_GvImgbAdministrativeAttachment" id="grdSupplies_ctl05__GvImgbAdministrativeAttachment" title="Anexos Administrativos" src="../../../Includes/images/Ofertas/adj-administrativos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=4rSnNgZAgiXxiKs84tup%2bPKGFd0UNDwTDwFoUkg892e5pDOKu4DIahYdpin2UcxF2kja9v0uDiJW5ICnu46nsc6MDC9Tr7Y3QyXuSKtTOekwPedC0PMTGVQrA0vM8e8pT8cKvLKnsl3NDo118irxdw%3d%3d', 800, 520); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                  
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;<span id="grdSupplies_ctl05_spaEdit"></span></td>
+                                      
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl05_lblDeclaracionJurada" class="cssLabelImageButton">Declaración Jurada </span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl05_lblChileProveedor" class="cssLabelImageButton">Información Proveedor</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl05_LblAnexoAdministrativo" class="cssLabelImageButton">Anexos Administrativos</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                     
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                 </tr>
+                                </tbody></table>
+                            </td>
+				</tr><tr class="cssFwkItemStyle" style="color:Black;">
+					<td style="width:15%;">
+                                <a id="grdSupplies_ctl06__GvLblRutProvider" href="#" style="color:Black;text-decoration:none;cursor:default;">76.132.603-1</a>
+                            </td><td style="width:15%;">
+                                <a id="grdSupplies_ctl06__GvLblProvider" href="#" style="color:Black;text-decoration:none;cursor:default;">MYBOX COMPUTACION SPA</a><br>                                                               
+                                <span id="grdSupplies_ctl06_lblHabilChileproveedores"></span></td>                                                                
+                            <td class="cssPRCWordWrapBreak" style="width:20%;">
+                                                                                            
+                                <span id="grdSupplies_ctl06__GvLblSuppliesName">Mybox_IP</span> 
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl06_TotalOferta"></span>
+                            </td><td class="cssPRCWordWrapBreak" style="width:20%;">
+                                <span id="grdSupplies_ctl06_EstadoOferta">Rechazada</span>
+                            </td><td align="center" style="width:15%;">
+				                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tbody><tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl06$_GvImgFirma" id="grdSupplies_ctl06__GvImgFirma" title="Firma declaración Jurada" src="../../../Includes/images/search_sintexto.gif" onclick="ver_declaracion('76.132.603-1' , '5067-243-L125');" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl06$_GvImgbAttachmentOther" id="grdSupplies_ctl06__GvImgbAttachmentOther" title="Información Proveedor" src="../../../Includes/images/Ofertas/info-chileproveedores.gif" onclick="verFicha('76.132.603-1'); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl06$_GvImgbAdministrativeAttachment" id="grdSupplies_ctl06__GvImgbAdministrativeAttachment" title="Anexos Administrativos" src="../../../Includes/images/Ofertas/adj-administrativos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=H4garb91IpCPw9%2bHkrVsXE%2fTmyHlVYfURvkD3IlLF4W9Jy38b%2bXdTyEOXOfeuue5wYIgmokDwjgI41%2ft3aDilj6H6CSIzKsU0lRdFIsD6V%2bSBu1ETcW6e0Y5HgGZLvwJpG8YGMPdM5n6gkkmdfSeJA%3d%3d', 800, 520); return false;" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><input type="image" name="grdSupplies$ctl06$_GvImgbEconomicAttachment" id="grdSupplies_ctl06__GvImgbEconomicAttachment" disabled="disabled" title="I18n entry not found: OpeningSupply.disable.ToolTip" src="../../../Includes/images/Ofertas/adj-economicos.gif" style="border-width:0px;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                  
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;<span id="grdSupplies_ctl06_spaEdit"></span></td>
+                                      
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl06_lblDeclaracionJurada" class="cssLabelImageButton">Declaración Jurada </span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl06_lblChileProveedor" class="cssLabelImageButton">Información Proveedor</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl06_LblAnexoAdministrativo" class="cssLabelImageButton">Anexos Administrativos</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"><span id="grdSupplies_ctl06_LblAnexoEconomico" class="cssLabelImageButton">Anexos Económico</span></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;">&nbsp;</td>
+                                     
+                                    <td style="border-right: 0px solid #C9C9C9;border-top:0px solid #C9C9C9;"></td>
+                                 </tr>
+                                </tbody></table>
+                            </td>
+				</tr>
+			</tbody></table>
+		</div>
+                    
+<style type="text/css">@import url(../../estilos/estilos.css );</style>
+
+<script language="javascript" type="text/javascript">
+    function fnMovePage(intIndex,objId)
+    {
+        objId = objId + '$btn_GoToPage';
+        __doPostBack(objId,intIndex);
+    }
+    
+</script>
+
+<input name="WucPagerGrid$hidIndex" type="hidden" id="WucPagerGrid_hidIndex" value="0">
+<input name="WucPagerGrid$hidCountRows" type="hidden" id="WucPagerGrid_hidCountRows" value="5">
+<input name="WucPagerGrid$hidMaxRowCount" type="hidden" id="WucPagerGrid_hidMaxRowCount" value="10">
+<input name="WucPagerGrid$hidSort" type="hidden" id="WucPagerGrid_hidSort">
+<table id="WucPagerGrid__TblPages" style="width: 100%" class="cssFwkGridPagerStyle">
+			<tbody><tr align="left">
+				<td width="2%"><div>Pág.</div></td>
+				<td width="2%"><div>1</div></td>
+				<td></td>
+			</tr>
+		</tbody></table>
+		
+
+
+
+                </td>
+	</tr>
+	<tr>
+		<td colspan="2" align="center">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2" align="center">
+                      
+                </td>
+	</tr>
+	<tr>
+		<td colspan="2" align="center">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="2" align="right" class="cssFwkLabelTitle">
+                    <span id="lblShowProcurement" class="cssLinkButtonProcurement"></span>
+                </td>
+	</tr>
+</tbody></table>
+
+
+         
+
+        
+
+    </form>
+
+
+
+
+
+</body></html>
