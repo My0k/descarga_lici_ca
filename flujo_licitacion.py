@@ -17,7 +17,7 @@ BUSCADOR_URL = "https://mercadopublico.cl/Procurement/Modules/RFB/SearchAcquisit
 def obtener_url_licitacion(codigo_lici, driver, timeout=20):
     """
     Busca el código en el buscador de licitaciones y devuelve la URL de la ficha si se encuentra.
-    No abre nuevas ventanas.
+    Abre el resultado para capturar la URL real (DetailsAcquisition.aspx?qs=...).
     """
     wait = WebDriverWait(driver, timeout)
     try:
@@ -43,11 +43,38 @@ def obtener_url_licitacion(codigo_lici, driver, timeout=20):
         except Exception:
             return ""
 
+    handle_original = driver.current_window_handle
+    handles_prev = driver.window_handles[:]
     try:
-        href = enlace.get_attribute("href") or ""
-        return href
+        driver.execute_script("arguments[0].click();", enlace)
     except Exception:
+        try:
+            enlace.click()
+        except Exception:
+            return ""
+
+    nuevo_handle = _esperar_nueva_ventana(driver, handles_prev, timeout=10)
+    if not nuevo_handle:
         return ""
+
+    url_ficha = ""
+    try:
+        driver.switch_to.window(nuevo_handle)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        url_ficha = driver.current_url or ""
+    except Exception:
+        url_ficha = ""
+    finally:
+        try:
+            driver.close()
+        except Exception:
+            pass
+        try:
+            driver.switch_to.window(handle_original)
+        except Exception:
+            pass
+
+    return url_ficha
 
 
 def test_flujo_licitacion(codigo_lici, driver, carpeta_base="Descargas/Licitaciones", url_directa=None):

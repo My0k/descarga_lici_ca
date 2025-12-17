@@ -363,6 +363,11 @@ class DescargadorLicitacionesApp:
             self._token_poll_after_id = None
 
         if self.driver:
+            # Intentar persistir cookies de la sesión antes de cerrar el navegador
+            try:
+                self._guardar_sesion_cookies()
+            except Exception as e:
+                print(f"[DEBUG] cerrar_navegador: error guardando cookies antes de cerrar: {e}")
             try:
                 self.driver.quit()
             except Exception:
@@ -1288,6 +1293,10 @@ class DescargadorLicitacionesApp:
     def on_closing(self):
         """Maneja el cierre de la aplicación"""
         try:
+            try:
+                self._guardar_sesion_cookies()
+            except Exception:
+                pass
             self.cerrar_navegador()
         except Exception:
             pass
