@@ -27,6 +27,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+import descarga_ca
+
 URL = "https://mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=5vvQo+7VGfY18eev2hYLBQ=="
 BASE = "https://mercadopublico.cl"
 DOWNLOAD_DIR = "adjuntos"
@@ -118,6 +120,33 @@ def switch_to_cuerpo_frame(driver: webdriver.Chrome, wait: WebDriverWait) -> boo
 
 def count_elements(driver: webdriver.Chrome) -> int:
     """Cuenta, lista y descarga adjuntos; retorna total descargados."""
+    descargados, _ = _count_elements_with_providers(driver)
+    return descargados
+
+
+def _normalize_provider_dir(provider_name: str, idx: int | None = None) -> str:
+    """
+    Normaliza un nombre de proveedor para usar como carpeta (compatible Windows).
+    """
+    nombre = (provider_name or "").strip()
+    if not nombre:
+        return f"Proveedor_{idx}" if idx else "Proveedor"
+    # Remover caracteres inválidos en Windows
+    nombre = re.sub(r'[<>:"/\\\\|?*]', "_", nombre)
+    # Colapsar espacios
+    nombre = " ".join(nombre.split())
+    # Limitar longitud
+    nombre = nombre[:100].rstrip()
+    return nombre or (f"Proveedor_{idx}" if idx else "Proveedor")
+
+
+def _count_elements_with_providers(driver: webdriver.Chrome) -> Tuple[int, List[dict]]:
+    """
+    Cuenta, lista y descarga adjuntos; retorna (total_descargados, proveedores_meta).
+
+    proveedores_meta: lista de dicts {rut, nombre, carpeta_rel}
+    donde carpeta_rel es el nombre de carpeta del proveedor bajo DOWNLOAD_DIR.
+    """
     print(f"URL actual: {driver.current_url}")
     rows = driver.find_elements(
         By.CSS_SELECTOR,
@@ -125,7 +154,7 @@ def count_elements(driver: webdriver.Chrome) -> int:
     )
     if not rows:
         print("No se encontraron filas de proveedores en grdSupplies.")
-        return
+        return 0, []
 
     # Imprime solo RUT en bloque para fácil lectura
     rut_links = driver.find_elements(By.CSS_SELECTOR, "#grdSupplies a[id$='_GvLblRutProvider']")
@@ -142,6 +171,7 @@ def count_elements(driver: webdriver.Chrome) -> int:
     # Detalle por fila
     print("Detalle por fila:")
     all_attachment_urls: List[Tuple[str, str, str, str]] = []  # (url, rut, prov, title_hint)
+    proveedores_meta: List[dict] = []
     for row in rows:
         rut = _safe_text(row.find_elements(By.CSS_SELECTOR, "a[id$='_GvLblRutProvider']"))
         prov = _safe_text(row.find_elements(By.CSS_SELECTOR, "a[id$='_GvLblProvider']"))
@@ -149,6 +179,8 @@ def count_elements(driver: webdriver.Chrome) -> int:
         total = _safe_text(row.find_elements(By.CSS_SELECTOR, "span[id$='TotalOferta']"))
         estado = _safe_text(row.find_elements(By.CSS_SELECTOR, "span[id$='EstadoOferta']"))
         print(f"- {rut} | {prov} | {nombre} | {total} | {estado}")
+        carpeta_rel = _normalize_provider_dir(prov, len(proveedores_meta) + 1)
+        proveedores_meta.append({"rut": (rut or "").strip(), "nombre": (prov or "").strip(), "carpeta_rel": carpeta_rel})
         attachments = _extract_attachments(row)
         print(f"  Adjuntos en fila: {len(attachments)} -> {[t for t, _ in attachments]}")
         for title, url in attachments:
@@ -197,7 +229,7 @@ def count_elements(driver: webdriver.Chrome) -> int:
                 downloaded_total += 1
                 print(f"Descargado: {saved}")
     print(f"Total adjuntos descargados: {downloaded_total}. Log: {log_path}")
-    return downloaded_total
+    return downloaded_total, proveedores_meta
 
 
 def _safe_iter(elements: Iterable) -> Iterable:
@@ -421,7 +453,7 @@ def _save_stream_to_file(
         fname = f"{name_hint}{ext}"
     safe_name = fname.replace("/", "-")
 
-    prov_dir = (current_prov or "Proveedor").replace("/", "-").strip() or "Proveedor"
+    prov_dir = _normalize_provider_dir(current_prov)
     tipo_dir = _normalize_type_dir(file_type or fname)
     base_path = os.path.join(DOWNLOAD_DIR, prov_dir, tipo_dir)
     os.makedirs(base_path, exist_ok=True)
@@ -626,10 +658,58 @@ def descargar_adjuntos_desde_url(url: str, driver: webdriver.Chrome, codigo: str
         return resultado
 
     try:
-        descargados = count_elements(driver) or 0
+        descargados, proveedores_meta = _count_elements_with_providers(driver)
+        proveedores_meta = proveedores_meta or []
+
+        # Asegurar carpetas de proveedores aunque no tengan adjuntos
+        for prov in proveedores_meta:
+            carpeta_rel = (prov.get("carpeta_rel") or "").strip()
+            if not carpeta_rel:
+                continue
+            try:
+                os.makedirs(os.path.join(destino, carpeta_rel), exist_ok=True)
+            except Exception:
+                pass
+
+        # Descargar certificados por proveedor (si hay código y RUT)
+        if codigo and proveedores_meta:
+            for prov in proveedores_meta:
+                rut = (prov.get("rut") or "").strip()
+                carpeta_rel = (prov.get("carpeta_rel") or "").strip()
+                if not rut or not carpeta_rel:
+                    continue
+
+                carpeta_prov = os.path.join(destino, carpeta_rel)
+                carpeta_certificados = os.path.join(carpeta_prov, "Certificados")
+                try:
+                    os.makedirs(carpeta_certificados, exist_ok=True)
+                except Exception:
+                    pass
+
+                try:
+                    descarga_ca.descargar_declaracion_jurada_licitacion_a_carpeta(
+                        codigo,
+                        rut,
+                        carpeta_certificados,
+                        driver=driver,
+                        nombre_archivo="DeclaracionJurada.pdf",
+                    )
+                except Exception:
+                    pass
+
+                try:
+                    descarga_ca.descargar_certificado_habilidad_a_carpeta(
+                        rut,
+                        carpeta_certificados,
+                        driver=driver,
+                        nombre_archivo="CertificadoHabilidad.pdf",
+                    )
+                except Exception:
+                    pass
+
         resultado["descargados"] = descargados
         resultado["ok"] = descargados > 0
-        resultado["proveedores"] = _build_proveedores_resumen(destino)
+        resultado["proveedores"] = _build_proveedores_resumen(destino, proveedores_meta=proveedores_meta)
         return resultado
     except Exception as exc:
         resultado["errores"].append(f"Error descargando adjuntos: {exc}")
@@ -638,7 +718,7 @@ def descargar_adjuntos_desde_url(url: str, driver: webdriver.Chrome, codigo: str
         DOWNLOAD_DIR = previo_dir
 
 
-def _build_proveedores_resumen(destino: str) -> List[dict]:
+def _build_proveedores_resumen(destino: str, proveedores_meta: List[dict] | None = None) -> List[dict]:
     """
     Construye una lista de proveedores basada en la estructura de carpetas creada por _save_stream_to_file:
       destino/{Proveedor}/{Tipo}/archivo
@@ -658,8 +738,17 @@ def _build_proveedores_resumen(destino: str) -> List[dict]:
             total += len(files)
         return total
 
+    meta_by_dir = {}
+    for prov in proveedores_meta or []:
+        carpeta_rel = (prov.get("carpeta_rel") or "").strip()
+        if not carpeta_rel:
+            continue
+        meta_by_dir[carpeta_rel] = prov
+
     def _match_tipo(tipo_dir: str) -> str:
         t = (tipo_dir or "").lower()
+        if t == "certificados":
+            return "ignorar"
         if "administrativ" in t:
             return "admin"
         if "tecnic" in t:
@@ -668,8 +757,8 @@ def _build_proveedores_resumen(destino: str) -> List[dict]:
             return "economico"
         return "otros"
 
-    for nombre_prov in sorted(os.listdir(destino)):
-        prov_path = os.path.join(destino, nombre_prov)
+    for carpeta_rel in sorted(os.listdir(destino)):
+        prov_path = os.path.join(destino, carpeta_rel)
         if not os.path.isdir(prov_path):
             continue
 
@@ -679,13 +768,18 @@ def _build_proveedores_resumen(destino: str) -> List[dict]:
             if not os.path.isdir(tipo_path):
                 continue
             bucket = _match_tipo(tipo_dir)
+            if bucket == "ignorar":
+                continue
             counts[bucket] += _count_files(tipo_path)
 
         total = counts["admin"] + counts["tecnico"] + counts["economico"] + counts["otros"]
+        meta = meta_by_dir.get(carpeta_rel) or {}
+        rut = (meta.get("rut") or "").strip()
+        nombre = (meta.get("nombre") or "").strip() or carpeta_rel
         proveedores.append(
             {
-                "rut": "",
-                "nombre": nombre_prov,
+                "rut": rut,
+                "nombre": nombre,
                 "carpeta": prov_path,
                 "admin": {"descargados": counts["admin"], "errores": []},
                 "tecnico": {"descargados": counts["tecnico"], "errores": []},

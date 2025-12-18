@@ -4,7 +4,7 @@ import threading
 import time
 import tkinter as tk
 from pathlib import Path
-from tkinter import messagebox, ttk
+from tkinter import filedialog, messagebox, ttk
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -25,6 +25,7 @@ class DescargadorProduccionApp:
 
         self.tipo_proceso = tk.StringVar(value="compra_agil")
         self.codigo = tk.StringVar()
+        self.base_descargas_dir = tk.StringVar(value=os.path.abspath("Descargas"))
 
         self.driver = None
         self.navegador_iniciado = False
@@ -118,6 +119,16 @@ class DescargadorProduccionApp:
         ttk.Label(codigo_frame, text="Codigo:", background="#ffffff").pack(anchor="w")
         self.entry_codigo = ttk.Entry(codigo_frame, textvariable=self.codigo, width=35, font=("Segoe UI", 11))
         self.entry_codigo.pack(anchor="w", pady=(4, 0))
+
+        ttk.Label(codigo_frame, text="Carpeta de descargas:", background="#ffffff").pack(anchor="w", pady=(10, 0))
+        carpeta_row = tk.Frame(codigo_frame, bg="#ffffff")
+        carpeta_row.pack(anchor="w", pady=(4, 0), fill="x")
+        self.entry_carpeta = ttk.Entry(carpeta_row, textvariable=self.base_descargas_dir, width=48)
+        self.entry_carpeta.pack(side="left", padx=(0, 8), fill="x", expand=True)
+        self.btn_elegir_carpeta = ttk.Button(
+            carpeta_row, text="📁", width=3, command=self.elegir_carpeta_descargas, style="Custom.TButton"
+        )
+        self.btn_elegir_carpeta.pack(side="left")
 
         # Bloque: accion
         accion_frame = tk.Frame(container, bg="#ffffff", padx=14, pady=14, bd=1, relief="solid")
@@ -249,6 +260,8 @@ class DescargadorProduccionApp:
                 self.btn_listo.configure(state="normal")
 
     def _proceso_compra_agil(self, codigo):
+        base_dir = (self.base_descargas_dir.get() or "").strip() or os.path.abspath("Descargas")
+        self.base_descargas_dir.set(base_dir)
         if not self.token_guardado:
             self.token_estado.set("Buscando token antes de procesar compra agil...")
             token_ok = self.capturar_y_guardar_token_desde_selenium()
@@ -262,19 +275,19 @@ class DescargadorProduccionApp:
             return
 
         self.status_var.set(f"Descargando adjuntos de compra agil {codigo}...")
-        ok = descarga_ca.descargar_compra_agil_api(codigo, driver=self.driver)
+        ok = descarga_ca.descargar_compra_agil_api(codigo, driver=self.driver, base_dir=base_dir)
         if not ok:
             messagebox.showerror("Descarga", "No se pudieron descargar los adjuntos de la compra agil.")
             self.status_var.set("Fallo descarga compra agil")
             return
 
         try:
-            descarga_ca.crear_zips_proveedores(codigo)
+            descarga_ca.crear_zips_proveedores(codigo, base_dir=base_dir)
         except Exception:
             pass
 
         self.status_var.set("Generando Excel de compra agil...")
-        ruta_excel = genera_xls_ca.generar_excel_compra_agil(codigo, self.driver)
+        ruta_excel = genera_xls_ca.generar_excel_compra_agil(codigo, self.driver, base_dir=base_dir)
         if ruta_excel:
             self.status_var.set(f"Flujo completado: {codigo}")
             messagebox.showinfo(
@@ -289,6 +302,8 @@ class DescargadorProduccionApp:
             )
 
     def _proceso_licitacion(self, codigo):
+        base_dir = (self.base_descargas_dir.get() or "").strip() or os.path.abspath("Descargas")
+        self.base_descargas_dir.set(base_dir)
         self.status_var.set(f"Descargando adjuntos de licitacion {codigo}...")
         url_directa = flujo_licitacion.obtener_url_licitacion(codigo, self.driver)
         if not url_directa:
@@ -298,11 +313,11 @@ class DescargadorProduccionApp:
                 url_directa,
                 self.driver,
                 codigo=codigo,
-                download_dir=os.path.join("Descargas", "Licitaciones", codigo),
+                download_dir=os.path.join(base_dir, "Licitaciones", codigo),
             )
             if isinstance(resumen, dict):
                 resumen.setdefault("url", url_directa)
-        manifest_path = self._guardar_manifest_licitacion(codigo, resumen)
+        manifest_path = self._guardar_manifest_licitacion(codigo, resumen, base_dir=base_dir)
 
         if not resumen.get("ok"):
             errores = "\n".join(resumen.get("errores") or [])
@@ -319,7 +334,9 @@ class DescargadorProduccionApp:
             pass
 
         self.status_var.set("Generando Excel de licitacion...")
-        ruta_excel = genera_xls_lici.generar_excel_licitacion(codigo, resumen=resumen, manifest_path=manifest_path)
+        ruta_excel = genera_xls_lici.generar_excel_licitacion(
+            codigo, resumen=resumen, manifest_path=manifest_path, base_dir=base_dir
+        )
         if ruta_excel:
             self.status_var.set(f"Flujo completado: {codigo}")
             messagebox.showinfo(
@@ -615,9 +632,9 @@ class DescargadorProduccionApp:
         return True
 
     # ---------------- Utilidades licitacion ----------------
-    def _guardar_manifest_licitacion(self, codigo, resumen):
+    def _guardar_manifest_licitacion(self, codigo, resumen, base_dir="Descargas"):
         try:
-            carpeta = os.path.join("Descargas", "Licitaciones", codigo)
+            carpeta = os.path.join(base_dir, "Licitaciones", codigo)
             os.makedirs(carpeta, exist_ok=True)
             ruta = os.path.join(carpeta, "manifest_licitacion.json")
             data = resumen or {}
@@ -628,6 +645,18 @@ class DescargadorProduccionApp:
             return ruta
         except Exception:
             return None
+
+    def elegir_carpeta_descargas(self):
+        actual = (self.base_descargas_dir.get() or "").strip() or os.path.abspath("Descargas")
+        try:
+            initial = actual if os.path.isdir(actual) else os.getcwd()
+        except Exception:
+            initial = os.getcwd()
+
+        carpeta = filedialog.askdirectory(title="Seleccionar carpeta de descargas", initialdir=initial, mustexist=False)
+        if not carpeta:
+            return
+        self.base_descargas_dir.set(os.path.abspath(carpeta))
 
     def _zip_proveedores(self, resumen, codigo):
         proveedores = resumen.get("proveedores") or []

@@ -21,6 +21,7 @@ API_BASE_CA = "https://servicios-compra-agil.mercadopublico.cl/v1/compra-agil"
 DEFAULT_COOKIE = "cf8fc9f9992a81aa1f6cd62d77d1d62b=19395daaa97624eb1f7f9f9e68b099e5"
 CERT_BASE_URL = "https://proveedor.mercadopublico.cl/ficha/certificado"
 DECLARACION_JURADA_BASE_URL = "https://proveedor.mercadopublico.cl/BeneficiariosFinales/lectura"
+DECLARACION_JURADA_LICITACION_BASE_URL = "https://proveedor.mercadopublico.cl/dj-requisitos"
 MANIFEST_ADJUNTOS_FILENAME = "manifest_adjuntos.json"
 
 
@@ -74,7 +75,7 @@ def _listar_archivos_descargados(carpeta_proveedor):
 def _normalizar_nombre_para_comparar(nombre):
     return _limpiar_nombre_archivo_con_extension(nombre).lower()
 
-def descargar_compra_agil(codigo_ca, driver=None):
+def descargar_compra_agil(codigo_ca, driver=None, base_dir="Descargas"):
     """
     Descarga todos los adjuntos de una compra ágil
     
@@ -91,7 +92,7 @@ def descargar_compra_agil(codigo_ca, driver=None):
     
     try:
         # Crear carpeta base para la compra ágil
-        carpeta_base = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
+        carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
         os.makedirs(carpeta_base, exist_ok=True)
         
         # Navegar a la compra ágil
@@ -153,7 +154,7 @@ def descargar_compra_agil(codigo_ca, driver=None):
         return False
 
 
-def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
+def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_dir="Descargas"):
     """
     Descarga los adjuntos de una compra ágil usando la API oficial con el token Bearer.
 
@@ -171,7 +172,7 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None):
         print(f"[API] Error leyendo token: {e}")
         return False
 
-    carpeta_base = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
+    carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
     os.makedirs(carpeta_base, exist_ok=True)
 
     exitosos = 0
@@ -1206,25 +1207,7 @@ def descargar_certificado_habilidad(rut, carpeta_proveedor, driver=None):
     destino_pdf = os.path.join(carpeta_certificados, "CertificadoHabilidad.pdf")
     url = f"{CERT_BASE_URL}/{rut_normalizado}"
 
-    try:
-        resp = requests.get(url, timeout=60)
-        resp.raise_for_status()
-        contenido = resp.content
-        content_type = (resp.headers.get("content-type") or "").lower()
-        if contenido.startswith(b"%PDF") or "pdf" in content_type:
-            with open(destino_pdf, "wb") as f:
-                f.write(contenido)
-            print(f"[CERT] Certificado descargado -> {destino_pdf}")
-            return True
-        print(f"[CERT] Respuesta no es PDF (content-type: {content_type}), intentando imprimir con navegador.")
-    except Exception as e:
-        print(f"[CERT] Error descargando certificado vía requests para {rut_normalizado}: {e}")
-
-    if not driver:
-        print("[CERT] No hay navegador disponible para imprimir el certificado.")
-        return False
-
-    return _imprimir_certificado_con_navegador(url, destino_pdf, driver)
+    return descargar_pdf_a_archivo(url, destino_pdf, driver=driver, tag="[CERT]")
 
 
 def descargar_declaracion_jurada(rut, carpeta_proveedor, driver=None):
@@ -1243,25 +1226,74 @@ def descargar_declaracion_jurada(rut, carpeta_proveedor, driver=None):
     destino_pdf = os.path.join(carpeta_certificados, "DeclaracionJurada.pdf")
     url = f"{DECLARACION_JURADA_BASE_URL}/{rut_normalizado}"
 
+    return descargar_pdf_a_archivo(url, destino_pdf, driver=driver, tag="[DJ]")
+
+
+def descargar_pdf_a_archivo(url, destino_pdf, driver=None, tag="[PDF]"):
+    """
+    Descarga/guarda un PDF desde una URL.
+    - Intenta requests (PDF directo).
+    - Si no es PDF o falla, usa el navegador (si está disponible) para imprimir a PDF vía Chrome DevTools.
+    """
     try:
         resp = requests.get(url, timeout=60)
         resp.raise_for_status()
         contenido = resp.content or b""
         content_type = (resp.headers.get("content-type") or "").lower()
-        if contenido.startswith(b"%PDF") or "application/pdf" in content_type:
+        if contenido.startswith(b"%PDF") or "pdf" in content_type:
+            os.makedirs(os.path.dirname(destino_pdf), exist_ok=True)
             with open(destino_pdf, "wb") as f:
                 f.write(contenido)
-            print(f"[DJ] Declaración jurada descargada -> {destino_pdf}")
+            print(f"{tag} PDF descargado -> {destino_pdf}")
             return True
-        print(f"[DJ] Respuesta no es PDF (content-type: {content_type}), intentando imprimir con navegador.")
+        print(f"{tag} Respuesta no es PDF (content-type: {content_type}), intentando imprimir con navegador.")
     except Exception as e:
-        print(f"[DJ] Error descargando declaración jurada vía requests para {rut_normalizado}: {e}")
+        print(f"{tag} Error descargando PDF vía requests: {e}")
 
     if not driver:
-        print("[DJ] No hay navegador disponible para imprimir la declaración jurada.")
+        print(f"{tag} No hay navegador disponible para imprimir el PDF.")
         return False
 
+    try:
+        os.makedirs(os.path.dirname(destino_pdf), exist_ok=True)
+    except Exception:
+        pass
     return _imprimir_certificado_con_navegador(url, destino_pdf, driver)
+
+
+def descargar_certificado_habilidad_a_carpeta(rut, carpeta_certificados, driver=None, nombre_archivo="CertificadoHabilidad.pdf"):
+    rut_normalizado = _normalizar_rut(rut)
+    if not rut_normalizado:
+        print(f"[CERT] RUT no válido o ausente para certificado: {rut}")
+        return False
+    destino_pdf = os.path.join(carpeta_certificados, nombre_archivo)
+    url = f"{CERT_BASE_URL}/{rut_normalizado}"
+    return descargar_pdf_a_archivo(url, destino_pdf, driver=driver, tag="[CERT]")
+
+
+def descargar_declaracion_jurada_licitacion_a_carpeta(
+    codigo_licitacion,
+    rut,
+    carpeta_certificados,
+    driver=None,
+    nombre_archivo="DeclaracionJurada.pdf",
+):
+    """
+    Descarga la declaración jurada específica de licitación desde:
+      https://proveedor.mercadopublico.cl/dj-requisitos/{codigo}/{rut}
+    y la guarda como PDF (requests o impresión con navegador).
+    """
+    rut_normalizado = _normalizar_rut(rut)
+    if not rut_normalizado:
+        print(f"[DJ] RUT no válido o ausente para declaración jurada (licitación): {rut}")
+        return False
+    codigo = (str(codigo_licitacion) or "").strip()
+    if not codigo:
+        print("[DJ] Código de licitación vacío para declaración jurada.")
+        return False
+    destino_pdf = os.path.join(carpeta_certificados, nombre_archivo)
+    url = f"{DECLARACION_JURADA_LICITACION_BASE_URL}/{codigo}/{rut_normalizado}"
+    return descargar_pdf_a_archivo(url, destino_pdf, driver=driver, tag="[DJ]")
 
 
 def _imprimir_certificado_con_navegador(url, destino_pdf, driver):
@@ -1432,12 +1464,12 @@ def limpiar_nombre_archivo(nombre):
     return nombre_limpio.strip()
 
 
-def crear_zips_proveedores(codigo_ca):
+def crear_zips_proveedores(codigo_ca, base_dir="Descargas"):
     """
     Recorre las carpetas de proveedores de una compra ágil y genera un ZIP por cada una.
     Ignora la carpeta 'Adjuntos' (adjuntos generales).
     """
-    carpeta_base = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
+    carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
     if not os.path.isdir(carpeta_base):
         print(f"[ZIP] Carpeta base no existe: {carpeta_base}")
         return []

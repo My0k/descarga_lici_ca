@@ -14,8 +14,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import descarga_ca
 
 
-def _cargar_manifest_adjuntos(codigo_ca):
-    carpeta_base = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
+def _cargar_manifest_adjuntos(codigo_ca, base_dir="Descargas"):
+    carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
     ruta_manifest = os.path.join(carpeta_base, descarga_ca.MANIFEST_ADJUNTOS_FILENAME)
     if not os.path.exists(ruta_manifest):
         return {}
@@ -35,7 +35,7 @@ def _cargar_manifest_adjuntos(codigo_ca):
         by_rut[rut_norm] = p
     return by_rut
 
-def generar_excel_compra_agil(codigo_ca, driver=None):
+def generar_excel_compra_agil(codigo_ca, driver=None, base_dir="Descargas"):
     """
     Genera un archivo Excel con la información de una compra ágil
     
@@ -62,14 +62,14 @@ def generar_excel_compra_agil(codigo_ca, driver=None):
         info_compra = extraer_informacion_compra_agil(codigo_ca, driver)
         
         # Extraer datos de proveedores
-        datos_proveedores = extraer_datos_proveedores(codigo_ca, driver)
+        datos_proveedores = extraer_datos_proveedores(codigo_ca, driver, base_dir=base_dir)
         
         if not datos_proveedores:
             print("No se encontraron proveedores para generar el Excel")
             return None
         
         # Crear el archivo Excel
-        ruta_excel = crear_estructura_excel(datos_proveedores, codigo_ca, info_compra)
+        ruta_excel = crear_estructura_excel(datos_proveedores, codigo_ca, info_compra, base_dir=base_dir)
         
         if ruta_excel:
             print(f"Excel generado exitosamente: {ruta_excel}")
@@ -152,7 +152,7 @@ def extraer_informacion_compra_agil(codigo_ca, driver):
         print(f"Error al extraer información de la compra ágil: {str(e)}")
         return info_compra
 
-def extraer_datos_proveedores(codigo_ca, driver):
+def extraer_datos_proveedores(codigo_ca, driver, base_dir="Descargas"):
     """
     Extrae los datos de los proveedores participantes
     
@@ -166,13 +166,13 @@ def extraer_datos_proveedores(codigo_ca, driver):
     try:
         # Obtener proveedores usando la función del módulo de descarga
         proveedores = descarga_ca.obtener_proveedores_ca(driver)
-        manifest_by_rut = _cargar_manifest_adjuntos(codigo_ca)
+        manifest_by_rut = _cargar_manifest_adjuntos(codigo_ca, base_dir=base_dir)
         
         datos_proveedores = []
         
         for i, proveedor in enumerate(proveedores, 1):
             # Construir rutas basadas en la estructura de carpetas
-            carpeta_base = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
+            carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
             rut_norm = descarga_ca._normalizar_rut(proveedor.get("rut")) or (proveedor.get("rut") or "").strip()
             entry = manifest_by_rut.get(rut_norm) if rut_norm else None
 
@@ -226,7 +226,7 @@ def extraer_datos_proveedores(codigo_ca, driver):
         print(f"Error al extraer datos de proveedores: {str(e)}")
         return []
 
-def crear_estructura_excel(datos_proveedores, codigo_ca, info_compra):
+def crear_estructura_excel(datos_proveedores, codigo_ca, info_compra, base_dir="Descargas"):
     """
     Crea la estructura del archivo Excel
     
@@ -240,7 +240,7 @@ def crear_estructura_excel(datos_proveedores, codigo_ca, info_compra):
     """
     try:
         # Crear carpeta de destino
-        carpeta_destino = os.path.join("Descargas", "ComprasAgiles", codigo_ca)
+        carpeta_destino = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
         os.makedirs(carpeta_destino, exist_ok=True)
         
         # Nombre del archivo Excel
