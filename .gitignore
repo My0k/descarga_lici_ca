@@ -11,6 +11,6 @@ __pycache__/
 /adjuntos/
 /capturas/
 /git.conf
-/update.sh
-/update.bat
+#/update.sh
+#/update.bat
 .DS_Store
