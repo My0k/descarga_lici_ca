@@ -7,6 +7,7 @@ import time
 from urllib.parse import urljoin, unquote, urlparse
 
 import requests
+import descarga_ca
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -193,6 +194,8 @@ def _procesar_cuadro_ofertas(driver, wait, session, carpeta_lici):
         res_economico = _descargar_anexos_tipo(
             driver, fila, session, carpeta_prov, "Economicos", ["_GvImgbEconomicAttachment", "_GvImgbEconomic"]
         )
+        res_certificados = _descargar_certificados_proveedor(rut, carpeta_prov, driver)
+        res_comprobante = _descargar_comprobante_oferta(driver, fila, carpeta_prov)
 
         total_descargados = res_admin["descargados"] + res_tecnico["descargados"] + res_economico["descargados"]
         proveedores.append(
@@ -203,6 +206,8 @@ def _procesar_cuadro_ofertas(driver, wait, session, carpeta_lici):
                 "admin": res_admin,
                 "tecnico": res_tecnico,
                 "economico": res_economico,
+                "certificados": res_certificados,
+                "comprobante": res_comprobante,
                 "total_descargados": total_descargados,
             }
         )
@@ -279,6 +284,103 @@ def _descargar_anexos_tipo(driver, fila, session, carpeta_prov, etiqueta, select
 
     except Exception as e:
         resumen["errores"].append(str(e))
+    return resumen
+
+
+def _descargar_certificados_proveedor(rut, carpeta_prov, driver):
+    """
+    Descarga certificados del proveedor (declaración jurada y certificado de habilidad) reutilizando la lógica de compra ágil.
+    """
+    resumen = {"declaracion": False, "habilidad": False, "errores": []}
+    try:
+        ok_dj = descarga_ca.descargar_declaracion_jurada(rut, carpeta_prov, driver=driver)
+        resumen["declaracion"] = bool(ok_dj)
+        if not ok_dj:
+            resumen["errores"].append("Declaración jurada no descargada")
+    except Exception as exc:
+        resumen["errores"].append(f"Error DJ: {exc}")
+
+    try:
+        ok_hab = descarga_ca.descargar_certificado_habilidad(rut, carpeta_prov, driver=driver)
+        resumen["habilidad"] = bool(ok_hab)
+        if not ok_hab:
+            resumen["errores"].append("Certificado de habilidad no descargado")
+    except Exception as exc:
+        resumen["errores"].append(f"Error habilidad: {exc}")
+
+    return resumen
+
+
+def _descargar_comprobante_oferta(driver, fila, carpeta_prov):
+    """
+    Intenta abrir y guardar el comprobante de oferta (HTML) desde la fila del proveedor.
+    """
+    resumen = {"guardado": False, "archivo": "", "errores": []}
+    try:
+        botones = fila.find_elements(
+            By.XPATH,
+            ".//input[contains(@title,'Comprobante') or contains(@id,'Comprobante') or contains(@onclick,'Comprobante') or contains(@src,'comprobante')]",
+        )
+        boton = botones[0] if botones else None
+        if not boton:
+            candidatos = fila.find_elements(By.XPATH, ".//input[@type='image' or @type='button' or @type='submit']")
+            if candidatos:
+                boton = candidatos[-1]
+        if not boton:
+            return resumen
+
+        handle_base = driver.current_window_handle
+        handles_prev = driver.window_handles[:]
+        try:
+            driver.execute_script("arguments[0].click();", boton)
+        except Exception:
+            try:
+                boton.click()
+            except Exception as exc:
+                resumen["errores"].append(f"Click comprobante falló: {exc}")
+                return resumen
+
+        handle_popup = _esperar_nueva_ventana(driver, handles_prev, timeout=10)
+        if handle_popup:
+            driver.switch_to.window(handle_popup)
+        try:
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        except Exception:
+            pass
+
+        try:
+            html = driver.page_source or ""
+        except Exception as exc:
+            resumen["errores"].append(f"No se pudo leer HTML del comprobante: {exc}")
+            html = ""
+
+        if html:
+            carpeta_comp = os.path.join(carpeta_prov, "COMPROBANTE")
+            os.makedirs(carpeta_comp, exist_ok=True)
+            destino = os.path.join(carpeta_comp, "ComprobanteOferta.html")
+            with open(destino, "w", encoding="utf-8") as f:
+                f.write(html)
+            resumen["guardado"] = True
+            resumen["archivo"] = destino
+            print(f"[LICI] Comprobante de oferta guardado en {destino}")
+
+        if handle_popup:
+            try:
+                driver.close()
+            except Exception:
+                pass
+            try:
+                driver.switch_to.window(handle_base)
+            except Exception:
+                pass
+
+    except Exception as exc:
+        resumen["errores"].append(f"Error comprobante: {exc}")
+        try:
+            driver.switch_to.window(driver.window_handles[0])
+        except Exception:
+            pass
+
     return resumen
 
 

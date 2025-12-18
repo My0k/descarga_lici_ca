@@ -572,7 +572,7 @@ def descargar_adjuntos_desde_url(url: str, driver: webdriver.Chrome, codigo: str
         destino = os.path.join("Descargas", "Licitaciones", codigo or "sin_codigo")
     DOWNLOAD_DIR = destino
 
-    resultado = {"ok": False, "descargados": 0, "download_dir": destino, "errores": []}
+    resultado = {"ok": False, "descargados": 0, "download_dir": destino, "errores": [], "proveedores": []}
 
     try:
         print(f"[SCRAPE_CUADRO] Abriendo URL directa: {url}")
@@ -629,9 +629,69 @@ def descargar_adjuntos_desde_url(url: str, driver: webdriver.Chrome, codigo: str
         descargados = count_elements(driver) or 0
         resultado["descargados"] = descargados
         resultado["ok"] = descargados > 0
+        resultado["proveedores"] = _build_proveedores_resumen(destino)
         return resultado
     except Exception as exc:
         resultado["errores"].append(f"Error descargando adjuntos: {exc}")
         return resultado
     finally:
         DOWNLOAD_DIR = previo_dir
+
+
+def _build_proveedores_resumen(destino: str) -> List[dict]:
+    """
+    Construye una lista de proveedores basada en la estructura de carpetas creada por _save_stream_to_file:
+      destino/{Proveedor}/{Tipo}/archivo
+
+    Esto permite reutilizar el flujo de zips + Excel en producción aunque el scraping no entregue
+    una lista explícita de proveedores.
+    """
+    proveedores: List[dict] = []
+    if not destino or not os.path.isdir(destino):
+        return proveedores
+
+    def _count_files(path: str) -> int:
+        if not os.path.isdir(path):
+            return 0
+        total = 0
+        for _, _, files in os.walk(path):
+            total += len(files)
+        return total
+
+    def _match_tipo(tipo_dir: str) -> str:
+        t = (tipo_dir or "").lower()
+        if "administrativ" in t:
+            return "admin"
+        if "tecnic" in t:
+            return "tecnico"
+        if "econ" in t:
+            return "economico"
+        return "otros"
+
+    for nombre_prov in sorted(os.listdir(destino)):
+        prov_path = os.path.join(destino, nombre_prov)
+        if not os.path.isdir(prov_path):
+            continue
+
+        counts = {"admin": 0, "tecnico": 0, "economico": 0, "otros": 0}
+        for tipo_dir in os.listdir(prov_path):
+            tipo_path = os.path.join(prov_path, tipo_dir)
+            if not os.path.isdir(tipo_path):
+                continue
+            bucket = _match_tipo(tipo_dir)
+            counts[bucket] += _count_files(tipo_path)
+
+        total = counts["admin"] + counts["tecnico"] + counts["economico"] + counts["otros"]
+        proveedores.append(
+            {
+                "rut": "",
+                "nombre": nombre_prov,
+                "carpeta": prov_path,
+                "admin": {"descargados": counts["admin"], "errores": []},
+                "tecnico": {"descargados": counts["tecnico"], "errores": []},
+                "economico": {"descargados": counts["economico"], "errores": []},
+                "otros": {"descargados": counts["otros"], "errores": []},
+                "total_descargados": total,
+            }
+        )
+    return proveedores

@@ -28,7 +28,7 @@ def generar_excel_licitacion(codigo_lici, driver=None, resumen=None, manifest_pa
 
     _render_encabezado(ws, codigo_lici)
 
-    headers = ["Proveedor", "RUT", "Total adjuntos", "Administrativos", "Tecnicos", "Economicos", "Carpeta"]
+    headers = ["Proveedor", "RUT", "Total adjuntos", "Administrativos", "Tecnicos", "Economicos", "Otros", "Carpeta"]
     ws.append(headers)
     _pintar_encabezado(ws, ws.max_row, len(headers))
 
@@ -42,11 +42,12 @@ def generar_excel_licitacion(codigo_lici, driver=None, resumen=None, manifest_pa
                 counts["admin"],
                 counts["tecnico"],
                 counts["economico"],
+                counts["otros"],
                 prov.get("carpeta") or "",
             ]
         )
 
-    _ajustar_columnas(ws, [28, 16, 16, 16, 16, 16, 48])
+    _ajustar_columnas(ws, [28, 16, 16, 16, 16, 16, 16, 48])
 
     errores = data.get("errores") or []
     _render_errores_sheet(wb, proveedores, errores)
@@ -79,6 +80,7 @@ def _contar_adjuntos(prov_entry):
         "admin": (prov_entry.get("admin") or {}).get("descargados") or 0,
         "tecnico": (prov_entry.get("tecnico") or {}).get("descargados") or 0,
         "economico": (prov_entry.get("economico") or {}).get("descargados") or 0,
+        "otros": (prov_entry.get("otros") or {}).get("descargados") or 0,
     }
 
     carpeta_base = prov_entry.get("carpeta")
@@ -89,10 +91,12 @@ def _contar_adjuntos(prov_entry):
             counts["tecnico"] = _contar_carpeta(os.path.join(carpeta_base, "TECNICOS"))
         if counts["economico"] == 0:
             counts["economico"] = _contar_carpeta(os.path.join(carpeta_base, "ECONOMICOS"))
+        if counts["otros"] == 0:
+            counts["otros"] = _contar_carpeta(os.path.join(carpeta_base, "OTROS"))
 
     total = prov_entry.get("total_descargados")
     if total is None:
-        total = counts["admin"] + counts["tecnico"] + counts["economico"]
+        total = counts["admin"] + counts["tecnico"] + counts["economico"] + counts["otros"]
     return {"total": total, **counts}
 
 
@@ -131,6 +135,7 @@ def _render_errores_sheet(wb, proveedores, errores_generales):
             ("Administrativos", prov.get("admin") or {}),
             ("Tecnicos", prov.get("tecnico") or {}),
             ("Economicos", prov.get("economico") or {}),
+            ("Otros", prov.get("otros") or {}),
         ]:
             for err in info.get("errores") or []:
                 ws_err.append([nombre, f"{etiqueta}: {err}"])

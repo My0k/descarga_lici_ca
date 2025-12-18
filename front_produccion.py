@@ -13,6 +13,7 @@ import descarga_ca
 import flujo_licitacion
 import genera_xls_ca
 import genera_xls_lici
+import scrape_cuadro
 
 
 class DescargadorProduccionApp:
@@ -289,7 +290,18 @@ class DescargadorProduccionApp:
 
     def _proceso_licitacion(self, codigo):
         self.status_var.set(f"Descargando adjuntos de licitacion {codigo}...")
-        resumen = flujo_licitacion.test_flujo_licitacion(codigo, self.driver, carpeta_base="Descargas/Licitaciones")
+        url_directa = flujo_licitacion.obtener_url_licitacion(codigo, self.driver)
+        if not url_directa:
+            resumen = {"ok": False, "proveedores": [], "errores": ["No se pudo obtener la URL de la licitación."]}
+        else:
+            resumen = scrape_cuadro.descargar_adjuntos_desde_url(
+                url_directa,
+                self.driver,
+                codigo=codigo,
+                download_dir=os.path.join("Descargas", "Licitaciones", codigo),
+            )
+            if isinstance(resumen, dict):
+                resumen.setdefault("url", url_directa)
         manifest_path = self._guardar_manifest_licitacion(codigo, resumen)
 
         if not resumen.get("ok"):
