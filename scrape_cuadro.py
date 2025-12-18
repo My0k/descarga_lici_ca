@@ -180,7 +180,35 @@ def _count_elements_with_providers(driver: webdriver.Chrome) -> Tuple[int, List[
         estado = _safe_text(row.find_elements(By.CSS_SELECTOR, "span[id$='EstadoOferta']"))
         print(f"- {rut} | {prov} | {nombre} | {total} | {estado}")
         carpeta_rel = _normalize_provider_dir(prov, len(proveedores_meta) + 1)
-        proveedores_meta.append({"rut": (rut or "").strip(), "nombre": (prov or "").strip(), "carpeta_rel": carpeta_rel})
+        voucher_url = ""
+        try:
+            voucher_btns = row.find_elements(
+                By.CSS_SELECTOR,
+                "input[type='image'][id$='_imgView'], input[type='image'][title*='Comprobante'], input[type='image'][onclick*='voucherview.aspx']",
+            )
+            for btn in voucher_btns:
+                onclick = btn.get_attribute("onclick") or ""
+                rel = _extract_url_from_openpopup(onclick)
+                if rel and "voucherview.aspx" in rel.lower():
+                    voucher_url = rel
+                    break
+        except Exception:
+            voucher_url = ""
+
+        if voucher_url and not voucher_url.startswith("http"):
+            try:
+                voucher_url = urljoin(driver.current_url or BASE, voucher_url)
+            except Exception:
+                voucher_url = urljoin(BASE, voucher_url)
+
+        proveedores_meta.append(
+            {
+                "rut": (rut or "").strip(),
+                "nombre": (prov or "").strip(),
+                "carpeta_rel": carpeta_rel,
+                "voucher_url": voucher_url,
+            }
+        )
         attachments = _extract_attachments(row)
         print(f"  Adjuntos en fila: {len(attachments)} -> {[t for t, _ in attachments]}")
         for title, url in attachments:
@@ -265,6 +293,18 @@ def _extract_url_from_onclick(onclick: str) -> str:
         return ""
     rel = m.group(1)
     return rel if rel.startswith("http") else urljoin(BASE, rel)
+
+def _extract_url_from_openpopup(onclick: str) -> str:
+    """
+    Extrae la URL (primer parámetro) desde openPopUp('...').
+    Devuelve URL relativa o absoluta, o '' si no calza.
+    """
+    if not onclick:
+        return ""
+    m = re.search(r"openPopUp\(\s*['\"]([^'\"]+)['\"]", onclick)
+    if not m:
+        return ""
+    return (m.group(1) or "").strip()
 
 
 def _requests_session_from_driver(driver: webdriver.Chrome) -> requests.Session:
@@ -706,6 +746,19 @@ def descargar_adjuntos_desde_url(url: str, driver: webdriver.Chrome, codigo: str
                     )
                 except Exception:
                     pass
+
+                # Comprobante de oferta (voucherview.aspx) -> PDF
+                voucher_url = (prov.get("voucher_url") or "").strip()
+                if voucher_url:
+                    try:
+                        descarga_ca.descargar_pdf_a_archivo(
+                            voucher_url,
+                            os.path.join(carpeta_certificados, "ComprobanteOferta.pdf"),
+                            driver=driver,
+                            tag="[VOUCHER]",
+                        )
+                    except Exception:
+                        pass
 
         resultado["descargados"] = descargados
         resultado["ok"] = descargados > 0
