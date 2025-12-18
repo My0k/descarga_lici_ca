@@ -137,6 +137,11 @@ def descargar_compra_agil(codigo_ca, driver=None, base_dir="Descargas"):
                 descargar_declaracion_jurada(proveedor.get("rut"), carpeta_proveedor, driver)
             except Exception as dj_error:
                 print(f"[DJ] Error al obtener declaración jurada para {nombre_proveedor}: {dj_error}")
+
+            try:
+                descargar_comprobante_oferta_compra_agil_por_proveedor(proveedor, carpeta_proveedor, driver)
+            except Exception as voucher_error:
+                print(f"[VOUCHER_CA] Error al obtener comprobante para {nombre_proveedor}: {voucher_error}")
             
             # Crear ZIP si hay adjuntos
             if adjuntos_descargados:
@@ -337,6 +342,13 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
         print(f"[API] Manifest guardado -> {ruta_manifest}")
     except Exception as e:
         print(f"[API] No se pudo guardar manifest: {e}")
+
+    # Comprobante de oferta por proveedor (UI "Ver detalle") -> PDF
+    try:
+        if driver:
+            descargar_comprobantes_oferta_compra_agil(codigo_ca, driver, base_dir=base_dir)
+    except Exception as e:
+        print(f"[VOUCHER_CA] Error inesperado descargando comprobantes de oferta: {e}")
 
     print(f"[API] Descarga finalizada. Éxitos: {exitosos} | Errores: {errores}")
     return exitosos > 0
@@ -1296,6 +1308,36 @@ def descargar_declaracion_jurada_licitacion_a_carpeta(
     return descargar_pdf_a_archivo(url, destino_pdf, driver=driver, tag="[DJ]")
 
 
+def imprimir_pagina_actual_a_pdf(destino_pdf, driver, tag="[PDF]"):
+    """
+    Guarda el estado actual del navegador como PDF usando Chrome DevTools.
+    Útil para modales/vistas SPA sin URL descargable.
+    """
+    if not driver:
+        return False
+    try:
+        os.makedirs(os.path.dirname(destino_pdf), exist_ok=True)
+    except Exception:
+        pass
+    try:
+        try:
+            WebDriverWait(driver, 20).until(lambda d: d.execute_script("return document.readyState") == "complete")
+        except Exception:
+            pass
+        time.sleep(1.0)
+        resultado_pdf = driver.execute_cdp_cmd("Page.printToPDF", {"printBackground": True})
+        data_base64 = resultado_pdf.get("data") if isinstance(resultado_pdf, dict) else None
+        if not data_base64:
+            raise RuntimeError("Chrome no entregó datos para el PDF")
+        with open(destino_pdf, "wb") as f:
+            f.write(base64.b64decode(data_base64))
+        print(f"{tag} PDF generado -> {destino_pdf}")
+        return True
+    except Exception as e:
+        print(f"{tag} Error al generar PDF: {e}")
+        return False
+
+
 def _imprimir_certificado_con_navegador(url, destino_pdf, driver):
     try:
         handle_original = driver.current_window_handle
@@ -1343,6 +1385,143 @@ def _imprimir_certificado_con_navegador(url, destino_pdf, driver):
                 driver.get(original_url)
         except Exception:
             pass
+
+
+def descargar_comprobante_oferta_compra_agil_por_proveedor(proveedor, carpeta_proveedor, driver):
+    """
+    Abre "Ver detalle" del proveedor (modal/vista) y guarda un PDF como ComprobanteOferta.pdf
+    en carpeta_proveedor/CERTIFICADOS.
+    """
+    if not driver or not proveedor or not carpeta_proveedor:
+        return False
+
+    wait = WebDriverWait(driver, 25)
+    carpeta_certificados = os.path.join(carpeta_proveedor, "CERTIFICADOS")
+    os.makedirs(carpeta_certificados, exist_ok=True)
+    destino_pdf = os.path.join(carpeta_certificados, "ComprobanteOferta.pdf")
+
+    elemento_ver_detalle = proveedor.get("elemento_ver_detalle") or proveedor.get("elemento")
+    if not elemento_ver_detalle:
+        # Fallback al XPath conocido
+        try:
+            elemento_ver_detalle = driver.find_element(
+                By.XPATH,
+                "/html/body/div[1]/div/main/div[2]/div[1]/div/div[2]/div/div/div[7]/div/div[1]/a",
+            )
+        except Exception:
+            elemento_ver_detalle = None
+
+    if not elemento_ver_detalle:
+        print("[VOUCHER_CA] No se encontró enlace 'Ver detalle' para proveedor.")
+        return False
+
+    try:
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", elemento_ver_detalle)
+    except Exception:
+        pass
+
+    try:
+        wait.until(EC.element_to_be_clickable(elemento_ver_detalle))
+        elemento_ver_detalle.click()
+    except Exception:
+        try:
+            driver.execute_script("arguments[0].click();", elemento_ver_detalle)
+        except Exception as exc:
+            print(f"[VOUCHER_CA] Click 'Ver detalle' falló: {exc}")
+            return False
+
+    # Esperar que cargue el modal/detalle (usamos la misma marca que adjuntos)
+    try:
+        wait.until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH,
+                    "//p[contains(normalize-space(),'Adjuntos de la cotización') or contains(normalize-space(),'Adjuntos de la cotizacion')]",
+                )
+            )
+        )
+    except TimeoutException:
+        # A veces el detalle no tiene esa etiqueta; igual intentamos imprimir tras un pequeño delay
+        time.sleep(1.5)
+
+    ok = imprimir_pagina_actual_a_pdf(destino_pdf, driver, tag="[VOUCHER_CA]")
+
+    # Cerrar modal/detalle
+    try:
+        boton_cerrar = driver.find_element(
+            By.XPATH,
+            "//button[contains(normalize-space(),'Cerrar') or contains(normalize-space(),'Volver') or contains(normalize-space(),'Atrás')]",
+        )
+        driver.execute_script("arguments[0].click();", boton_cerrar)
+    except Exception:
+        try:
+            body = driver.find_element(By.TAG_NAME, "body")
+            body.send_keys(Keys.ESCAPE)
+        except Exception:
+            pass
+
+    time.sleep(0.5)
+    return bool(ok)
+
+
+def descargar_comprobantes_oferta_compra_agil(codigo_ca, driver, base_dir="Descargas"):
+    """
+    Recorre proveedores de una compra ágil, abre 'Ver detalle' y guarda ComprobanteOferta.pdf
+    en la carpeta CERTIFICADOS de cada proveedor.
+    """
+    if not driver:
+        return False
+
+    carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
+    os.makedirs(carpeta_base, exist_ok=True)
+
+    # Mapa por RUT desde manifest (si existe) para guardar en la misma carpeta usada por API
+    manifest_by_rut = {}
+    try:
+        ruta_manifest = os.path.join(carpeta_base, MANIFEST_ADJUNTOS_FILENAME)
+        if os.path.exists(ruta_manifest):
+            with open(ruta_manifest, "r", encoding="utf-8") as f:
+                data = json.load(f) or {}
+            for p in data.get("proveedores") or []:
+                rut = _normalizar_rut(p.get("rut")) or (p.get("rut") or "").strip()
+                carpeta = p.get("carpeta")
+                if rut and carpeta:
+                    manifest_by_rut[rut] = carpeta
+    except Exception:
+        manifest_by_rut = {}
+
+    # Asegurar que estamos en el resumen (lista de proveedores)
+    if not navegar_a_compra_agil(codigo_ca, driver):
+        print("[VOUCHER_CA] No se pudo navegar al resumen de compra ágil.")
+        return False
+
+    proveedores = obtener_proveedores_ca(driver) or []
+    if not proveedores:
+        print("[VOUCHER_CA] No se encontraron proveedores en la UI para imprimir comprobantes.")
+        return False
+
+    ok_any = False
+    for prov in proveedores:
+        rut = _normalizar_rut(prov.get("rut")) or (prov.get("rut") or "").strip()
+        carpeta_prov = None
+        if rut and rut in manifest_by_rut:
+            carpeta_prov = manifest_by_rut[rut]
+        if not carpeta_prov:
+            nombre = limpiar_nombre_archivo(prov.get("nombre") or "Proveedor")
+            carpeta_prov = os.path.join(carpeta_base, nombre)
+        try:
+            os.makedirs(carpeta_prov, exist_ok=True)
+        except Exception:
+            pass
+
+        try:
+            ok = descargar_comprobante_oferta_compra_agil_por_proveedor(prov, carpeta_prov, driver)
+            ok_any = ok_any or bool(ok)
+        except Exception as exc:
+            print(f"[VOUCHER_CA] Error imprimiendo comprobante para {prov.get('nombre')} ({prov.get('rut')}): {exc}")
+            continue
+
+    return ok_any
 
 
 def extract_candidate_ids(info_data):
