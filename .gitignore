@@ -6,4 +6,11 @@ __pycache__/
 /venv/
 /.venv/
 /sesion/
+/Descargas/
+/Licitaciones/
+/adjuntos/
+/capturas/
+/git.conf
+/update.sh
+/update.bat
 .DS_Store
