@@ -33,7 +33,7 @@ class DescargadorLicitacionesApp:
         # Configurar ventana para que se vea completa
         self.root.geometry("700x650")
         self.root.minsize(650, 600)
-        self.root.configure(bg='#f8f9fa')
+        self.root.configure(bg='#f4f6f8')
         
         # Centrar la ventana en la pantalla
         self.centrar_ventana()
@@ -71,19 +71,63 @@ class DescargadorLicitacionesApp:
         style = ttk.Style()
         style.theme_use('clam')
         
-        # Configurar colores del tema
-        style.configure('Title.TLabel', font=('Segoe UI', 16, 'bold'), 
-                       background='#f8f9fa', foreground='#2c3e50')
-        style.configure('Subtitle.TLabel', font=('Segoe UI', 10), 
-                       background='#f8f9fa', foreground='#7f8c8d')
-        style.configure('Custom.TButton', font=('Segoe UI', 10))
-        style.configure('Custom.TRadiobutton', font=('Segoe UI', 10), 
-                       background='#f8f9fa')
+        # Configurar colores del tema (sobrio + institucional INH)
+        colors = {
+            "bg": "#f4f6f8",
+            "card": "#ffffff",
+            "text": "#1f2a44",
+            "muted": "#5f6c7b",
+            "blue": "#003580",
+            "red": "#DA291C",
+            "teal": "#009DAE",
+            "border": "#d7dde3",
+            "status_bg": "#eef2f6",
+        }
+        self.colors = colors
+        self.root.configure(bg=colors["bg"])
+
+        style.configure(
+            'Title.TLabel',
+            font=('Segoe UI', 16, 'bold'),
+            background=colors["card"],
+            foreground=colors["blue"]
+        )
+        style.configure(
+            'Subtitle.TLabel',
+            font=('Segoe UI', 10),
+            background=colors["bg"],
+            foreground=colors["muted"]
+        )
+        style.configure(
+            'Section.TLabel',
+            font=('Segoe UI', 12, 'bold'),
+            background=colors["bg"],
+            foreground=colors["blue"]
+        )
+        style.configure('Custom.TButton', font=('Segoe UI', 10), padding=(12, 6))
+        style.configure(
+            'Custom.TRadiobutton',
+            font=('Segoe UI', 10),
+            background=colors["bg"],
+            foreground=colors["text"]
+        )
+        style.configure(
+            'Custom.TCheckbutton',
+            font=('Segoe UI', 9),
+            background=colors["bg"],
+            foreground=colors["text"]
+        )
+        style.configure(
+            'Status.TLabel',
+            background=colors["status_bg"],
+            foreground=colors["text"],
+            font=('Segoe UI', 9)
+        )
         
         # Frame principal con scrollbar
-        canvas = tk.Canvas(self.root, bg='#f8f9fa')
+        canvas = tk.Canvas(self.root, bg=colors["bg"])
         scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)
-        scrollable_frame = tk.Frame(canvas, bg='#f8f9fa')
+        scrollable_frame = tk.Frame(canvas, bg=colors["bg"])
         
         scrollable_frame.bind(
             "<Configure>",
@@ -97,33 +141,82 @@ class DescargadorLicitacionesApp:
         scrollbar.pack(side="right", fill="y")
         
         # Frame principal
-        main_frame = tk.Frame(scrollable_frame, bg='#f8f9fa', padx=40, pady=30)
+        main_frame = tk.Frame(scrollable_frame, bg=colors["bg"], padx=40, pady=30)
         main_frame.pack(fill='both', expand=True)
         
-        # Título
-        title_label = ttk.Label(main_frame, text="Descargador de Licitaciones", 
-                               style='Title.TLabel')
-        title_label.pack(pady=(0, 5))
-        
-        subtitle_label = ttk.Label(main_frame, text="MercadoPublico.cl - Automatización de descargas", 
-                                  style='Subtitle.TLabel')
-        subtitle_label.pack(pady=(0, 30))
-        
+        # Encabezado institucional
+        header_frame = tk.Frame(
+            main_frame,
+            bg=colors["card"],
+            highlightbackground=colors["border"],
+            highlightthickness=1
+        )
+        header_frame.pack(fill='x', pady=(0, 20))
+
+        header_band = tk.Frame(header_frame, bg=colors["blue"], height=8)
+        header_band.pack(fill='x', side='top')
+        header_accent = tk.Frame(header_band, bg=colors["red"], width=90)
+        header_accent.pack(side='left', fill='y')
+
+        header_content = tk.Frame(header_frame, bg=colors["card"], padx=18, pady=14)
+        header_content.pack(fill='x')
+
+        logo_path = Path(__file__).with_name("logo.png")
+        self.logo_image = None
+        if logo_path.exists():
+            try:
+                self.logo_image = tk.PhotoImage(file=str(logo_path))
+                if self.logo_image.width() > 220:
+                    factor = max(1, int(self.logo_image.width() / 220))
+                    self.logo_image = self.logo_image.subsample(factor, factor)
+            except tk.TclError:
+                self.logo_image = None
+
+        if self.logo_image:
+            logo_label = tk.Label(header_content, image=self.logo_image, bg=colors["card"])
+        else:
+            logo_label = tk.Label(
+                header_content,
+                text="INH",
+                bg=colors["card"],
+                fg=colors["blue"],
+                font=('Segoe UI', 18, 'bold')
+            )
+        logo_label.grid(row=0, column=0, rowspan=2, sticky='w', padx=(0, 14))
+
+        title_label = ttk.Label(
+            header_content,
+            text="Descargador de Licitaciones",
+            style='Title.TLabel'
+        )
+        title_label.grid(row=0, column=1, sticky='w')
+
+        subtitle_label = tk.Label(
+            header_content,
+            text="Instituto Nacional de Hidráulica - MercadoPublico.cl",
+            bg=colors["card"],
+            fg=colors["teal"],
+            font=('Segoe UI', 10, 'bold')
+        )
+        subtitle_label.grid(row=1, column=1, sticky='w', pady=(4, 0))
+
         # Separador
         separator1 = ttk.Separator(main_frame, orient='horizontal')
-        separator1.pack(fill='x', pady=(0, 25))
+        separator1.pack(fill='x', pady=(0, 20))
         
         # Sección de navegador
-        nav_frame = tk.Frame(main_frame, bg='#f8f9fa')
+        nav_frame = tk.Frame(main_frame, bg=colors["bg"])
         nav_frame.pack(fill='x', pady=(0, 25))
         
-        nav_label = ttk.Label(nav_frame, text="1. Inicializar Navegador", 
-                             font=('Segoe UI', 12, 'bold'), background='#f8f9fa')
+        nav_label = ttk.Label(nav_frame, text="1. Inicializar Navegador", style='Section.TLabel')
         nav_label.pack(anchor='w', pady=(0, 10))
         
-        nav_desc = ttk.Label(nav_frame, 
-                            text="Inicie el navegador, ingrese a su cuenta en MercadoPublico.cl y presione 'Continuar'",
-                            style='Subtitle.TLabel', wraplength=500)
+        nav_desc = ttk.Label(
+            nav_frame,
+            text="Inicie el navegador, ingrese a su cuenta en MercadoPublico.cl y presione 'Continuar'",
+            style='Subtitle.TLabel',
+            wraplength=500
+        )
         nav_desc.pack(anchor='w', pady=(0, 15))
         
         self.btn_navegador = ttk.Button(nav_frame, text="🌐 Iniciar Navegador", 
@@ -147,7 +240,8 @@ class DescargadorLicitacionesApp:
         self.chk_sin_login = ttk.Checkbutton(
             nav_frame,
             text="Continuar sin login (solo pruebas, no captura token)",
-            variable=self.continuar_sin_login
+            variable=self.continuar_sin_login,
+            style='Custom.TCheckbutton'
         )
         self.chk_sin_login.pack(anchor='w', pady=(10, 0))
         
@@ -156,15 +250,18 @@ class DescargadorLicitacionesApp:
         separator2.pack(fill='x', pady=(25, 25))
         
         # Sección de selección de proceso
-        proceso_frame = tk.Frame(main_frame, bg='#f8f9fa')
+        proceso_frame = tk.Frame(main_frame, bg=colors["bg"])
         proceso_frame.pack(fill='x', pady=(0, 25))
         
-        proceso_label = ttk.Label(proceso_frame, text="2. Seleccionar Tipo de Proceso", 
-                                 font=('Segoe UI', 12, 'bold'), background='#f8f9fa')
+        proceso_label = ttk.Label(
+            proceso_frame,
+            text="2. Seleccionar Tipo de Proceso",
+            style='Section.TLabel'
+        )
         proceso_label.pack(anchor='w', pady=(0, 15))
         
         # Radio buttons para tipo de proceso
-        radio_frame = tk.Frame(proceso_frame, bg='#f8f9fa')
+        radio_frame = tk.Frame(proceso_frame, bg=colors["bg"])
         radio_frame.pack(anchor='w', pady=(0, 15))
         
         rb_licitacion = ttk.Radiobutton(radio_frame, text="📋 Licitación", 
@@ -178,8 +275,13 @@ class DescargadorLicitacionesApp:
         rb_compra_agil.pack(side='left')
         
         # Campo de código
-        codigo_label = ttk.Label(proceso_frame, text="Código del Proceso:", 
-                                font=('Segoe UI', 10, 'bold'), background='#f8f9fa')
+        codigo_label = ttk.Label(
+            proceso_frame,
+            text="Código del Proceso:",
+            font=('Segoe UI', 10, 'bold'),
+            background=colors["bg"],
+            foreground=colors["text"]
+        )
         codigo_label.pack(anchor='w', pady=(0, 5))
         
         self.entry_codigo = ttk.Entry(proceso_frame, textvariable=self.codigo, 
@@ -191,11 +293,14 @@ class DescargadorLicitacionesApp:
         separator3.pack(fill='x', pady=(25, 25))
         
         # Botón de flujo completo
-        flujo_frame = tk.Frame(main_frame, bg='#f8f9fa')
+        flujo_frame = tk.Frame(main_frame, bg=colors["bg"])
         flujo_frame.pack(fill='x', pady=(0, 25))
         
-        flujo_label = ttk.Label(flujo_frame, text="3. Ejecutar flujo completo", 
-                               font=('Segoe UI', 12, 'bold'), background='#f8f9fa')
+        flujo_label = ttk.Label(
+            flujo_frame,
+            text="3. Ejecutar flujo completo",
+            style='Section.TLabel'
+        )
         flujo_label.pack(anchor='w', pady=(0, 10))
         
         flujo_desc = ttk.Label(
@@ -225,14 +330,17 @@ class DescargadorLicitacionesApp:
         separator4.pack(fill='x', pady=(25, 25))
         
         # Botones de acción individuales (debug)
-        action_frame = tk.Frame(main_frame, bg='#f8f9fa')
+        action_frame = tk.Frame(main_frame, bg=colors["bg"])
         action_frame.pack(fill='x')
         
-        action_label = ttk.Label(action_frame, text="4. Acciones individuales (debug)", 
-                                font=('Segoe UI', 12, 'bold'), background='#f8f9fa')
+        action_label = ttk.Label(
+            action_frame,
+            text="4. Acciones individuales (debug)",
+            style='Section.TLabel'
+        )
         action_label.pack(anchor='w', pady=(0, 15))
         
-        buttons_frame = tk.Frame(action_frame, bg='#f8f9fa')
+        buttons_frame = tk.Frame(action_frame, bg=colors["bg"])
         buttons_frame.pack(anchor='w')
         
         self.btn_descargar = ttk.Button(buttons_frame, text="📥 Descargar Adjuntos", 
@@ -262,14 +370,16 @@ class DescargadorLicitacionesApp:
         self.chk_test_lici_directo = ttk.Checkbutton(
             buttons_frame,
             text="Usar enlace directo (evita login)",
-            variable=self.test_lici_url_directa
+            variable=self.test_lici_url_directa,
+            style='Custom.TCheckbutton'
         )
         self.chk_test_lici_directo.pack(side='left', padx=(10, 0))
 
         self.chk_test_lici_desde_url = ttk.Checkbutton(
             buttons_frame,
             text="Testear licitación desde URL",
-            variable=self.test_lici_desde_url
+            variable=self.test_lici_desde_url,
+            style='Custom.TCheckbutton'
         )
         self.chk_test_lici_desde_url.pack(side='left', padx=(10, 0))
 
@@ -283,12 +393,11 @@ class DescargadorLicitacionesApp:
         
         # Status bar
         self.status_var = tk.StringVar(value="Listo - Inicie el navegador para comenzar")
-        status_frame = tk.Frame(self.root, bg='#ecf0f1', height=30)
+        status_frame = tk.Frame(self.root, bg=colors["status_bg"], height=30)
         status_frame.pack(fill='x', side='bottom')
         status_frame.pack_propagate(False)
         
-        status_label = ttk.Label(status_frame, textvariable=self.status_var, 
-                                background='#ecf0f1', font=('Segoe UI', 9))
+        status_label = ttk.Label(status_frame, textvariable=self.status_var, style='Status.TLabel')
         status_label.pack(pady=5)
         
     def iniciar_navegador(self):

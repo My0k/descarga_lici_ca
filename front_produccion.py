@@ -37,31 +37,124 @@ class DescargadorProduccionApp:
         self.token_estado = tk.StringVar(value="Token no detectado")
 
         self._build_ui()
+        self._ajustar_ventana()
+
+    def _ajustar_ventana(self):
+        self.root.update_idletasks()
+        req_w = self.root.winfo_reqwidth()
+        req_h = self.root.winfo_reqheight()
+        width = req_w + 40
+        height = req_h + 60
+        screen_w = self.root.winfo_screenwidth()
+        screen_h = self.root.winfo_screenheight()
+        max_w = max(300, screen_w - 80)
+        max_h = max(300, screen_h - 80)
+        width = min(width, max_w)
+        height = min(height, max_h)
+        x = max(0, (screen_w - width) // 2)
+        y = max(0, (screen_h - height) // 2)
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
+        self.root.minsize(width, height)
 
     # ---------------- UI ----------------
     def _build_ui(self):
         style = ttk.Style()
         style.theme_use("clam")
-        style.configure("Title.TLabel", font=("Segoe UI", 16, "bold"))
-        style.configure("Section.TLabel", font=("Segoe UI", 11, "bold"))
-        style.configure("Custom.TButton", font=("Segoe UI", 10))
+        colors = {
+            "bg": "#f4f6f8",
+            "card": "#ffffff",
+            "text": "#1f2a44",
+            "muted": "#5f6c7b",
+            "blue": "#003580",
+            "red": "#DA291C",
+            "teal": "#009DAE",
+            "border": "#d7dde3",
+        }
+        self.colors = colors
+        self.root.configure(bg=colors["bg"])
 
-        container = tk.Frame(self.root, bg="#f7f7f7", padx=24, pady=20)
+        style.configure(
+            "Title.TLabel",
+            font=("Segoe UI", 16, "bold"),
+            background=colors["card"],
+            foreground=colors["blue"],
+        )
+        style.configure(
+            "Section.TLabel",
+            font=("Segoe UI", 11, "bold"),
+            background=colors["card"],
+            foreground=colors["blue"],
+        )
+        style.configure(
+            "Custom.TButton",
+            font=("Segoe UI", 10),
+            padding=(12, 6),
+        )
+
+        container = tk.Frame(self.root, bg=colors["bg"], padx=24, pady=20)
         container.pack(fill="both", expand=True)
 
-        title = ttk.Label(container, text="Descargador MercadoPublico", style="Title.TLabel", background="#f7f7f7")
-        title.pack(anchor="w", pady=(0, 4))
-        subtitle = ttk.Label(
+        header_frame = tk.Frame(
             container,
-            text="Flujo simple para usuarios finales. Inicie el navegador, ingrese el codigo y procese.",
-            background="#f7f7f7",
+            bg=colors["card"],
+            highlightbackground=colors["border"],
+            highlightthickness=1,
         )
-        subtitle.pack(anchor="w", pady=(0, 16))
+        header_frame.pack(fill="x", pady=(0, 16))
+
+        header_band = tk.Frame(header_frame, bg=colors["blue"], height=8)
+        header_band.pack(fill="x", side="top")
+        header_accent = tk.Frame(header_band, bg=colors["red"], width=90)
+        header_accent.pack(side="left", fill="y")
+
+        header_content = tk.Frame(header_frame, bg=colors["card"], padx=16, pady=12)
+        header_content.pack(fill="x")
+
+        logo_path = Path(__file__).with_name("logo.png")
+        self.logo_image = None
+        if logo_path.exists():
+            try:
+                self.logo_image = tk.PhotoImage(file=str(logo_path))
+                if self.logo_image.width() > 200:
+                    factor = max(1, int(self.logo_image.width() / 200))
+                    self.logo_image = self.logo_image.subsample(factor, factor)
+            except tk.TclError:
+                self.logo_image = None
+
+        if self.logo_image:
+            logo_label = tk.Label(header_content, image=self.logo_image, bg=colors["card"])
+        else:
+            logo_label = tk.Label(
+                header_content,
+                text="INH",
+                bg=colors["card"],
+                fg=colors["blue"],
+                font=("Segoe UI", 18, "bold"),
+            )
+        logo_label.grid(row=0, column=0, rowspan=2, sticky="w", padx=(0, 14))
+
+        title = ttk.Label(header_content, text="Descargador MercadoPublico", style="Title.TLabel")
+        title.grid(row=0, column=1, sticky="w")
+        subtitle = tk.Label(
+            header_content,
+            text="Instituto Nacional de Hidraulica - Descarga de adjuntos",
+            bg=colors["card"],
+            fg=colors["teal"],
+            font=("Segoe UI", 10, "bold"),
+        )
+        subtitle.grid(row=1, column=1, sticky="w", pady=(4, 0))
 
         # Bloque: navegador
-        navegador_frame = tk.Frame(container, bg="#ffffff", padx=14, pady=14, bd=1, relief="solid")
+        navegador_frame = tk.Frame(
+            container,
+            bg=colors["card"],
+            padx=14,
+            pady=14,
+            highlightbackground=colors["border"],
+            highlightthickness=1,
+        )
         navegador_frame.pack(fill="x", pady=(0, 12))
-        ttk.Label(navegador_frame, text="1. Iniciar navegador", style="Section.TLabel", background="#ffffff").pack(
+        ttk.Label(navegador_frame, text="1. Iniciar navegador", style="Section.TLabel").pack(
             anchor="w", pady=(0, 8)
         )
         ttk.Label(
@@ -70,11 +163,12 @@ class DescargadorProduccionApp:
                 "Se abrira Chrome. Inicie sesion en MercadoPublico.cl. "
                 "El sistema detecta el token automaticamente; no es necesario presionar Continuar."
             ),
-            background="#ffffff",
+            background=colors["card"],
+            foreground=colors["muted"],
             wraplength=540,
         ).pack(anchor="w", pady=(0, 10))
 
-        btns_nav = tk.Frame(navegador_frame, bg="#ffffff")
+        btns_nav = tk.Frame(navegador_frame, bg=colors["card"])
         btns_nav.pack(anchor="w", pady=(0, 6))
         self.btn_iniciar_nav = ttk.Button(
             btns_nav, text="Iniciar navegador", command=self.iniciar_navegador, style="Custom.TButton"
@@ -99,29 +193,46 @@ class DescargadorProduccionApp:
         )
         self.btn_cerrar_nav.pack(side="left", padx=(8, 0))
 
-        self.lbl_token = ttk.Label(navegador_frame, textvariable=self.token_estado, background="#ffffff")
+        self.lbl_token = ttk.Label(
+            navegador_frame,
+            textvariable=self.token_estado,
+            background=colors["card"],
+            foreground=colors["text"],
+        )
         self.lbl_token.pack(anchor="w", pady=(6, 0))
 
         # Bloque: codigo
-        codigo_frame = tk.Frame(container, bg="#ffffff", padx=14, pady=14, bd=1, relief="solid")
+        codigo_frame = tk.Frame(
+            container,
+            bg=colors["card"],
+            padx=14,
+            pady=14,
+            highlightbackground=colors["border"],
+            highlightthickness=1,
+        )
         codigo_frame.pack(fill="x", pady=(0, 12))
-        ttk.Label(codigo_frame, text="2. Seleccione tipo e ingrese codigo", style="Section.TLabel", background="#ffffff").pack(
+        ttk.Label(codigo_frame, text="2. Seleccione tipo e ingrese codigo", style="Section.TLabel").pack(
             anchor="w", pady=(0, 8)
         )
 
-        radios = tk.Frame(codigo_frame, bg="#ffffff")
+        radios = tk.Frame(codigo_frame, bg=colors["card"])
         radios.pack(anchor="w", pady=(0, 10))
         ttk.Radiobutton(radios, text="Compra agil", variable=self.tipo_proceso, value="compra_agil").pack(
             side="left", padx=(0, 14)
         )
         ttk.Radiobutton(radios, text="Licitacion", variable=self.tipo_proceso, value="licitacion").pack(side="left")
 
-        ttk.Label(codigo_frame, text="Codigo:", background="#ffffff").pack(anchor="w")
+        ttk.Label(codigo_frame, text="Codigo:", background=colors["card"], foreground=colors["text"]).pack(anchor="w")
         self.entry_codigo = ttk.Entry(codigo_frame, textvariable=self.codigo, width=35, font=("Segoe UI", 11))
         self.entry_codigo.pack(anchor="w", pady=(4, 0))
 
-        ttk.Label(codigo_frame, text="Carpeta de descargas:", background="#ffffff").pack(anchor="w", pady=(10, 0))
-        carpeta_row = tk.Frame(codigo_frame, bg="#ffffff")
+        ttk.Label(
+            codigo_frame,
+            text="Carpeta de descargas:",
+            background=colors["card"],
+            foreground=colors["text"],
+        ).pack(anchor="w", pady=(10, 0))
+        carpeta_row = tk.Frame(codigo_frame, bg=colors["card"])
         carpeta_row.pack(anchor="w", pady=(4, 0), fill="x")
         self.entry_carpeta = ttk.Entry(carpeta_row, textvariable=self.base_descargas_dir, width=48)
         self.entry_carpeta.pack(side="left", padx=(0, 8), fill="x", expand=True)
@@ -131,15 +242,23 @@ class DescargadorProduccionApp:
         self.btn_elegir_carpeta.pack(side="left")
 
         # Bloque: accion
-        accion_frame = tk.Frame(container, bg="#ffffff", padx=14, pady=14, bd=1, relief="solid")
+        accion_frame = tk.Frame(
+            container,
+            bg=colors["card"],
+            padx=14,
+            pady=14,
+            highlightbackground=colors["border"],
+            highlightthickness=1,
+        )
         accion_frame.pack(fill="x", pady=(0, 12))
-        ttk.Label(accion_frame, text="3. Procesar", style="Section.TLabel", background="#ffffff").pack(
+        ttk.Label(accion_frame, text="3. Procesar", style="Section.TLabel").pack(
             anchor="w", pady=(0, 8)
         )
         ttk.Label(
             accion_frame,
             text="Descargara adjuntos y generara un Excel automaticamente para el codigo ingresado.",
-            background="#ffffff",
+            background=colors["card"],
+            foreground=colors["muted"],
             wraplength=540,
         ).pack(anchor="w", pady=(0, 8))
 
@@ -149,9 +268,14 @@ class DescargadorProduccionApp:
         self.btn_procesar.pack(anchor="w", pady=(4, 0))
 
         # Estado
-        status_frame = tk.Frame(container, bg="#f7f7f7")
+        status_frame = tk.Frame(container, bg=colors["bg"])
         status_frame.pack(fill="x", pady=(4, 0))
-        ttk.Label(status_frame, textvariable=self.status_var, background="#f7f7f7").pack(anchor="w")
+        ttk.Label(
+            status_frame,
+            textvariable=self.status_var,
+            background=colors["bg"],
+            foreground=colors["text"],
+        ).pack(anchor="w")
 
     # ---------------- Navegador ----------------
     def iniciar_navegador(self):
