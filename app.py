@@ -25,18 +25,20 @@ class DescargadorLicitacionesApp:
     def __init__(self, root, modo="debug"):
         self.root = root
         self.modo = modo or "debug"
+        self.modo_prod = self.modo == "prod"
         titulo = "Descargador de Licitaciones - MercadoPublico.cl"
         if self.modo == "test":
             titulo += " [TEST]"
         self.root.title(titulo)
         
         # Configurar ventana para que se vea completa
-        self.root.geometry("700x650")
-        self.root.minsize(650, 600)
+        if self.modo_prod:
+            self.root.geometry("620x520")
+            self.root.minsize(600, 480)
+        else:
+            self.root.geometry("700x650")
+            self.root.minsize(650, 600)
         self.root.configure(bg='#f4f6f8')
-        
-        # Centrar la ventana en la pantalla
-        self.centrar_ventana()
         
         # Variables
         self.tipo_proceso = tk.StringVar(value="licitacion")
@@ -54,6 +56,10 @@ class DescargadorLicitacionesApp:
         )
         
         self.setup_ui()
+        if self.modo_prod:
+            self._ajustar_ventana_prod()
+        else:
+            self.centrar_ventana()
         if self.modo == "test":
             self.status_var.set("Modo test activo: continuar sin login esta habilitado por defecto.")
     
@@ -65,8 +71,30 @@ class DescargadorLicitacionesApp:
         x = (self.root.winfo_screenwidth() // 2) - (width // 2)
         y = (self.root.winfo_screenheight() // 2) - (height // 2)
         self.root.geometry(f'{width}x{height}+{x}+{y}')
+
+    def _ajustar_ventana_prod(self):
+        """Ajusta el tamaño para que el contenido se vea completo en modo prod."""
+        if not hasattr(self, "_scrollable_frame"):
+            self.centrar_ventana()
+            return
+        self.root.update_idletasks()
+        req_w = self._scrollable_frame.winfo_reqwidth()
+        req_h = self._scrollable_frame.winfo_reqheight()
+        width = req_w + 60
+        height = req_h + 80
+        screen_w = self.root.winfo_screenwidth()
+        screen_h = self.root.winfo_screenheight()
+        max_w = max(300, screen_w - 80)
+        max_h = max(300, screen_h - 80)
+        width = min(width, max_w)
+        height = min(height, max_h)
+        x = max(0, (screen_w - width) // 2)
+        y = max(0, (screen_h - height) // 2)
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
+        self.root.minsize(width, height)
         
     def setup_ui(self):
+        mostrar_debug = not self.modo_prod
         # Estilo
         style = ttk.Style()
         style.theme_use('clam')
@@ -128,6 +156,8 @@ class DescargadorLicitacionesApp:
         canvas = tk.Canvas(self.root, bg=colors["bg"])
         scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)
         scrollable_frame = tk.Frame(canvas, bg=colors["bg"])
+        self._canvas = canvas
+        self._scrollable_frame = scrollable_frame
         
         scrollable_frame.bind(
             "<Configure>",
@@ -237,13 +267,14 @@ class DescargadorLicitacionesApp:
         )
         self.btn_cerrar_navegador.pack(anchor='w', pady=(10, 0))
 
-        self.chk_sin_login = ttk.Checkbutton(
-            nav_frame,
-            text="Continuar sin login (solo pruebas, no captura token)",
-            variable=self.continuar_sin_login,
-            style='Custom.TCheckbutton'
-        )
-        self.chk_sin_login.pack(anchor='w', pady=(10, 0))
+        if mostrar_debug:
+            self.chk_sin_login = ttk.Checkbutton(
+                nav_frame,
+                text="Continuar sin login (solo pruebas, no captura token)",
+                variable=self.continuar_sin_login,
+                style='Custom.TCheckbutton'
+            )
+            self.chk_sin_login.pack(anchor='w', pady=(10, 0))
         
         # Separador
         separator2 = ttk.Separator(main_frame, orient='horizontal')
@@ -327,11 +358,13 @@ class DescargadorLicitacionesApp:
         
         # Separador
         separator4 = ttk.Separator(main_frame, orient='horizontal')
-        separator4.pack(fill='x', pady=(25, 25))
+        if mostrar_debug:
+            separator4.pack(fill='x', pady=(25, 25))
         
         # Botones de acción individuales (debug)
         action_frame = tk.Frame(main_frame, bg=colors["bg"])
-        action_frame.pack(fill='x')
+        if mostrar_debug:
+            action_frame.pack(fill='x')
         
         action_label = ttk.Label(
             action_frame,
@@ -544,19 +577,31 @@ class DescargadorLicitacionesApp:
         self.btn_ficha_proveedor.configure(state='normal')
         self.btn_test_flujo_lici.configure(state='normal' if self.tipo_proceso.get() == "licitacion" else 'disabled')
         
-        self.status_var.set(
-            "Listo para procesar - Ingrese el código y ejecute el flujo completo o las acciones individuales"
-        )
-        
-        messagebox.showinfo(
-            "Listo",
-            "Sistema listo para procesar.\n\n"
-            "Ahora puede:\n"
-            "• Seleccionar el tipo de proceso\n"
-            "• Ingresar el código\n"
-            "• Ejecutar el flujo completo (recomendado)\n"
-            "• O usar las acciones individuales para debug"
-        )
+        if self.modo_prod:
+            self.status_var.set(
+                "Listo para procesar - Ingrese el código y ejecute el flujo completo"
+            )
+            messagebox.showinfo(
+                "Listo",
+                "Sistema listo para procesar.\n\n"
+                "Ahora puede:\n"
+                "• Seleccionar el tipo de proceso\n"
+                "• Ingresar el código\n"
+                "• Ejecutar el flujo completo"
+            )
+        else:
+            self.status_var.set(
+                "Listo para procesar - Ingrese el código y ejecute el flujo completo o las acciones individuales"
+            )
+            messagebox.showinfo(
+                "Listo",
+                "Sistema listo para procesar.\n\n"
+                "Ahora puede:\n"
+                "• Seleccionar el tipo de proceso\n"
+                "• Ingresar el código\n"
+                "• Ejecutar el flujo completo (recomendado)\n"
+                "• O usar las acciones individuales para debug"
+            )
 
     def capturar_y_guardar_token_desde_selenium(self):
         """
@@ -1412,10 +1457,10 @@ class DescargadorLicitacionesApp:
         self.root.destroy()
 
 def _parse_args():
-    parser = argparse.ArgumentParser(description="Frontend de debug/test para descargas MercadoPublico.")
+    parser = argparse.ArgumentParser(description="Frontend con modos debug/test/prod para descargas MercadoPublico.")
     parser.add_argument(
         "--modo",
-        choices=["debug", "test"],
+        choices=["debug", "test", "prod"],
         default="debug",
         help="Selecciona el modo de arranque de la interfaz (debug por defecto).",
     )
@@ -1424,12 +1469,22 @@ def _parse_args():
         action="store_true",
         help="Atajo para iniciar en modo test (equivalente a --modo test).",
     )
+    parser.add_argument(
+        "--prod",
+        action="store_true",
+        help="Atajo para iniciar en modo prod (equivalente a --modo prod).",
+    )
     return parser.parse_args()
 
 
 def main():
     args = _parse_args()
-    modo = "test" if getattr(args, "test", False) else args.modo
+    if getattr(args, "prod", False):
+        modo = "prod"
+    elif getattr(args, "test", False):
+        modo = "test"
+    else:
+        modo = args.modo
     root = tk.Tk()
     app = DescargadorLicitacionesApp(root, modo=modo)
     root.protocol("WM_DELETE_WINDOW", app.on_closing)
