@@ -1,4 +1,5 @@
 import argparse
+import configparser
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import os
@@ -348,6 +349,13 @@ class DescargadorLicitacionesApp:
             style='Custom.TButton'
         )
         self.btn_elegir_carpeta.pack(side='left')
+        self.btn_guardar_carpeta = ttk.Button(
+            carpeta_row,
+            text="Guardar",
+            command=self.guardar_carpeta_descargas,
+            style='Custom.TButton'
+        )
+        self.btn_guardar_carpeta.pack(side='left', padx=(8, 0))
         
         # Separador
         separator3 = ttk.Separator(main_frame, orient='horizontal')
@@ -1033,23 +1041,51 @@ class DescargadorLicitacionesApp:
             self._token_poll_after_id = None
 
     def _ruta_config(self):
-        return os.path.join(self._ruta_sesion_dir(), "config_ui.json")
+        return os.path.join(os.getcwd(), "config.conf")
+
+    def _limpiar_path_config(self, valor):
+        if not valor:
+            return ""
+        valor = str(valor).strip()
+        if (valor.startswith('"') and valor.endswith('"')) or (valor.startswith("'") and valor.endswith("'")):
+            valor = valor[1:-1]
+        return valor.strip()
+
+    def _es_ruta_windows(self, valor):
+        return len(valor) >= 2 and valor[1] == ":"
 
     def _cargar_config(self):
         ruta = self._ruta_config()
-        if not os.path.exists(ruta):
-            return {}
-        try:
-            with open(ruta, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            return data if isinstance(data, dict) else {}
-        except Exception:
-            return {}
+        config = configparser.ConfigParser()
+        if os.path.exists(ruta):
+            try:
+                config.read(ruta)
+            except Exception:
+                return {}
+        data = {}
+        if config.has_option("PATH", "download_path"):
+            raw = config.get("PATH", "download_path", fallback="").strip()
+            base_dir = self._limpiar_path_config(raw)
+            if base_dir:
+                data["base_descargas_dir"] = base_dir
+        return data
 
     def _guardar_config(self, data):
         try:
-            with open(self._ruta_config(), "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+            ruta = self._ruta_config()
+            config = configparser.ConfigParser()
+            if os.path.exists(ruta):
+                try:
+                    config.read(ruta)
+                except Exception:
+                    config = configparser.ConfigParser()
+            if not config.has_section("PATH"):
+                config.add_section("PATH")
+            base_dir = self._limpiar_path_config(data.get("base_descargas_dir", ""))
+            if base_dir:
+                config.set("PATH", "download_path", f"\"{base_dir}\"")
+            with open(ruta, "w", encoding="utf-8") as f:
+                config.write(f)
         except Exception:
             pass
 
@@ -1062,9 +1098,13 @@ class DescargadorLicitacionesApp:
 
     def _normalizar_base_descargas(self):
         base_dir = (self.base_descargas_dir.get() or "").strip() or os.path.abspath("Descargas")
-        base_dir = os.path.abspath(base_dir)
-        self.base_descargas_dir.set(base_dir)
-        return base_dir
+        base_dir = self._limpiar_path_config(base_dir)
+        if self._es_ruta_windows(base_dir):
+            normalizado = base_dir
+        else:
+            normalizado = os.path.abspath(base_dir)
+        self.base_descargas_dir.set(normalizado)
+        return normalizado
 
     def _guardar_base_descargas(self):
         base_dir = self._normalizar_base_descargas()
@@ -1087,7 +1127,13 @@ class DescargadorLicitacionesApp:
         if not carpeta:
             return
         self.base_descargas_dir.set(os.path.abspath(carpeta))
+        if hasattr(self, "status_var"):
+            self.status_var.set("Carpeta de descargas seleccionada")
+
+    def guardar_carpeta_descargas(self):
         self._guardar_base_descargas()
+        if hasattr(self, "status_var"):
+            self.status_var.set("Carpeta de descargas guardada")
 
     def _ruta_sesion_dir(self):
         ruta = os.path.join(os.getcwd(), "sesion")
