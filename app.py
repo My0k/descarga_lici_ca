@@ -1,6 +1,6 @@
 import argparse
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import filedialog, messagebox, ttk
 import os
 import webbrowser
 import json
@@ -53,6 +53,9 @@ class DescargadorLicitacionesApp:
         self.test_lici_desde_url = tk.BooleanVar(value=False)
         self.test_lici_url_valor = tk.StringVar(
             value="https://mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=lMJBTBVx1W3Vzd7cnoBDUw=="
+        )
+        self.base_descargas_dir = tk.StringVar(
+            value=self._cargar_base_descargas() or os.path.abspath("Descargas")
         )
         
         self.setup_ui()
@@ -318,6 +321,33 @@ class DescargadorLicitacionesApp:
         self.entry_codigo = ttk.Entry(proceso_frame, textvariable=self.codigo, 
                                      font=('Segoe UI', 11), width=30)
         self.entry_codigo.pack(anchor='w', pady=(0, 20))
+
+        carpeta_label = ttk.Label(
+            proceso_frame,
+            text="Carpeta de descargas:",
+            font=('Segoe UI', 10, 'bold'),
+            background=colors["bg"],
+            foreground=colors["text"]
+        )
+        carpeta_label.pack(anchor='w', pady=(0, 5))
+
+        carpeta_row = tk.Frame(proceso_frame, bg=colors["bg"])
+        carpeta_row.pack(anchor='w', pady=(0, 20), fill='x')
+        self.entry_carpeta = ttk.Entry(
+            carpeta_row,
+            textvariable=self.base_descargas_dir,
+            font=('Segoe UI', 10),
+            width=40
+        )
+        self.entry_carpeta.pack(side='left', padx=(0, 8), fill='x', expand=True)
+        self.btn_elegir_carpeta = ttk.Button(
+            carpeta_row,
+            text="📁",
+            width=3,
+            command=self.elegir_carpeta_descargas,
+            style='Custom.TButton'
+        )
+        self.btn_elegir_carpeta.pack(side='left')
         
         # Separador
         separator3 = ttk.Separator(main_frame, orient='horizontal')
@@ -1002,6 +1032,63 @@ class DescargadorLicitacionesApp:
                 pass
             self._token_poll_after_id = None
 
+    def _ruta_config(self):
+        return os.path.join(self._ruta_sesion_dir(), "config_ui.json")
+
+    def _cargar_config(self):
+        ruta = self._ruta_config()
+        if not os.path.exists(ruta):
+            return {}
+        try:
+            with open(ruta, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return data if isinstance(data, dict) else {}
+        except Exception:
+            return {}
+
+    def _guardar_config(self, data):
+        try:
+            with open(self._ruta_config(), "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+
+    def _cargar_base_descargas(self):
+        data = self._cargar_config()
+        base_dir = data.get("base_descargas_dir")
+        if base_dir:
+            return base_dir
+        return None
+
+    def _normalizar_base_descargas(self):
+        base_dir = (self.base_descargas_dir.get() or "").strip() or os.path.abspath("Descargas")
+        base_dir = os.path.abspath(base_dir)
+        self.base_descargas_dir.set(base_dir)
+        return base_dir
+
+    def _guardar_base_descargas(self):
+        base_dir = self._normalizar_base_descargas()
+        data = self._cargar_config()
+        data["base_descargas_dir"] = base_dir
+        self._guardar_config(data)
+
+    def elegir_carpeta_descargas(self):
+        actual = (self.base_descargas_dir.get() or "").strip() or os.path.abspath("Descargas")
+        try:
+            initial = actual if os.path.isdir(actual) else os.getcwd()
+        except Exception:
+            initial = os.getcwd()
+
+        carpeta = filedialog.askdirectory(
+            title="Seleccionar carpeta de descargas",
+            initialdir=initial,
+            mustexist=False
+        )
+        if not carpeta:
+            return
+        self.base_descargas_dir.set(os.path.abspath(carpeta))
+        self._guardar_base_descargas()
+
     def _ruta_sesion_dir(self):
         ruta = os.path.join(os.getcwd(), "sesion")
         os.makedirs(ruta, exist_ok=True)
@@ -1089,6 +1176,7 @@ class DescargadorLicitacionesApp:
         
         codigo = self.codigo.get().strip()
         tipo = self.tipo_proceso.get()
+        base_dir = self._normalizar_base_descargas()
         
         self.status_var.set(f"Ejecutando flujo completo para {tipo}: {codigo}...")
         
@@ -1105,7 +1193,11 @@ class DescargadorLicitacionesApp:
                     return
 
                 # Compra ágil: usar API para descarga
-                resultado_descarga = descarga_ca.descargar_compra_agil_api(codigo, driver=self.driver)
+                resultado_descarga = descarga_ca.descargar_compra_agil_api(
+                    codigo,
+                    driver=self.driver,
+                    base_dir=base_dir
+                )
                 if not resultado_descarga:
                     messagebox.showerror("Error", f"Error durante la descarga de {tipo}: {codigo}")
                     self.status_var.set("Error en la descarga")
@@ -1113,13 +1205,17 @@ class DescargadorLicitacionesApp:
 
                 # Paso 2: crear ZIP por proveedor
                 try:
-                    zips_generados = descarga_ca.crear_zips_proveedores(codigo)
+                    zips_generados = descarga_ca.crear_zips_proveedores(codigo, base_dir=base_dir)
                     print(f"[ZIP] Generados {len(zips_generados)} ZIPs para compra ágil {codigo}")
                 except Exception as e:
                     print(f"[ZIP] Error al crear ZIPs: {e}")
 
                 # Paso 3: generar Excel (reutiliza el mismo botón de excel)
-                ruta_excel = genera_xls_ca.generar_excel_compra_agil(codigo, self.driver)
+                ruta_excel = genera_xls_ca.generar_excel_compra_agil(
+                    codigo,
+                    self.driver,
+                    base_dir=base_dir
+                )
 
                 if ruta_excel:
                     messagebox.showinfo(
@@ -1148,6 +1244,7 @@ class DescargadorLicitacionesApp:
             
         codigo = self.codigo.get().strip()
         tipo = self.tipo_proceso.get()
+        base_dir = self._normalizar_base_descargas()
         
         self.status_var.set(f"Descargando adjuntos para {tipo}: {codigo}...")
         
@@ -1162,12 +1259,21 @@ class DescargadorLicitacionesApp:
                     resultado = False
                 else:
                     # Llamar a descarga_ca.py usando API y token guardado
-                    resultado = descarga_ca.descargar_compra_agil_api(codigo, driver=self.driver)
+                    resultado = descarga_ca.descargar_compra_agil_api(
+                        codigo,
+                        driver=self.driver,
+                        base_dir=base_dir
+                    )
                 
                 if resultado:
+                    destino = os.path.join(
+                        base_dir,
+                        f"{tipo.replace('_', ' ').title()}s",
+                        codigo
+                    )
                     messagebox.showinfo("Descarga Completada", 
                                        f"Descarga completada exitosamente para {tipo}: {codigo}\n\n"
-                                       f"Los archivos se guardaron en:\nDescargas/{tipo.replace('_', ' ').title()}s/{codigo}/")
+                                       f"Los archivos se guardaron en:\n{destino}")
                     self.status_var.set(f"Descarga completada para {tipo}: {codigo}")
                 else:
                     messagebox.showerror("Error", f"Error durante la descarga de {tipo}: {codigo}")
@@ -1192,6 +1298,7 @@ class DescargadorLicitacionesApp:
             
         codigo = self.codigo.get().strip()
         tipo = self.tipo_proceso.get()
+        base_dir = self._normalizar_base_descargas()
         
         self.status_var.set(f"Generando Excel para {tipo}: {codigo}...")
         
@@ -1206,7 +1313,11 @@ class DescargadorLicitacionesApp:
                     ruta_excel = None
                 else:
                     # Llamar a genera_xls_ca.py
-                    ruta_excel = genera_xls_ca.generar_excel_compra_agil(codigo, self.driver)
+                    ruta_excel = genera_xls_ca.generar_excel_compra_agil(
+                        codigo,
+                        self.driver,
+                        base_dir=base_dir
+                    )
                 
                 if ruta_excel:
                     messagebox.showinfo("Excel Generado", 
@@ -1247,6 +1358,7 @@ class DescargadorLicitacionesApp:
             return
 
         codigo = self.codigo.get().strip()
+        base_dir = self._normalizar_base_descargas()
         self.status_var.set(f"Testeando descarga de adjuntos: {codigo or 'URL directa'}...")
         self._set_estado_botones_accion('disabled')
 
@@ -1275,7 +1387,7 @@ class DescargadorLicitacionesApp:
                         self.status_var.set("No se pudo obtener URL de licitación")
                         return
 
-                destino = os.path.join("Descargas", "Licitaciones", codigo or "sin_codigo")
+                destino = os.path.join(base_dir, "Licitaciones", codigo or "sin_codigo")
                 # Descargar usando el mismo flujo que scrape_cuadro.py, pero guardando en la estructura de Descargas/Licitaciones/{codigo}
                 resultado = scrape_cuadro.descargar_adjuntos_desde_url(
                     url_directa,
@@ -1449,6 +1561,10 @@ class DescargadorLicitacionesApp:
         try:
             try:
                 self._guardar_sesion_cookies()
+            except Exception:
+                pass
+            try:
+                self._guardar_base_descargas()
             except Exception:
                 pass
             self.cerrar_navegador()
