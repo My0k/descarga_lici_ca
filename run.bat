@@ -46,9 +46,9 @@ REM Asegurar PyQt para compatibilidad en Windows (Tkinter ya viene con Python)
 echo [INFO] Asegurando instalacion de PyQt5...
 pip install --upgrade PyQt5 PyQt5-Qt5 PyQt5-sip
 
-REM Ejecutar la aplicacion (app principal con imagen institucional)
-echo [INFO] Lanzando aplicacion principal: app.py
-python "%~dp0app.py"
+REM Ejecutar la aplicacion (front de produccion)
+echo [INFO] Lanzando aplicacion de produccion: front_produccion.py
+python "%~dp0front_produccion.py"
 
 echo [INFO] Proceso finalizado. Pulse una tecla para cerrar.
 pause
