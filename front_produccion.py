@@ -44,8 +44,12 @@ class DescargadorProduccionApp:
 
     def _ajustar_ventana(self):
         self.root.update_idletasks()
-        req_w = self.root.winfo_reqwidth()
-        req_h = self.root.winfo_reqheight()
+        if hasattr(self, "_scrollable_frame"):
+            req_w = self._scrollable_frame.winfo_reqwidth()
+            req_h = self._scrollable_frame.winfo_reqheight()
+        else:
+            req_w = self.root.winfo_reqwidth()
+            req_h = self.root.winfo_reqheight()
         width = req_w + 40
         height = req_h + 60
         screen_w = self.root.winfo_screenwidth()
@@ -94,7 +98,44 @@ class DescargadorProduccionApp:
             padding=(12, 6),
         )
 
-        container = tk.Frame(self.root, bg=colors["bg"], padx=24, pady=20)
+        canvas = tk.Canvas(self.root, bg=colors["bg"], highlightthickness=0)
+        scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas, bg=colors["bg"])
+        self._canvas = canvas
+        self._scrollable_frame = scrollable_frame
+
+        def _on_frame_configure(_event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        scrollable_frame.bind("<Configure>", _on_frame_configure)
+
+        window_id = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        def _on_canvas_configure(event):
+            canvas.itemconfigure(window_id, width=event.width)
+
+        canvas.bind("<Configure>", _on_canvas_configure)
+
+        def _on_mousewheel(event):
+            if event.delta:
+                canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+            elif event.num == 4:
+                canvas.yview_scroll(-1, "units")
+            elif event.num == 5:
+                canvas.yview_scroll(1, "units")
+
+        canvas.bind("<MouseWheel>", _on_mousewheel)
+        canvas.bind("<Button-4>", _on_mousewheel)
+        canvas.bind("<Button-5>", _on_mousewheel)
+        scrollable_frame.bind("<MouseWheel>", _on_mousewheel)
+        scrollable_frame.bind("<Button-4>", _on_mousewheel)
+        scrollable_frame.bind("<Button-5>", _on_mousewheel)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        container = tk.Frame(scrollable_frame, bg=colors["bg"], padx=24, pady=20)
         container.pack(fill="both", expand=True)
 
         header_frame = tk.Frame(

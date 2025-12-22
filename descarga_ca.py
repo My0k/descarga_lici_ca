@@ -11,7 +11,7 @@ from urllib.parse import unquote
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 import re
 import json
@@ -458,17 +458,28 @@ def obtener_proveedores_ca(driver):
         except TimeoutException:
             print("Advertencia: no se encontró el encabezado del listado de proveedores.")
         
+        ver_detalle_global = driver.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
+
         # Buscar tarjetas de proveedores en toda la página:
         #  - div con clase MuiPaper-root (la tarjeta)
         #  - que contenga un enlace "Ver detalle"
-        #  - y un enlace a la ficha del proveedor
         tarjetas = driver.find_elements(
             By.XPATH,
-            "//div[contains(@class,'MuiPaper-root') and "
-            ".//a[contains(normalize-space(),'Ver detalle')] and "
-            ".//a[contains(@href,'proveedor.mercadopublico.cl/ficha')]]"
+            "//div[contains(@class,'MuiPaper-root') and .//a[contains(normalize-space(),'Ver detalle')]]"
         )
-        
+
+        if not tarjetas:
+            tarjetas = []
+            for enlace in ver_detalle_global:
+                try:
+                    tarjeta = enlace.find_element(
+                        By.XPATH,
+                        "./ancestor::div[contains(@class,'MuiPaper-root')][1]"
+                    )
+                    tarjetas.append(tarjeta)
+                except Exception:
+                    continue
+
         if not tarjetas:
             print("No se encontraron tarjetas de proveedores en la página.")
             return []
@@ -485,7 +496,7 @@ def obtener_proveedores_ca(driver):
                     )
                     nombre = elemento_nombre.text.strip()
                 except NoSuchElementException:
-                    nombre = f"PROVEEDOR_{i}"
+                    nombre = ""
                 
                 # RUT del proveedor: buscar patrón de RUT chileno dentro del texto de la tarjeta
                 rut = f"PROVEEDOR_{i}"
@@ -495,6 +506,9 @@ def obtener_proveedores_ca(driver):
                         rut = rut_match.group(1)
                         break
                 
+                if not nombre:
+                    nombre = extraer_nombre_proveedor(tarjeta.text, rut)
+
                 # Evitar duplicados por RUT
                 if rut in vistos_por_rut:
                     continue
@@ -527,6 +541,23 @@ def obtener_proveedores_ca(driver):
                     By.XPATH,
                     ".//a[contains(normalize-space(),'Ver detalle')]"
                 )
+
+                idx_ver_detalle = None
+                if ver_detalle_global:
+                    try:
+                        elem_id = getattr(elemento_ver_detalle, "id", None)
+                    except Exception:
+                        elem_id = None
+                    for idx, el in enumerate(ver_detalle_global):
+                        try:
+                            if elem_id and getattr(el, "id", None) == elem_id:
+                                idx_ver_detalle = idx
+                                break
+                            if el == elemento_ver_detalle:
+                                idx_ver_detalle = idx
+                                break
+                        except Exception:
+                            continue
                 
                 proveedor = {
                     'nombre': nombre,
@@ -534,6 +565,7 @@ def obtener_proveedores_ca(driver):
                     'descripcion': descripcion,
                     'monto_total': monto_total,
                     'elemento_ver_detalle': elemento_ver_detalle,
+                    'idx_ver_detalle': idx_ver_detalle,
                     'carpeta_path': '',
                     'ruta_zip': '',
                     'adjuntos_descargados': []
@@ -1441,6 +1473,15 @@ def descargar_comprobante_oferta_compra_agil_por_proveedor(proveedor, carpeta_pr
             )
         except Exception:
             elemento_ver_detalle = None
+    if not elemento_ver_detalle:
+        idx_ver_detalle = proveedor.get("idx_ver_detalle")
+        if idx_ver_detalle is not None:
+            try:
+                enlaces = driver.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
+                if 0 <= idx_ver_detalle < len(enlaces):
+                    elemento_ver_detalle = enlaces[idx_ver_detalle]
+            except Exception:
+                elemento_ver_detalle = None
 
     if not elemento_ver_detalle:
         print("[VOUCHER_CA] No se encontró enlace 'Ver detalle' para proveedor.")
@@ -1454,6 +1495,16 @@ def descargar_comprobante_oferta_compra_agil_por_proveedor(proveedor, carpeta_pr
     try:
         wait.until(EC.element_to_be_clickable(elemento_ver_detalle))
         elemento_ver_detalle.click()
+    except StaleElementReferenceException:
+        try:
+            enlaces = driver.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
+            idx_ver_detalle = proveedor.get("idx_ver_detalle")
+            if idx_ver_detalle is not None and 0 <= idx_ver_detalle < len(enlaces):
+                elemento_ver_detalle = enlaces[idx_ver_detalle]
+            driver.execute_script("arguments[0].click();", elemento_ver_detalle)
+        except Exception as exc:
+            print(f"[VOUCHER_CA] Click 'Ver detalle' falló (stale): {exc}")
+            return False
     except Exception:
         try:
             driver.execute_script("arguments[0].click();", elemento_ver_detalle)
@@ -1461,19 +1512,31 @@ def descargar_comprobante_oferta_compra_agil_por_proveedor(proveedor, carpeta_pr
             print(f"[VOUCHER_CA] Click 'Ver detalle' falló: {exc}")
             return False
 
-    # Esperar que cargue el modal/detalle (usamos la misma marca que adjuntos)
+    # Esperar que cargue el modal/detalle
     try:
         wait.until(
-            EC.presence_of_element_located(
-                (
+            lambda d: (
+                d.find_elements(
                     By.XPATH,
                     "//p[contains(normalize-space(),'Adjuntos de la cotización') or contains(normalize-space(),'Adjuntos de la cotizacion')]",
+                )
+                or d.find_elements(
+                    By.XPATH,
+                    "//*[contains(normalize-space(),'Cotización enviada') or contains(normalize-space(),'Cotizacion enviada')]",
+                )
+                or d.find_elements(
+                    By.XPATH,
+                    "//button[contains(normalize-space(),'Cerrar') or contains(normalize-space(),'Volver') or contains(normalize-space(),'Atrás')]",
                 )
             )
         )
     except TimeoutException:
-        # A veces el detalle no tiene esa etiqueta; igual intentamos imprimir tras un pequeño delay
         time.sleep(1.5)
+
+    try:
+        driver.execute_script("window.scrollTo(0, 0);")
+    except Exception:
+        pass
 
     ok = imprimir_pagina_actual_a_pdf(destino_pdf, driver, tag="[VOUCHER_CA]", full_page=True)
 
