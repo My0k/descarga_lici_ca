@@ -350,6 +350,7 @@ class DescargadorProduccionApp:
             self._compra_agil_clicked = False
             self.token_guardado = False
             self.token_estado.set("Token no detectado (intentando automaticamente)")
+            self._habilitar_acciones()
             self._iniciar_monitoreo_token_automatico()
             messagebox.showinfo(
                 "Navegador iniciado",
