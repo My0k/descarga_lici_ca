@@ -1308,7 +1308,7 @@ def descargar_declaracion_jurada_licitacion_a_carpeta(
     return descargar_pdf_a_archivo(url, destino_pdf, driver=driver, tag="[DJ]")
 
 
-def imprimir_pagina_actual_a_pdf(destino_pdf, driver, tag="[PDF]"):
+def imprimir_pagina_actual_a_pdf(destino_pdf, driver, tag="[PDF]", full_page=False):
     """
     Guarda el estado actual del navegador como PDF usando Chrome DevTools.
     Útil para modales/vistas SPA sin URL descargable.
@@ -1325,7 +1325,38 @@ def imprimir_pagina_actual_a_pdf(destino_pdf, driver, tag="[PDF]"):
         except Exception:
             pass
         time.sleep(1.0)
-        resultado_pdf = driver.execute_cdp_cmd("Page.printToPDF", {"printBackground": True})
+        params = {"printBackground": True}
+        if full_page:
+            try:
+                metrics = driver.execute_cdp_cmd("Page.getLayoutMetrics", {})
+                content_size = (metrics or {}).get("contentSize") or {}
+                width_px = content_size.get("width")
+                height_px = content_size.get("height")
+                if not width_px or not height_px:
+                    size = driver.execute_script(
+                        "return {"
+                        "width: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),"
+                        "height: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)"
+                        "};"
+                    )
+                    if size:
+                        width_px = size.get("width")
+                        height_px = size.get("height")
+                if width_px and height_px:
+                    params.update(
+                        {
+                            "paperWidth": max(1, float(width_px) / 96.0),
+                            "paperHeight": max(1, float(height_px) / 96.0),
+                            "marginTop": 0,
+                            "marginBottom": 0,
+                            "marginLeft": 0,
+                            "marginRight": 0,
+                            "preferCSSPageSize": True,
+                        }
+                    )
+            except Exception:
+                pass
+        resultado_pdf = driver.execute_cdp_cmd("Page.printToPDF", params)
         data_base64 = resultado_pdf.get("data") if isinstance(resultado_pdf, dict) else None
         if not data_base64:
             raise RuntimeError("Chrome no entregó datos para el PDF")
@@ -1444,7 +1475,7 @@ def descargar_comprobante_oferta_compra_agil_por_proveedor(proveedor, carpeta_pr
         # A veces el detalle no tiene esa etiqueta; igual intentamos imprimir tras un pequeño delay
         time.sleep(1.5)
 
-    ok = imprimir_pagina_actual_a_pdf(destino_pdf, driver, tag="[VOUCHER_CA]")
+    ok = imprimir_pagina_actual_a_pdf(destino_pdf, driver, tag="[VOUCHER_CA]", full_page=True)
 
     # Cerrar modal/detalle
     try:
