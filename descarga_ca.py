@@ -8,6 +8,7 @@ import requests
 import base64
 from datetime import datetime
 from urllib.parse import unquote
+import unicodedata
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -106,6 +107,95 @@ def _safe_click(driver, element):
             return True
         except Exception:
             return False
+
+
+def _archivo_listo(ruta, min_bytes=1024):
+    try:
+        return os.path.isfile(ruta) and os.path.getsize(ruta) >= int(min_bytes)
+    except Exception:
+        return False
+
+
+def _normalizar_texto_busqueda(texto):
+    texto = (texto or "").strip().upper()
+    texto = unicodedata.normalize("NFKD", texto)
+    texto = "".join(ch for ch in texto if not unicodedata.combining(ch))
+    texto = re.sub(r"\s+", " ", texto)
+    return texto
+
+
+def _js_click_ver_detalle(driver, idx=None, rut=None, nombre=None):
+    """
+    Clickea "Ver detalle" desde JS (sin pasar WebElements), útil para evitar stale elements.
+    - Si idx es válido, clickea el idx-ésimo link.
+    - Si hay rut/nombre, intenta matchear por texto de la tarjeta.
+    """
+    if not driver:
+        return False
+    try:
+        script = """
+            (function() {
+              var idx = arguments[0];
+              var rut = (arguments[1] || '').toString().trim();
+              var nombre = (arguments[2] || '').toString().trim().toUpperCase();
+
+              function normRut(s) {
+                return (s || '').toString().replace(/[.\\s]/g, '').toUpperCase();
+              }
+
+              function isVerDetalle(a) {
+                var t = (a && a.textContent ? a.textContent : '').trim().toLowerCase();
+                return t === 'ver detalle' || t.indexOf('ver detalle') !== -1;
+              }
+
+              var links = Array.from(document.querySelectorAll('a')).filter(isVerDetalle);
+              if (!links.length) return false;
+
+              function clickLink(a) {
+                try { a.scrollIntoView({block: 'center'}); } catch(e) {}
+                try { a.click(); return true; } catch(e) {}
+                return false;
+              }
+
+              if (idx !== null && idx !== undefined) {
+                var n = parseInt(idx, 10);
+                if (!isNaN(n) && n >= 0 && n < links.length) {
+                  return clickLink(links[n]);
+                }
+              }
+
+              if (!rut && !nombre) return false;
+              var rutNorm = normRut(rut);
+
+              for (var i = 0; i < links.length; i++) {
+                var a = links[i];
+                var card = null;
+                try {
+                  card = a.closest('div, section, article') || a.parentElement;
+                } catch (e) {
+                  card = a.parentElement;
+                }
+                var text = '';
+                try {
+                  text = (card && card.innerText ? card.innerText : '').toString();
+                } catch (e) {
+                  text = '';
+                }
+                var textUpper = text.toUpperCase();
+                if (rutNorm && normRut(textUpper).indexOf(rutNorm) !== -1) {
+                  return clickLink(a);
+                }
+                if (nombre && textUpper.indexOf(nombre) !== -1) {
+                  return clickLink(a);
+                }
+              }
+
+              return false;
+            })();
+        """
+        return bool(driver.execute_script(script, idx, rut or "", (nombre or "")))
+    except Exception:
+        return False
 
 
 def descargar_compra_agil(codigo_ca, driver=None, base_dir="Descargas"):
@@ -1492,74 +1582,156 @@ def descargar_comprobante_oferta_compra_agil_por_proveedor(proveedor, carpeta_pr
     os.makedirs(carpeta_certificados, exist_ok=True)
     destino_pdf = os.path.join(carpeta_certificados, "ComprobanteOferta.pdf")
 
-    elemento_ver_detalle = proveedor.get("elemento_ver_detalle") or proveedor.get("elemento")
-    if not elemento_ver_detalle:
-        # Fallback al XPath conocido
+    def _buscar_enlace_ver_detalle():
+        idx_ver_detalle = proveedor.get("idx_ver_detalle")
+        rut_obj = _normalizar_rut(proveedor.get("rut")) or (proveedor.get("rut") or "").strip()
+        rut_key = (rut_obj or "").strip().upper().replace(".", "").replace(" ", "")
+        nombre_key = _normalizar_texto_busqueda(proveedor.get("nombre"))
+
         try:
-            elemento_ver_detalle = driver.find_element(
+            driver.execute_script("window.scrollTo(0, 0);")
+        except Exception:
+            pass
+        time.sleep(0.2)
+
+        last_y = None
+
+        for _ in range(12):
+            enlaces = driver.find_elements(By.XPATH, "//a[normalize-space()='Ver detalle']")
+            if not enlaces:
+                enlaces = driver.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
+
+            # 1) Preferir match por RUT/nombre (evita depender del índice).
+            if enlaces and (rut_key or nombre_key):
+                for enlace in enlaces:
+                    tarjeta = None
+                    for xp in (
+                        "./ancestor::*[.//a[contains(@href,'proveedor.mercadopublico.cl/ficha')]][1]",
+                        "./ancestor::*[self::div or self::section or self::article][1]",
+                    ):
+                        try:
+                            tarjeta = enlace.find_element(By.XPATH, xp)
+                            break
+                        except Exception:
+                            tarjeta = None
+
+                    texto_tarjeta = ""
+                    try:
+                        texto_tarjeta = (tarjeta.text or "").strip() if tarjeta else ""
+                    except Exception:
+                        texto_tarjeta = ""
+
+                    if rut_key:
+                        texto_rut = texto_tarjeta.replace(".", "").replace(" ", "").upper()
+                        if rut_key in texto_rut:
+                            return enlace
+                    if nombre_key and texto_tarjeta:
+                        if nombre_key in _normalizar_texto_busqueda(texto_tarjeta):
+                            return enlace
+
+            # 2) Luego intentar por índice (si existe y está en rango).
+            if idx_ver_detalle is not None and enlaces and 0 <= idx_ver_detalle < len(enlaces):
+                return enlaces[idx_ver_detalle]
+
+            # 3) Scroll incremental para casos con lazy-render / virtualización.
+            try:
+                y = driver.execute_script("return window.scrollY") or 0
+                if last_y is not None and y == last_y:
+                    break
+                last_y = y
+                driver.execute_script("window.scrollBy(0, 700);")
+            except Exception:
+                break
+            time.sleep(0.4)
+
+        # Fallback al XPath conocido (último recurso).
+        try:
+            return driver.find_element(
                 By.XPATH,
                 "/html/body/div[1]/div/main/div[2]/div[1]/div/div[2]/div/div/div[7]/div/div[1]/a",
             )
         except Exception:
-            elemento_ver_detalle = None
-    if not elemento_ver_detalle:
-        idx_ver_detalle = proveedor.get("idx_ver_detalle")
-        if idx_ver_detalle is not None:
+            return None
+
+    elemento_ver_detalle = None
+    click_ok = False
+    ultimo_error_click = None
+    origin_handle = None
+    before_handles = set()
+    prev_url = ""
+    idx_hint = proveedor.get("idx_ver_detalle")
+    rut_hint = _normalizar_rut(proveedor.get("rut")) or (proveedor.get("rut") or "").strip()
+    nombre_hint = proveedor.get("nombre") or ""
+
+    for intento in range(1, 7):
+        try:
+            elemento_ver_detalle = _buscar_enlace_ver_detalle()
+            if not elemento_ver_detalle:
+                print(
+                    f"[VOUCHER_CA] No se encontró enlace 'Ver detalle' para proveedor "
+                    f"{proveedor.get('nombre')} ({proveedor.get('rut')}) (intento {intento}/3)."
+                )
+                time.sleep(0.6)
+                continue
+
+            # Capturar contexto ANTES del click para detectar navegación/ventanas nuevas.
             try:
-                enlaces = driver.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
-                if 0 <= idx_ver_detalle < len(enlaces):
-                    elemento_ver_detalle = enlaces[idx_ver_detalle]
+                origin_handle = driver.current_window_handle
             except Exception:
-                elemento_ver_detalle = None
+                origin_handle = None
+            try:
+                before_handles = set(driver.window_handles or [])
+            except Exception:
+                before_handles = set()
+            try:
+                prev_url = driver.current_url or ""
+            except Exception:
+                prev_url = ""
 
-    if not elemento_ver_detalle:
-        print("[VOUCHER_CA] No se encontró enlace 'Ver detalle' para proveedor.")
+            try:
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", elemento_ver_detalle)
+            except Exception:
+                pass
+
+            try:
+                try:
+                    wait.until(EC.element_to_be_clickable(elemento_ver_detalle))
+                except Exception:
+                    pass
+                if not _safe_click(driver, elemento_ver_detalle):
+                    # Fallback JS (evita stale elements).
+                    if not _js_click_ver_detalle(driver, idx=idx_hint, rut=rut_hint, nombre=nombre_hint):
+                        raise RuntimeError("No se pudo hacer click en 'Ver detalle'")
+            except StaleElementReferenceException as exc:
+                ultimo_error_click = exc
+                if _js_click_ver_detalle(driver, idx=idx_hint, rut=rut_hint, nombre=nombre_hint):
+                    click_ok = True
+                    ultimo_error_click = None
+                    break
+                time.sleep(0.6)
+                continue
+            except Exception as exc:
+                ultimo_error_click = exc
+                if _js_click_ver_detalle(driver, idx=idx_hint, rut=rut_hint, nombre=nombre_hint):
+                    click_ok = True
+                    ultimo_error_click = None
+                    break
+                time.sleep(0.6)
+                continue
+
+            # Click exitoso: salir del loop de reintentos
+            click_ok = True
+            ultimo_error_click = None
+            break
+        except Exception as exc:
+            ultimo_error_click = exc
+            time.sleep(0.6)
+            continue
+
+    if not click_ok:
+        if ultimo_error_click:
+            print(f"[VOUCHER_CA] Click 'Ver detalle' falló para {proveedor.get('nombre')} ({proveedor.get('rut')}): {ultimo_error_click}")
         return False
-
-    try:
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", elemento_ver_detalle)
-    except Exception:
-        pass
-
-    # Detectar si "Ver detalle" abre en otra ventana/pestaña, navega en la misma pestaña o es un modal.
-    try:
-        origin_handle = driver.current_window_handle
-    except Exception:
-        origin_handle = None
-    try:
-        before_handles = set(driver.window_handles or [])
-    except Exception:
-        before_handles = set()
-    try:
-        prev_url = driver.current_url or ""
-    except Exception:
-        prev_url = ""
-
-    try:
-        try:
-            wait.until(EC.element_to_be_clickable(elemento_ver_detalle))
-        except Exception:
-            pass
-        if not _safe_click(driver, elemento_ver_detalle):
-            raise RuntimeError("No se pudo hacer click en 'Ver detalle'")
-    except StaleElementReferenceException:
-        try:
-            enlaces = driver.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
-            idx_ver_detalle = proveedor.get("idx_ver_detalle")
-            if idx_ver_detalle is not None and 0 <= idx_ver_detalle < len(enlaces):
-                elemento_ver_detalle = enlaces[idx_ver_detalle]
-            if not _safe_click(driver, elemento_ver_detalle):
-                raise RuntimeError("No se pudo hacer click en 'Ver detalle' (stale)")
-        except Exception as exc:
-            print(f"[VOUCHER_CA] Click 'Ver detalle' falló (stale): {exc}")
-            return False
-    except Exception:
-        try:
-            if not _safe_click(driver, elemento_ver_detalle):
-                raise RuntimeError("No se pudo hacer click en 'Ver detalle'")
-        except Exception as exc:
-            print(f"[VOUCHER_CA] Click 'Ver detalle' falló: {exc}")
-            return False
 
     modo_detalle = "modal_or_same"
     try:
@@ -1688,6 +1860,7 @@ def descargar_comprobantes_oferta_compra_agil(codigo_ca, driver, base_dir="Desca
         return False
 
     ok_any = False
+    max_intentos_por_proveedor = 4
     for prov in proveedores:
         rut = _normalizar_rut(prov.get("rut")) or (prov.get("rut") or "").strip()
         carpeta_prov = None
@@ -1702,8 +1875,53 @@ def descargar_comprobantes_oferta_compra_agil(codigo_ca, driver, base_dir="Desca
             pass
 
         try:
-            ok = descargar_comprobante_oferta_compra_agil_por_proveedor(prov, carpeta_prov, driver)
-            ok_any = ok_any or bool(ok)
+            destino_pdf = os.path.join(carpeta_prov, "CERTIFICADOS", "ComprobanteOferta.pdf")
+            if _archivo_listo(destino_pdf):
+                ok_any = True
+                continue
+
+            ok = False
+            for intento in range(1, max_intentos_por_proveedor + 1):
+                try:
+                    # Ir siempre al resumen antes de cada intento para evitar DOM inestable/stale.
+                    if not navegar_a_compra_agil(codigo_ca, driver):
+                        time.sleep(0.8)
+                        continue
+                    try:
+                        WebDriverWait(driver, 20).until(
+                            lambda d: len(
+                                d.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
+                            )
+                            > 0
+                        )
+                    except Exception:
+                        pass
+
+                    ok = descargar_comprobante_oferta_compra_agil_por_proveedor(prov, carpeta_prov, driver)
+                except Exception as exc:
+                    print(
+                        f"[VOUCHER_CA] Error intento {intento}/{max_intentos_por_proveedor} "
+                        f"para {prov.get('nombre')} ({prov.get('rut')}): {exc}"
+                    )
+                    ok = False
+
+                if ok and _archivo_listo(destino_pdf):
+                    ok_any = True
+                    break
+
+                # Limpieza mínima antes de reintentar
+                try:
+                    body = driver.find_element(By.TAG_NAME, "body")
+                    body.send_keys(Keys.ESCAPE)
+                except Exception:
+                    pass
+                time.sleep(0.8)
+
+            if not ok or not _archivo_listo(destino_pdf):
+                print(
+                    f"[VOUCHER_CA] No se pudo generar ComprobanteOferta.pdf para "
+                    f"{prov.get('nombre')} ({prov.get('rut')})."
+                )
         except Exception as exc:
             print(f"[VOUCHER_CA] Error imprimiendo comprobante para {prov.get('nombre')} ({prov.get('rut')}): {exc}")
             continue
