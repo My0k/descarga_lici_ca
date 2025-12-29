@@ -1,4 +1,5 @@
 import configparser
+import re
 import json
 import os
 import threading
@@ -693,6 +694,12 @@ class DescargadorProduccionApp:
             nombre = nombre[: -len(codigo_str)].strip(" -_/()[]")
         if nombre.lower() in frases_genericas:
             return ""
+        nombre = re.sub(
+            r"^DAG\s*N[º°]?\s*[:#-]?\s*[\w/-]+",
+            "",
+            nombre,
+            flags=re.IGNORECASE,
+        ).strip(" -_/()[]")
         return nombre
 
     # ---------------- Token helpers ----------------

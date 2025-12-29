@@ -2140,13 +2140,23 @@ def _limpiar_nombre_proyecto(codigo, nombre):
 
     if nombre.lower() in frases_genericas:
         return ""
+
+    nombre = re.sub(
+        r"^DAG\s*N[º°]?\s*[:#-]?\s*[\w/-]+",
+        "",
+        nombre,
+        flags=re.IGNORECASE,
+    ).strip(" -_/()[]")
     return nombre
 
 def construir_nombre_carpeta_base(codigo, nombre_proyecto=None):
     codigo_str = (str(codigo) or "").strip()
     nombre = _limpiar_nombre_proyecto(codigo_str, nombre_proyecto)
     if nombre:
-        base = f"{codigo_str} {nombre}".strip()
+        if codigo_str:
+            base = f"{codigo_str} {nombre}".strip()
+        else:
+            base = nombre
     else:
         base = codigo_str
     base = limpiar_nombre_archivo(base)
@@ -2174,6 +2184,12 @@ def resolver_carpeta_base(base_dir, subdir, codigo, nombre_proyecto=None):
                 pass
             elif nombre_dir.startswith(f"{codigo_str}_"):
                 pass
+            elif nombre_dir == f"({codigo_str})":
+                pass
+            elif nombre_dir.startswith(f"({codigo_str}) "):
+                pass
+            elif nombre_dir.startswith(f"({codigo_str})_"):
+                pass
             else:
                 continue
             ruta = os.path.join(carpeta_root, nombre_dir)
@@ -2191,7 +2207,13 @@ def resolver_carpeta_base(base_dir, subdir, codigo, nombre_proyecto=None):
             return (1, base)
         if base == codigo_str:
             return (2, base)
-        return (3, base)
+        if base.startswith(f"({codigo_str}) "):
+            return (3, base)
+        if base.startswith(f"({codigo_str})_"):
+            return (4, base)
+        if base == f"({codigo_str})":
+            return (5, base)
+        return (6, base)
     candidatos.sort(key=_rank)
     return candidatos[0]
 
@@ -2221,7 +2243,16 @@ def _extraer_nombre_proyecto_compra_info(info_data):
     nombre = _probe(payload)
     if nombre:
         return nombre
-    for key in ("solicitud", "detalle", "compra", "adquisicion", "proceso", "cotizacion", "resumen"):
+    for key in (
+        "detalleSolicitud",
+        "solicitud",
+        "detalle",
+        "compra",
+        "adquisicion",
+        "proceso",
+        "cotizacion",
+        "resumen",
+    ):
         try:
             nombre = _probe(payload.get(key))
         except Exception:
