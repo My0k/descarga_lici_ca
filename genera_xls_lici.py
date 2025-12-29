@@ -2,23 +2,39 @@ import json
 import os
 from datetime import datetime
 
+import descarga_ca
+
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 
 
-def generar_excel_licitacion(codigo_lici, driver=None, resumen=None, manifest_path=None, base_dir="Descargas"):
+def generar_excel_licitacion(
+    codigo_lici,
+    driver=None,
+    resumen=None,
+    manifest_path=None,
+    base_dir="Descargas",
+    carpeta_base=None,
+):
     """
     Genera un Excel sencillo de resumen para una licitacion.
 
     Prioriza un resumen ya calculado (por ejemplo, retornado por flujo_licitacion.test_flujo_licitacion).
     Si no se entrega, intenta leer un manifest_licitacion.json en la carpeta de Descargas.
     """
-    data = resumen or _cargar_manifest(codigo_lici, manifest_path, base_dir=base_dir)
+    data = resumen or _cargar_manifest(
+        codigo_lici,
+        manifest_path,
+        base_dir=base_dir,
+        carpeta_base=carpeta_base,
+    )
     proveedores = data.get("proveedores") if isinstance(data, dict) else None
     if not proveedores:
         return None
 
-    carpeta = os.path.join(base_dir, "Licitaciones", codigo_lici)
+    if not carpeta_base:
+        carpeta_base = descarga_ca.resolver_carpeta_base(base_dir, "Licitaciones", codigo_lici)
+    carpeta = carpeta_base
     os.makedirs(carpeta, exist_ok=True)
     ruta_excel = os.path.join(carpeta, f"resumen_{codigo_lici}.xlsx")
 
@@ -57,8 +73,10 @@ def generar_excel_licitacion(codigo_lici, driver=None, resumen=None, manifest_pa
 
 
 # ---------------- internal helpers ----------------
-def _cargar_manifest(codigo_lici, manifest_path=None, base_dir="Descargas"):
-    ruta = manifest_path or os.path.join(base_dir, "Licitaciones", codigo_lici, "manifest_licitacion.json")
+def _cargar_manifest(codigo_lici, manifest_path=None, base_dir="Descargas", carpeta_base=None):
+    if not carpeta_base:
+        carpeta_base = descarga_ca.resolver_carpeta_base(base_dir, "Licitaciones", codigo_lici)
+    ruta = manifest_path or os.path.join(carpeta_base, "manifest_licitacion.json")
     if not os.path.exists(ruta):
         return {}
     try:

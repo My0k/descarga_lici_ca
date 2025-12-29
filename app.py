@@ -1249,18 +1249,22 @@ class DescargadorLicitacionesApp:
                     self.status_var.set("Error en la descarga")
                     return
 
-                # Paso 2: crear ZIP por proveedor
+                # Paso 2: crear ZIP unico del proceso
                 try:
-                    zips_generados = descarga_ca.crear_zips_proveedores(codigo, base_dir=base_dir)
-                    print(f"[ZIP] Generados {len(zips_generados)} ZIPs para compra ágil {codigo}")
+                    carpeta = descarga_ca.resolver_carpeta_base(base_dir, "ComprasAgiles", codigo)
+                    zip_destino = os.path.join(os.path.dirname(carpeta), f"{os.path.basename(carpeta)}.zip")
+                    zip_path = descarga_ca.crear_zip_carpeta(carpeta, zip_destino)
+                    if zip_path:
+                        print(f"[ZIP] ZIP generado para compra agil {codigo}: {zip_path}")
                 except Exception as e:
-                    print(f"[ZIP] Error al crear ZIPs: {e}")
+                    print(f"[ZIP] Error al crear ZIP: {e}")
 
                 # Paso 3: generar Excel (reutiliza el mismo botón de excel)
                 ruta_excel = genera_xls_ca.generar_excel_compra_agil(
                     codigo,
                     self.driver,
-                    base_dir=base_dir
+                    base_dir=base_dir,
+                    carpeta_base=carpeta,
                 )
 
                 if ruta_excel:

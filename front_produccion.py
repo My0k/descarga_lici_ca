@@ -9,6 +9,9 @@ from tkinter import filedialog, messagebox, ttk
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import descarga_ca
 import flujo_licitacion
@@ -266,7 +269,12 @@ class DescargadorProduccionApp:
         )
         ttk.Radiobutton(radios, text="Licitacion", variable=self.tipo_proceso, value="licitacion").pack(side="left")
 
-        ttk.Label(codigo_frame, text="Codigo:", background=colors["card"], foreground=colors["text"]).pack(anchor="w")
+        ttk.Label(
+            codigo_frame,
+            text="Codigo(s) (separados por coma):",
+            background=colors["card"],
+            foreground=colors["text"],
+        ).pack(anchor="w")
         self.entry_codigo = ttk.Entry(codigo_frame, textvariable=self.codigo, width=35, font=("Segoe UI", 11))
         self.entry_codigo.pack(anchor="w", pady=(4, 0))
 
@@ -304,14 +312,21 @@ class DescargadorProduccionApp:
         )
         ttk.Label(
             accion_frame,
-            text="Descargara adjuntos y generara un Excel automaticamente para el codigo ingresado.",
+            text=(
+                "Descargara adjuntos y generara un Excel automaticamente para el/los codigo(s) ingresados "
+                "(separados por coma)."
+            ),
             background=colors["card"],
             foreground=colors["muted"],
             wraplength=540,
         ).pack(anchor="w", pady=(0, 8))
 
         self.btn_procesar = ttk.Button(
-            accion_frame, text="Procesar codigo", command=self.procesar_codigo, state="disabled", style="Custom.TButton"
+            accion_frame,
+            text="Procesar codigo(s)",
+            command=self.procesar_codigo,
+            state="disabled",
+            style="Custom.TButton",
         )
         self.btn_procesar.pack(anchor="w", pady=(4, 0))
 
@@ -401,29 +416,93 @@ class DescargadorProduccionApp:
         self._guardar_sesion_cookies()
 
     # ---------------- Procesamiento ----------------
+    def _parse_codigos(self, raw):
+        if not raw:
+            return []
+        normalizado = raw.replace("\n", ",").replace(";", ",")
+        return [p.strip() for p in normalizado.split(",") if p.strip()]
+
+    def _asegurar_token_compra_agil(self, mostrar_mensaje=True):
+        if self.token_guardado:
+            return True
+        self.token_estado.set("Buscando token antes de procesar compra agil...")
+        token_ok = self.capturar_y_guardar_token_desde_selenium()
+        self.token_guardado = token_ok
+        if token_ok:
+            return True
+        if mostrar_mensaje:
+            messagebox.showwarning(
+                "Token requerido",
+                "No se detecto token de sesion. Para compra agil es necesario iniciar sesion y esperar la deteccion.",
+            )
+        self.status_var.set("Token no disponible para compra agil")
+        return False
+
     def procesar_codigo(self):
         if not self.navegador_iniciado or not self.driver:
             messagebox.showwarning("Navegador requerido", "Inicie el navegador antes de procesar.")
             return
 
-        codigo = self.codigo.get().strip()
-        if not codigo:
+        codigos = self._parse_codigos(self.codigo.get().strip())
+        if not codigos:
             messagebox.showwarning("Codigo requerido", "Ingrese el codigo de la compra agil o licitacion.")
             return
 
         self.btn_procesar.configure(state="disabled")
         self.btn_listo.configure(state="disabled")
-        self.status_var.set(f"Procesando {codigo}...")
+        if len(codigos) == 1:
+            self.status_var.set(f"Procesando {codigos[0]}...")
+        else:
+            self.status_var.set(f"Procesando {len(codigos)} codigo(s)...")
 
-        thread = threading.Thread(target=self._proceso_thread, args=(codigo, self.tipo_proceso.get()), daemon=True)
+        thread = threading.Thread(
+            target=self._proceso_thread,
+            args=(codigos, self.tipo_proceso.get()),
+            daemon=True,
+        )
         thread.start()
 
-    def _proceso_thread(self, codigo, tipo):
+    def _proceso_thread(self, codigos, tipo):
         try:
-            if tipo == "compra_agil":
-                self._proceso_compra_agil(codigo)
-            else:
-                self._proceso_licitacion(codigo)
+            total = len(codigos)
+            mostrar_mensajes = total == 1
+            if tipo == "compra_agil" and not self._asegurar_token_compra_agil(mostrar_mensaje=True):
+                return
+
+            exitosos = []
+            fallidos = []
+            for idx, codigo in enumerate(codigos, 1):
+                self.status_var.set(f"Procesando {codigo} ({idx}/{total})...")
+                if tipo == "compra_agil":
+                    ok = self._proceso_compra_agil(codigo, mostrar_mensaje=mostrar_mensajes)
+                else:
+                    ok = self._proceso_licitacion(codigo, mostrar_mensaje=mostrar_mensajes)
+                if ok:
+                    exitosos.append(codigo)
+                else:
+                    fallidos.append(codigo)
+
+            if not mostrar_mensajes:
+                if fallidos and exitosos:
+                    messagebox.showwarning(
+                        "Procesamiento finalizado",
+                        "Se completaron algunos codigos.\n\n"
+                        f"Exitosos: {', '.join(exitosos)}\n"
+                        f"Fallidos: {', '.join(fallidos)}",
+                    )
+                    self.status_var.set("Procesamiento parcial completado")
+                elif fallidos:
+                    messagebox.showwarning(
+                        "Procesamiento finalizado",
+                        f"No se pudieron procesar los codigos:\n{', '.join(fallidos)}",
+                    )
+                    self.status_var.set("Procesamiento con fallos")
+                else:
+                    messagebox.showinfo(
+                        "Procesamiento completado",
+                        f"Se procesaron correctamente los codigos:\n{', '.join(exitosos)}",
+                    )
+                    self.status_var.set("Procesamiento completado")
         except Exception as exc:
             messagebox.showerror("Error", f"Error inesperado al procesar:\n{exc}")
             self.status_var.set("Error general")
@@ -432,94 +511,162 @@ class DescargadorProduccionApp:
             if self.navegador_iniciado:
                 self.btn_listo.configure(state="normal")
 
-    def _proceso_compra_agil(self, codigo):
+    def _proceso_compra_agil(self, codigo, mostrar_mensaje=True):
         base_dir = self._normalizar_base_descargas()
-        if not self.token_guardado:
-            self.token_estado.set("Buscando token antes de procesar compra agil...")
-            token_ok = self.capturar_y_guardar_token_desde_selenium()
-            self.token_guardado = token_ok
-        if not self.token_guardado:
-            messagebox.showwarning(
-                "Token requerido",
-                "No se detecto token de sesion. Para compra agil es necesario iniciar sesion y esperar la deteccion.",
-            )
-            self.status_var.set("Token no disponible para compra agil")
-            return
+        if not self._asegurar_token_compra_agil(mostrar_mensaje=mostrar_mensaje):
+            return False
 
         self.status_var.set(f"Descargando adjuntos de compra agil {codigo}...")
         ok = descarga_ca.descargar_compra_agil_api(codigo, driver=self.driver, base_dir=base_dir)
         if not ok:
-            messagebox.showerror("Descarga", "No se pudieron descargar los adjuntos de la compra agil.")
+            if mostrar_mensaje:
+                messagebox.showerror("Descarga", "No se pudieron descargar los adjuntos de la compra agil.")
             self.status_var.set("Fallo descarga compra agil")
-            return
+            return False
 
+        carpeta = descarga_ca.resolver_carpeta_base(base_dir, "ComprasAgiles", codigo)
         try:
-            descarga_ca.crear_zips_proveedores(codigo, base_dir=base_dir)
+            self.status_var.set("Generando ZIP de compra agil...")
+            zip_destino = os.path.join(os.path.dirname(carpeta), f"{os.path.basename(carpeta)}.zip")
+            descarga_ca.crear_zip_carpeta(carpeta, zip_destino)
         except Exception:
             pass
 
         self.status_var.set("Generando Excel de compra agil...")
-        ruta_excel = genera_xls_ca.generar_excel_compra_agil(codigo, self.driver, base_dir=base_dir)
+        ruta_excel = genera_xls_ca.generar_excel_compra_agil(
+            codigo,
+            self.driver,
+            base_dir=base_dir,
+            carpeta_base=carpeta,
+        )
         if ruta_excel:
             self.status_var.set(f"Flujo completado: {codigo}")
-            messagebox.showinfo(
-                "Proceso completado",
-                f"Compra agil {codigo} procesada.\n\nExcel generado en:\n{ruta_excel}",
-            )
+            if mostrar_mensaje:
+                messagebox.showinfo(
+                    "Proceso completado",
+                    f"Compra agil {codigo} procesada.\n\nExcel generado en:\n{ruta_excel}",
+                )
+            return True
         else:
             self.status_var.set("Excel no generado")
-            messagebox.showwarning(
-                "Excel",
-                "La descarga termino pero el Excel no se genero correctamente.",
-            )
+            if mostrar_mensaje:
+                messagebox.showwarning(
+                    "Excel",
+                    "La descarga termino pero el Excel no se genero correctamente.",
+                )
+            return False
 
-    def _proceso_licitacion(self, codigo):
+    def _proceso_licitacion(self, codigo, mostrar_mensaje=True):
         base_dir = self._normalizar_base_descargas()
         self.status_var.set(f"Descargando adjuntos de licitacion {codigo}...")
         url_directa = flujo_licitacion.obtener_url_licitacion(codigo, self.driver)
         if not url_directa:
             resumen = {"ok": False, "proveedores": [], "errores": ["No se pudo obtener la URL de la licitación."]}
         else:
+            nombre_proyecto = self._extraer_nombre_licitacion(url_directa, codigo)
+            carpeta_licitacion = descarga_ca.resolver_carpeta_base(
+                base_dir, "Licitaciones", codigo, nombre_proyecto
+            )
             resumen = scrape_cuadro.descargar_adjuntos_desde_url(
                 url_directa,
                 self.driver,
                 codigo=codigo,
-                download_dir=os.path.join(base_dir, "Licitaciones", codigo),
+                download_dir=carpeta_licitacion,
             )
             if isinstance(resumen, dict):
                 resumen.setdefault("url", url_directa)
-        manifest_path = self._guardar_manifest_licitacion(codigo, resumen, base_dir=base_dir)
+        if not url_directa:
+            nombre_proyecto = ""
+            carpeta_licitacion = descarga_ca.resolver_carpeta_base(base_dir, "Licitaciones", codigo)
+        manifest_path = self._guardar_manifest_licitacion(
+            codigo,
+            resumen,
+            base_dir=base_dir,
+            carpeta_base=carpeta_licitacion,
+            nombre_proyecto=nombre_proyecto,
+        )
 
         if not resumen.get("ok"):
             errores = "\n".join(resumen.get("errores") or [])
-            messagebox.showwarning(
-                "Licitacion",
-                f"No se pudieron descargar adjuntos de la licitacion.\n{errores}",
-            )
+            if mostrar_mensaje:
+                messagebox.showwarning(
+                    "Licitacion",
+                    f"No se pudieron descargar adjuntos de la licitacion.\n{errores}",
+                )
             self.status_var.set("Fallo descarga licitacion")
-            return
+            return False
 
         try:
-            self._zip_proveedores(resumen, codigo)
+            self.status_var.set("Generando ZIP de licitacion...")
+            carpeta = carpeta_licitacion
+            zip_destino = os.path.join(os.path.dirname(carpeta), f"{os.path.basename(carpeta)}.zip")
+            descarga_ca.crear_zip_carpeta(carpeta, zip_destino)
         except Exception:
             pass
 
         self.status_var.set("Generando Excel de licitacion...")
         ruta_excel = genera_xls_lici.generar_excel_licitacion(
-            codigo, resumen=resumen, manifest_path=manifest_path, base_dir=base_dir
+            codigo,
+            resumen=resumen,
+            manifest_path=manifest_path,
+            base_dir=base_dir,
+            carpeta_base=carpeta_licitacion,
         )
         if ruta_excel:
             self.status_var.set(f"Flujo completado: {codigo}")
-            messagebox.showinfo(
-                "Proceso completado",
-                f"Licitacion {codigo} procesada.\n\nExcel generado en:\n{ruta_excel}",
-            )
+            if mostrar_mensaje:
+                messagebox.showinfo(
+                    "Proceso completado",
+                    f"Licitacion {codigo} procesada.\n\nExcel generado en:\n{ruta_excel}",
+                )
+            return True
         else:
             self.status_var.set("Excel no generado")
-            messagebox.showwarning(
-                "Excel",
-                "La descarga termino pero el Excel no se genero correctamente.",
-            )
+            if mostrar_mensaje:
+                messagebox.showwarning(
+                    "Excel",
+                    "La descarga termino pero el Excel no se genero correctamente.",
+                )
+            return False
+
+    def _extraer_nombre_licitacion(self, url_directa, codigo):
+        if not self.driver or not url_directa:
+            return ""
+        try:
+            self.driver.get(url_directa)
+            WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        except Exception:
+            return ""
+
+        xpaths = [
+            "//span[contains(@id,'lblNombre') and normalize-space()]",
+            "//span[contains(@id,'lblAdquisicion') and normalize-space()]",
+            "//h1[normalize-space()]",
+            "//h2[normalize-space()]",
+            "//div[contains(@class,'title') and normalize-space()]",
+            "//div[contains(@class,'titulo') and normalize-space()]",
+        ]
+        for xp in xpaths:
+            try:
+                elem = self.driver.find_element(By.XPATH, xp)
+            except Exception:
+                continue
+            texto = (elem.text or "").strip()
+            if texto:
+                return self._limpiar_nombre_proyecto(codigo, texto)
+
+        try:
+            titulo = (self.driver.title or "").strip()
+        except Exception:
+            titulo = ""
+        return self._limpiar_nombre_proyecto(codigo, titulo) if titulo else ""
+
+    def _limpiar_nombre_proyecto(self, codigo, nombre):
+        nombre = " ".join((nombre or "").split()).strip()
+        codigo_norm = (str(codigo) or "").strip().lower()
+        if codigo_norm and nombre.lower().startswith(codigo_norm):
+            nombre = nombre[len(codigo_norm):].strip(" -_/")
+        return nombre
 
     # ---------------- Token helpers ----------------
     def capturar_y_guardar_token_desde_selenium(self):
@@ -861,13 +1008,16 @@ class DescargadorProduccionApp:
             pass
 
     # ---------------- Utilidades licitacion ----------------
-    def _guardar_manifest_licitacion(self, codigo, resumen, base_dir="Descargas"):
+    def _guardar_manifest_licitacion(self, codigo, resumen, base_dir="Descargas", carpeta_base=None, nombre_proyecto=None):
         try:
-            carpeta = os.path.join(base_dir, "Licitaciones", codigo)
-            os.makedirs(carpeta, exist_ok=True)
-            ruta = os.path.join(carpeta, "manifest_licitacion.json")
+            if not carpeta_base:
+                carpeta_base = descarga_ca.resolver_carpeta_base(base_dir, "Licitaciones", codigo)
+            os.makedirs(carpeta_base, exist_ok=True)
+            ruta = os.path.join(carpeta_base, "manifest_licitacion.json")
             data = resumen or {}
             data["codigo"] = codigo
+            if nombre_proyecto:
+                data["nombre_proyecto"] = nombre_proyecto
             data["generado_en"] = time.time()
             with open(ruta, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
@@ -891,18 +1041,6 @@ class DescargadorProduccionApp:
     def guardar_carpeta_descargas(self):
         self._guardar_base_descargas()
         self.status_var.set("Carpeta de descargas guardada")
-
-    def _zip_proveedores(self, resumen, codigo):
-        proveedores = resumen.get("proveedores") or []
-        for prov in proveedores:
-            carpeta = prov.get("carpeta")
-            if not carpeta or not os.path.isdir(carpeta):
-                continue
-            nombre_base = os.path.basename(carpeta.rstrip(os.sep))
-            try:
-                descarga_ca.crear_zip_proveedor(carpeta, nombre_base)
-            except Exception:
-                continue
 
     # ---------------- Misc ----------------
     def _habilitar_acciones(self):

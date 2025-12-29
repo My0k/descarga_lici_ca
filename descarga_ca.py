@@ -198,7 +198,7 @@ def _js_click_ver_detalle(driver, idx=None, rut=None, nombre=None):
         return False
 
 
-def descargar_compra_agil(codigo_ca, driver=None, base_dir="Descargas"):
+def descargar_compra_agil(codigo_ca, driver=None, base_dir="Descargas", nombre_proyecto=None):
     """
     Descarga todos los adjuntos de una compra ágil
     
@@ -214,13 +214,16 @@ def descargar_compra_agil(codigo_ca, driver=None, base_dir="Descargas"):
         return False
     
     try:
-        # Crear carpeta base para la compra ágil
-        carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
-        os.makedirs(carpeta_base, exist_ok=True)
-        
         # Navegar a la compra ágil
         if not navegar_a_compra_agil(codigo_ca, driver):
             return False
+
+        if not nombre_proyecto and driver:
+            nombre_proyecto = _extraer_nombre_compra_agil_desde_ui(driver)
+
+        # Crear carpeta base para la compra ágil
+        carpeta_base = resolver_carpeta_base(base_dir, "ComprasAgiles", codigo_ca, nombre_proyecto)
+        os.makedirs(carpeta_base, exist_ok=True)
         
         # Obtener lista de proveedores
         proveedores = obtener_proveedores_ca(driver)
@@ -282,7 +285,7 @@ def descargar_compra_agil(codigo_ca, driver=None, base_dir="Descargas"):
         return False
 
 
-def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_dir="Descargas"):
+def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_dir="Descargas", nombre_proyecto=None):
     """
     Descarga los adjuntos de una compra ágil usando la API oficial con el token Bearer.
 
@@ -300,13 +303,31 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
         print(f"[API] Error leyendo token: {e}")
         return False
 
-    carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
+    info_data = None
+    if not nombre_proyecto:
+        try:
+            info_data = _obtener_info_compra(codigo_ca, token)
+            nombre_proyecto = _extraer_nombre_proyecto_compra_info(info_data)
+        except Exception as e:
+            print(f"[API] Error obteniendo nombre de compra agil: {e}")
+            info_data = None
+
+    if not nombre_proyecto and driver:
+        try:
+            if navegar_a_compra_agil(codigo_ca, driver):
+                nombre_proyecto = _extraer_nombre_compra_agil_desde_ui(driver)
+        except Exception:
+            pass
+
+    carpeta_base = resolver_carpeta_base(base_dir, "ComprasAgiles", codigo_ca, nombre_proyecto)
     os.makedirs(carpeta_base, exist_ok=True)
 
     exitosos = 0
     errores = 0
     manifest = {
         "codigo": codigo_ca,
+        "nombre_proyecto": nombre_proyecto or "",
+        "carpeta_base": carpeta_base,
         "generado_en": datetime.now().isoformat(timespec="seconds"),
         "proveedores": [],
     }
@@ -346,7 +367,8 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
 
     # 2) Adjuntos por postulante (cotización) usando IDs de candidatos
     try:
-        info_data = _obtener_info_compra(codigo_ca, token)
+        if info_data is None:
+            info_data = _obtener_info_compra(codigo_ca, token)
         candidatos = extract_candidate_ids(info_data)
     except Exception as e:
         print(f"[API] Error al obtener información de compra o candidatos: {e}")
@@ -1831,7 +1853,7 @@ def descargar_comprobantes_oferta_compra_agil(codigo_ca, driver, base_dir="Desca
     if not driver:
         return False
 
-    carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
+    carpeta_base = resolver_carpeta_base(base_dir, "ComprasAgiles", codigo_ca)
     os.makedirs(carpeta_base, exist_ok=True)
 
     # Mapa por RUT desde manifest (si existe) para guardar en la misma carpeta usada por API
@@ -2027,6 +2049,41 @@ def crear_zip_proveedor(ruta_proveedor, nombre_proveedor):
         print(f"Error al crear ZIP para {nombre_proveedor}: {str(e)}")
         return None
 
+def crear_zip_carpeta(ruta_carpeta, ruta_zip):
+    """
+    Crea un archivo ZIP con el contenido de una carpeta completa.
+
+    Args:
+        ruta_carpeta (str): Ruta a la carpeta a comprimir
+        ruta_zip (str): Ruta final del ZIP a generar
+
+    Returns:
+        str: Ruta del archivo ZIP creado, o None si falla
+    """
+    try:
+        if not ruta_carpeta or not os.path.isdir(ruta_carpeta):
+            print(f"[ZIP] Carpeta no existe: {ruta_carpeta}")
+            return None
+
+        os.makedirs(os.path.dirname(ruta_zip), exist_ok=True)
+        ruta_zip_abs = os.path.abspath(ruta_zip)
+        ruta_carpeta_abs = os.path.abspath(ruta_carpeta)
+
+        with zipfile.ZipFile(ruta_zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, _, files in os.walk(ruta_carpeta):
+                for file in files:
+                    ruta_archivo = os.path.join(root, file)
+                    if os.path.abspath(ruta_archivo) == ruta_zip_abs:
+                        continue
+                    nombre_en_zip = os.path.relpath(ruta_archivo, ruta_carpeta_abs)
+                    zipf.write(ruta_archivo, nombre_en_zip)
+
+        print(f"[ZIP] ZIP creado: {ruta_zip}")
+        return ruta_zip
+    except Exception as e:
+        print(f"[ZIP] Error al crear ZIP para carpeta {ruta_carpeta}: {str(e)}")
+        return None
+
 def limpiar_nombre_archivo(nombre):
     """
     Limpia un nombre para usarlo como nombre de archivo/carpeta
@@ -2047,13 +2104,127 @@ def limpiar_nombre_archivo(nombre):
     
     return nombre_limpio.strip()
 
+def _limpiar_nombre_proyecto(codigo, nombre):
+    nombre = " ".join((nombre or "").split()).strip()
+    codigo_norm = (str(codigo) or "").strip().lower()
+    if codigo_norm and nombre.lower().startswith(codigo_norm):
+        nombre = nombre[len(codigo_norm):].strip(" -_/")
+    return nombre
+
+def construir_nombre_carpeta_base(codigo, nombre_proyecto=None):
+    codigo_str = (str(codigo) or "").strip()
+    nombre = _limpiar_nombre_proyecto(codigo_str, nombre_proyecto)
+    if nombre:
+        base = f"{codigo_str} {nombre}".strip()
+    else:
+        base = codigo_str
+    base = limpiar_nombre_archivo(base)
+    return base or codigo_str or "sin_codigo"
+
+def resolver_carpeta_base(base_dir, subdir, codigo, nombre_proyecto=None):
+    base_dir = base_dir or "Descargas"
+    subdir = subdir or ""
+    codigo_str = (str(codigo) or "").strip()
+    nombre = (nombre_proyecto or "").strip()
+    carpeta_root = os.path.join(base_dir, subdir) if subdir else base_dir
+    if nombre:
+        carpeta = construir_nombre_carpeta_base(codigo_str, nombre)
+        return os.path.join(carpeta_root, carpeta)
+    if not codigo_str:
+        return carpeta_root
+    if not os.path.isdir(carpeta_root):
+        return os.path.join(carpeta_root, codigo_str)
+    candidatos = []
+    try:
+        for nombre_dir in os.listdir(carpeta_root):
+            if nombre_dir == codigo_str:
+                pass
+            elif nombre_dir.startswith(f"{codigo_str} "):
+                pass
+            elif nombre_dir.startswith(f"{codigo_str}_"):
+                pass
+            else:
+                continue
+            ruta = os.path.join(carpeta_root, nombre_dir)
+            if os.path.isdir(ruta):
+                candidatos.append(ruta)
+    except Exception:
+        return exacta
+    if not candidatos:
+        return os.path.join(carpeta_root, codigo_str)
+    def _rank(ruta):
+        base = os.path.basename(ruta)
+        if base.startswith(f"{codigo_str} "):
+            return (0, base)
+        if base.startswith(f"{codigo_str}_"):
+            return (1, base)
+        if base == codigo_str:
+            return (2, base)
+        return (3, base)
+    candidatos.sort(key=_rank)
+    return candidatos[0]
+
+def _extraer_nombre_proyecto_compra_info(info_data):
+    if not isinstance(info_data, dict):
+        return ""
+    payload = info_data.get("payload") or info_data
+    def _probe(obj):
+        if not isinstance(obj, dict):
+            return ""
+        for key in (
+            "nombreSolicitud",
+            "nombreCompra",
+            "nombre",
+            "titulo",
+            "nombreLicitacion",
+            "nombreAdquisicion",
+            "nombreProyecto",
+            "descripcion",
+            "name",
+            "title",
+        ):
+            val = obj.get(key)
+            if isinstance(val, str) and val.strip():
+                return val.strip()
+        return ""
+    nombre = _probe(payload)
+    if nombre:
+        return nombre
+    for key in ("solicitud", "detalle", "compra", "adquisicion", "proceso", "cotizacion", "resumen"):
+        try:
+            nombre = _probe(payload.get(key))
+        except Exception:
+            nombre = ""
+        if nombre:
+            return nombre
+    return ""
+
+def _extraer_nombre_compra_agil_desde_ui(driver):
+    if not driver:
+        return ""
+    xpaths = [
+        "//h1[normalize-space()]",
+        "//h2[normalize-space()]",
+        "//div[contains(@class,'title') and normalize-space()]",
+        "//span[contains(@class,'title') and normalize-space()]",
+    ]
+    for xp in xpaths:
+        try:
+            elem = driver.find_element(By.XPATH, xp)
+        except Exception:
+            continue
+        texto = (elem.text or "").strip()
+        if texto:
+            return texto
+    return ""
+
 
 def crear_zips_proveedores(codigo_ca, base_dir="Descargas"):
     """
     Recorre las carpetas de proveedores de una compra ágil y genera un ZIP por cada una.
     Ignora la carpeta 'Adjuntos' (adjuntos generales).
     """
-    carpeta_base = os.path.join(base_dir, "ComprasAgiles", codigo_ca)
+    carpeta_base = resolver_carpeta_base(base_dir, "ComprasAgiles", codigo_ca)
     if not os.path.isdir(carpeta_base):
         print(f"[ZIP] Carpeta base no existe: {carpeta_base}")
         return []
