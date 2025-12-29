@@ -219,7 +219,7 @@ def descargar_compra_agil(codigo_ca, driver=None, base_dir="Descargas", nombre_p
             return False
 
         if not nombre_proyecto and driver:
-            nombre_proyecto = _extraer_nombre_compra_agil_desde_ui(driver)
+            nombre_proyecto = _extraer_nombre_compra_agil_desde_ui(driver, codigo_ca)
 
         # Crear carpeta base para la compra ágil
         carpeta_base = resolver_carpeta_base(base_dir, "ComprasAgiles", codigo_ca, nombre_proyecto)
@@ -315,7 +315,7 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
     if not nombre_proyecto and driver:
         try:
             if navegar_a_compra_agil(codigo_ca, driver):
-                nombre_proyecto = _extraer_nombre_compra_agil_desde_ui(driver)
+                nombre_proyecto = _extraer_nombre_compra_agil_desde_ui(driver, codigo_ca)
         except Exception:
             pass
 
@@ -2106,9 +2106,40 @@ def limpiar_nombre_archivo(nombre):
 
 def _limpiar_nombre_proyecto(codigo, nombre):
     nombre = " ".join((nombre or "").split()).strip()
-    codigo_norm = (str(codigo) or "").strip().lower()
+    if not nombre:
+        return ""
+    codigo_str = (str(codigo) or "").strip()
+    codigo_norm = codigo_str.lower()
+
     if codigo_norm and nombre.lower().startswith(codigo_norm):
-        nombre = nombre[len(codigo_norm):].strip(" -_/")
+        nombre = nombre[len(codigo_str):].strip(" -_/()[]")
+    if codigo_norm and nombre.lower().endswith(codigo_norm):
+        nombre = nombre[: -len(codigo_str)].strip(" -_/()[]")
+
+    frases_genericas = {
+        "detalle de la cotizacion",
+        "detalle de la cotización",
+        "detalle cotizacion",
+        "detalle cotización",
+    }
+    nombre_norm = nombre.lower()
+    for frase in frases_genericas:
+        if nombre_norm == frase:
+            return ""
+        if nombre_norm.startswith(f"{frase} "):
+            nombre = nombre[len(frase) :].strip(" -_/()[]")
+            nombre_norm = nombre.lower()
+        if nombre_norm.endswith(f" {frase}"):
+            nombre = nombre[: -len(frase)].strip(" -_/()[]")
+            nombre_norm = nombre.lower()
+
+    if codigo_norm and nombre.lower().startswith(codigo_norm):
+        nombre = nombre[len(codigo_str):].strip(" -_/()[]")
+    if codigo_norm and nombre.lower().endswith(codigo_norm):
+        nombre = nombre[: -len(codigo_str)].strip(" -_/()[]")
+
+    if nombre.lower() in frases_genericas:
+        return ""
     return nombre
 
 def construir_nombre_carpeta_base(codigo, nombre_proyecto=None):
@@ -2199,9 +2230,30 @@ def _extraer_nombre_proyecto_compra_info(info_data):
             return nombre
     return ""
 
-def _extraer_nombre_compra_agil_desde_ui(driver):
+def _extraer_nombre_compra_agil_desde_ui(driver, codigo=None):
     if not driver:
         return ""
+
+    def _limpiar(texto):
+        texto = " ".join((texto or "").split()).strip()
+        if not texto:
+            return ""
+        if codigo:
+            texto = _limpiar_nombre_proyecto(codigo, texto)
+        return texto.strip()
+
+    def _es_candidato(texto):
+        if not texto:
+            return False
+        if len(texto) < 3:
+            return False
+        if len(texto) > 180:
+            return False
+        lower = texto.lower()
+        if "cotizacion" in lower or "cotización" in lower:
+            return False
+        return True
+
     xpaths = [
         "//h1[normalize-space()]",
         "//h2[normalize-space()]",
@@ -2213,9 +2265,45 @@ def _extraer_nombre_compra_agil_desde_ui(driver):
             elem = driver.find_element(By.XPATH, xp)
         except Exception:
             continue
-        texto = (elem.text or "").strip()
-        if texto:
+        texto = _limpiar(elem.text or "")
+        if _es_candidato(texto):
             return texto
+
+    label_xpaths = [
+        "//p[normalize-space()='Nombre' or starts-with(normalize-space(),'Nombre')]/following-sibling::*[1]",
+        "//p[normalize-space()='Titulo' or normalize-space()='Título']/following-sibling::*[1]",
+        "//p[normalize-space()='Objeto' or starts-with(normalize-space(),'Objeto')]/following-sibling::*[1]",
+        "//span[normalize-space()='Nombre' or starts-with(normalize-space(),'Nombre')]/following-sibling::*[1]",
+        "//span[normalize-space()='Titulo' or normalize-space()='Título']/following-sibling::*[1]",
+        "//span[normalize-space()='Objeto' or starts-with(normalize-space(),'Objeto')]/following-sibling::*[1]",
+    ]
+    for xp in label_xpaths:
+        try:
+            elem = driver.find_element(By.XPATH, xp)
+        except Exception:
+            continue
+        texto = _limpiar(elem.text or "")
+        if _es_candidato(texto):
+            return texto
+
+    try:
+        candidatos = driver.find_elements(By.CSS_SELECTOR, "p.MuiTypography-root.MuiTypography-body2")
+    except Exception:
+        candidatos = []
+    for elem in candidatos:
+        texto = _limpiar(elem.text or "")
+        if _es_candidato(texto):
+            return texto
+
+    try:
+        candidatos = driver.find_elements(By.CSS_SELECTOR, "p.MuiTypography-root")
+    except Exception:
+        candidatos = []
+    for elem in candidatos:
+        texto = _limpiar(elem.text or "")
+        if _es_candidato(texto):
+            return texto
+
     return ""
 
 

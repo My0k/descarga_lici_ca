@@ -663,9 +663,36 @@ class DescargadorProduccionApp:
 
     def _limpiar_nombre_proyecto(self, codigo, nombre):
         nombre = " ".join((nombre or "").split()).strip()
-        codigo_norm = (str(codigo) or "").strip().lower()
+        if not nombre:
+            return ""
+        codigo_str = (str(codigo) or "").strip()
+        codigo_norm = codigo_str.lower()
         if codigo_norm and nombre.lower().startswith(codigo_norm):
-            nombre = nombre[len(codigo_norm):].strip(" -_/")
+            nombre = nombre[len(codigo_str):].strip(" -_/()[]")
+        if codigo_norm and nombre.lower().endswith(codigo_norm):
+            nombre = nombre[: -len(codigo_str)].strip(" -_/()[]")
+        frases_genericas = {
+            "detalle de la cotizacion",
+            "detalle de la cotización",
+            "detalle cotizacion",
+            "detalle cotización",
+        }
+        nombre_norm = nombre.lower()
+        for frase in frases_genericas:
+            if nombre_norm == frase:
+                return ""
+            if nombre_norm.startswith(f"{frase} "):
+                nombre = nombre[len(frase) :].strip(" -_/()[]")
+                nombre_norm = nombre.lower()
+            if nombre_norm.endswith(f" {frase}"):
+                nombre = nombre[: -len(frase)].strip(" -_/()[]")
+                nombre_norm = nombre.lower()
+        if codigo_norm and nombre.lower().startswith(codigo_norm):
+            nombre = nombre[len(codigo_str):].strip(" -_/()[]")
+        if codigo_norm and nombre.lower().endswith(codigo_norm):
+            nombre = nombre[: -len(codigo_str)].strip(" -_/()[]")
+        if nombre.lower() in frases_genericas:
+            return ""
         return nombre
 
     # ---------------- Token helpers ----------------
