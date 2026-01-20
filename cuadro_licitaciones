@@ -1,0 +1,34 @@
+rut:
+
+<a onclick="openPopUp('/BID/Modules/PopUps/InformationProvider.aspx?enc=cohyD12KGlY7UTvAR8GmcAw9mmVCeBJtBocDKtoe%2brmzEasRAy6C%2fsFL7rJDrpbBs8LZSrwqxg0bxM9EKnKb1iMSevDmuB9Nm2A0clIuaMHt2gHgzPFmb9%2fuGJLn3TaY2wZnGw5xz6peiuqpQ9Nf1Q%3d%3d'); return false;" id="grdSupplies_ctl02__GvLblRutProvider" href="javascript:__doPostBack('grdSupplies$ctl02$_GvLblRutProvider','')">77.681.122-K</a>
+
+proveedor:
+
+<a onclick="openPopUp('/BID/Modules/PopUps/InformationProvider.aspx?enc=S9b09Ar3kOZjl%2fXswWd7duJ982RuZLOzPw8V0a7eYjwliAiiOiR0Tk561ffKsczNq1IvWCRA434LkSqU68zT9%2fV6cw%2bWHt8wKgTMJT3b7qOLY%2buW8IXE4U3gXl0PRJcUlYu93jy8fNYCw5SU1%2boVCw%3d%3d'); return false;" id="grdSupplies_ctl02__GvLblProvider" href="javascript:__doPostBack('grdSupplies$ctl02$_GvLblProvider','')">BILDER SPA</a>
+
+nombre oferta:
+<a onclick="openPopUp('../../../../bid/modules/bid/SupportingOfSupply.aspx?enc=JFaqHG9qc1RUCrQ6VLrSpJJt%2b1SVsE11IvcwSaDwc8qHVvtKrDuWVsRFSKUNlbSgubJS67D2CrQvcG%2fOSdOpslJHzH0%2fMG857%2f51d%2bDycKT%2fLKJU4arhc3h6Dq67T4ful8eYF5W9DQbCp8PB651zfg%3d%3d', 620, 600); return false;" id="grdSupplies_ctl02__GvLnkSuppliesName" href="javascript:__doPostBack('grdSupplies$ctl02$_GvLnkSuppliesName','')">Oferta de BILDER SPA para 728-27-LE25 - 56dr</a>
+
+Total oferta:
+
+<span id="grdSupplies_ctl02_TotalOferta">$ 8.551.475</span>
+
+abrir ventana anexos administrativos:
+<input type="image" name="grdSupplies$ctl02$_GvImgbAdministrativeAttachment" id="grdSupplies_ctl02__GvImgbAdministrativeAttachment" title="Anexos Administrativos" src="../../../Includes/images/Ofertas/adj-administrativos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=aKwLdLFE9D%2fezOROY0f19UC6Z17FL%2fPfd1f940nG8vrwpZ7l0aFnmcJW5EgCkEDDJaQroWzO0wY5UXjmeb6misngQHmcM9j4sp3%2bSZ0yN4ldMO3jEjdLFoI%2fK9dROgX7zJDlZFgDusBPBqy9c2iuFw%3d%3d', 800, 520); return false;" style="border-width:0px;">
+/html/body/form/table/tbody/tr[3]/td/div/table/tbody/tr[2]/td[6]/table/tbody/tr[1]/td[7]/input
+abrir ventana anexos tecnicos
+<input type="image" name="grdSupplies$ctl02$_GvImgbTechnicalAttachment" id="grdSupplies_ctl02__GvImgbTechnicalAttachment" title="Anexos Técnicos" src="../../../Includes/images/Ofertas/adj-tecnicos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=ZxsioAfA%2bsF34o7yN%2fkX8jYbKfSZc9Fa8JJY5rOADdSsA1mlTuhzOLjj7II274GZ751xuFeG2BAFJutr3jyzZzwTxkgSutkaFbII1qeoweaz6OkIsDtzWTm%2bzG5LEDsOGYvVtY4qKDdawIy2Ox15Zg%3d%3d', 800, 520); return false;" style="border-width:0px;">
+/html/body/form/table/tbody/tr[3]/td/div/table/tbody/tr[2]/td[6]/table/tbody/tr[1]/td[9]/input
+abrir ventana anexos economicos:
+
+<input type="image" name="grdSupplies$ctl02$_GvImgbEconomicAttachment" id="grdSupplies_ctl02__GvImgbEconomicAttachment" title="Anexos económicos" src="../../../Includes/images/Ofertas/adj-economicos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=HuumqU6fIlmXboWbXplOKC049YVhoPFc%2bsfSSiDIP2s5%2bCohxLwPPQhzDRqW%2bm9%2bITx1HakSMof2u7LE3cYfG9gRNEL34RzUXDX53yI3drow9rAUw8ZVt7w2S118SdNYuesK0ip37%2bxqouLJaYZq4g%3d%3d', 800, 520); return false;" style="border-width:0px;">
+/html/body/form/table/tbody/tr[3]/td/div/table/tbody/tr[2]/td[6]/table/tbody/tr[1]/td[15]/input
+
+el link de cada cuadro con anexos es algo asi:
+
+https://mercadopublico.cl/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=aKwLdLFE9D%2fezOROY0f19UC6Z17FL%2fPfd1f940nG8vrwpZ7l0aFnmcJW5EgCkEDDJaQroWzO0wY5UXjmeb6misngQHmcM9j4sp3%2bSZ0yN4ldMO3jEjdLFoI%2fK9dROgX7zJDlZFgDusBPBqy9c2iuFw%3d%3d
+
+
+y cada botón para descargar cada uno de los adjuntos correspondientes son asi
+<input type="image" name="DWNL$grdId$ctl02$search" id="DWNL_grdId_ctl02_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;">
+/html/body/form/table[2]/tbody/tr[2]/td/span/div/div/table/tbody/tr[2]/td[6]/input

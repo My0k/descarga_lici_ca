@@ -1,0 +1,4 @@
+Handles antes: ['F62069040609515715E365DBF092D09B']
+Handles después: ['F62069040609515715E365DBF092D09B']
+Nuevos handles: []
+after_handle0 -> handle F62069040609515715E365DBF092D09B url https://mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=JjO5zKqb+2R21IMjm8Gxkg==
