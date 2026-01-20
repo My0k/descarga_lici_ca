@@ -2,6 +2,7 @@ import configparser
 import re
 import json
 import os
+import shutil
 import threading
 import time
 import tkinter as tk
@@ -243,6 +244,14 @@ class DescargadorProduccionApp:
         )
         self.btn_cerrar_nav.pack(side="left", padx=(8, 0))
 
+        self.btn_eliminar_sesion = ttk.Button(
+            btns_nav,
+            text="Eliminar sesion",
+            command=self.eliminar_sesion,
+            style="Custom.TButton",
+        )
+        self.btn_eliminar_sesion.pack(side="left", padx=(8, 0))
+
         self.lbl_token = ttk.Label(
             navegador_frame,
             textvariable=self.token_estado,
@@ -404,6 +413,33 @@ class DescargadorProduccionApp:
         self.btn_cerrar_nav.configure(state="disabled")
         self.btn_procesar.configure(state="disabled")
         self._actualizar_estado_procesar()
+
+    def eliminar_sesion(self):
+        if self.driver:
+            if not messagebox.askyesno(
+                "Eliminar sesion",
+                "Hay un navegador abierto. Se cerrara antes de eliminar la sesion. Continuar?",
+            ):
+                return
+            self.cerrar_navegador()
+
+        ruta = self._ruta_sesion_dir()
+        if not os.path.isdir(ruta):
+            messagebox.showinfo("Eliminar sesion", "No hay sesion para eliminar.")
+            return
+
+        if not messagebox.askyesno(
+            "Eliminar sesion",
+            "Se eliminara la carpeta de sesion para iniciar desde cero. Continuar?",
+        ):
+            return
+
+        try:
+            shutil.rmtree(ruta)
+            self.status_var.set("Sesion eliminada")
+            messagebox.showinfo("Eliminar sesion", "Sesion eliminada correctamente.")
+        except Exception as exc:
+            messagebox.showerror("Eliminar sesion", f"No se pudo eliminar la sesion:\n{exc}")
 
     def continuar_si_listo(self):
         if not self.navegador_iniciado:
