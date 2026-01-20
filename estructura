@@ -1,0 +1,43 @@
+El objetivo de esta herramienta, es dado un codigo de licitacion o de compraagil (mercadopublico chile), descargar automaticamente todos los adjuntos de cada postulante, generar un excel asociado al codigo (un excel por codigo de licitacion), archivos zip con los adjuntos por proveedor.
+
+
+run.bat
+corre todo incluyendo instalación de requirements en windows
+
+app.py
+Interfaz base con Tkinter
+
+descarga_ca.py
+Dado un código de compra ágil, descarga carpetas con adjuntos y además crea un zip con los adjuntos llamado (NombreProveedor).zip
+
+genera_xls_ca.py
+Dado un código de compra ágil, genera un archivo Excel  
+
+descarga_lici.py
+Dado un código de licitación, descarga carpetas con adjuntos y además crea un zip con los adjuntos llamado (NombreProveedor).zip
+
+genera_xls_lici.py
+Dado un código de licitación, genera un archivo Excel
+
+genera_ficha_proveedor.py
+Dado un rut de proveedor y codigo de licitacion o compra agil, obtener documento de habilidad, declaración jurada y comprobante de ingreso
+
+
+carpeta descargas (solo 2 carpetas)
+Descargas/Licitaciones/(codigolicitacion)/(NombreProveedor)
+Descargas/ComprasAgiles/(CodigoCompraAgil)/(NombreProveedor)
+
+Dentro de cada carpeta (CodigoLicitacion) y (CodigoCompraAgil) debe ir el excel con la información de ese código en especifico
+
+
+links:
+
+el link para visitar una compra agil es https://compra-agil.mercadopublico.cl/resumen-cotizacion/1067455-151-COT25 (ejemplo de codigo 1067455-151-COT25)
+
+FLUJO:
+
+Para cada licitacion o compra agil, debe
+
+1) generar las carpetas para todos los proveedores y descargar los anexos correspondientes
+2) generar una ficha con los 3 documentos (Declaracion jurada, habilidad y ingreso) en cada carpeta de proveedor
+3) generar el excel en la raiz de la licitación o compra agil, con el resumen

@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head><title>
+	Anexos
+</title><link href="../../Includes/styles/ChileCompra.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript"  language="javascript" src="../../Includes/scripts/chilecompra.js"></script>
+    <script src="../../Includes/scripts/Jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../Includes/scripts/GetDocumentsApertura.js" type="text/javascript"></script>
+</head>
+<body>
+    <form name="form1" method="post" action="./ViewBidAttachment.aspx?enc=Jbmh%2bMlbaOB9kitCUMyobvSXnOEGQi%2bMm2DWOnEHXYiDHlVFfwPO4T956OhK6I8wqvKgPCX0bFpDVrtOGeqBcJwg01pY9OU8tK1OKB7hVSMMjvYRa0%2fJhIpbw5%2b7vlkYZ2HW4db9T76uWPrFzgMyPA%3d%3d" id="form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTU1NTc3ODY3NA8WAh4TVmFsaWRhdGVSZXF1ZXN0TW9kZQIBFgICBA9kFgwCAQ8PFgIeBFRleHRlZGQCBQ8PFgIeFU1lbnNhamVBbGVydGFEZXNjYXJnYQVMRXN0aW1hZG8gVXN1YXJpbyBubyBzZSBwZXJtaXRlIGRlc2NhcmdhciBhcmNoaXZvcyBxdWUgc3VwZXJlbiBsb3MgMzAwMDAwIGtiLmQWAmYPD2QWAh4Fc3R5bGUFC1dpZHRoOjEwMCU7FggCAQ8PFgYeCUZvbnRfU2l6ZSgqIlN5c3RlbS5XZWIuVUkuV2ViQ29udHJvbHMuRm9udFVuaXQEMTJwdB4JRm9udF9Cb2xkZx4EXyFTQgKAGBYCHwMFVmZvbnQtZmFtaWx5OidUcmVidWNoZXQgTVMnICwgQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZixWZXJkYW5hLCBTYW5zO2NvbG9yOiMxRDREOUU7ZAIDDzwrABEDAA8WBB4LXyFEYXRhQm91bmRnHgtfIUl0ZW1Db3VudAIHFgIfAwULV2lkdGg6MTAwJTsBEBYAFgAWAAwUKwAAFgJmD2QWDgIBD2QWEmYPZBYCZg8QD2QWAh4Hb25jbGljawUmamF2YXNjcmlwdDpkZXNDaGtTZWxBbGwoJ0RXTkxfY3RsMDMnKTtkZGQCAQ9kFgJmDw8WAh8BBQkzODg2NjY0MTZkZAICD2QWAmYPDxYCHwEFJDg2NzUxN0ZGLTAxOEYtNDE4OS1CMTY1LThCMURENDhFM0Q4NWRkAgMPZBYCZg8PFgIfAQU1Q0VSVElGSUNBRE9TIERFIEFOVEVDRURFTlRFUyBMQUJPUkFMRVMgWSBQUkVWIEYzMC5wZGZkZAIED2QWAmYPDxYCHwEFIEFuZXhvcyBBZG1pbmlzdHJhdGl2b3MgZGUgT2ZlcnRhZGQCBQ9kFgJmDw8WAh8BBTVDRVJUSUZJQ0FET1MgREUgQU5URUNFREVOVEVTIExBQk9SQUxFUyBZIFBSRVYgRjMwLnBkZmRkAgYPZBYCZg8PFgIfAQUFODkgS2JkZAIHD2QWAmYPDxYCHwEFEzAxLTAxLTAwMDEgMDA6MDA6MDBkZAIID2QWAmYPDxYKHhBDYXVzZXNWYWxpZGF0aW9uaB4ISW1hZ2VVcmwFJC4uLy4uL0luY2x1ZGVzL2ltYWdlcy9HcmlsbGEvdmVyLmdpZh4LQ29tbWFuZE5hbWUFC09QRU5fQUNUSU9OHgdUb29sVGlwBQlWZXIgQW5leG8eD0NvbW1hbmRBcmd1bWVudAUBMGRkAgIPZBYSZg9kFgJmDxAPZBYCHwkFJmphdmFzY3JpcHQ6ZGVzQ2hrU2VsQWxsKCdEV05MX2N0bDAzJyk7ZGRkAgEPZBYCZg8PFgIfAQUJMzg4NjUzMTQ1ZGQCAg9kFgJmDw8WAh8BBSQ3RjhENzNDRC0wRDhCLTQ3MDItOTU2MC1FRkYzQTY3QjE3NTNkZAIDD2QWAmYPDxYCHwEFIkFORVhPIE7CsCA0IERFQ0xBUkFDSU9OIEpVUkFEQS5wZGZkZAIED2QWAmYPDxYCHwEFIEFuZXhvcyBBZG1pbmlzdHJhdGl2b3MgZGUgT2ZlcnRhZGQCBQ9kFgJmDw8WAh8BBSJBTkVYTyBOwrAgNCBERUNMQVJBQ0lPTiBKVVJBREEucGRmZGQCBg9kFgJmDw8WAh8BBQUzMSBLYmRkAgcPZBYCZg8PFgIfAQUTMDEtMDEtMDAwMSAwMDowMDowMGRkAggPZBYCZg8PFgofCmgfCwUkLi4vLi4vSW5jbHVkZXMvaW1hZ2VzL0dyaWxsYS92ZXIuZ2lmHwwFC09QRU5fQUNUSU9OHw0FCVZlciBBbmV4bx8OBQExZGQCAw9kFhJmD2QWAmYPEA9kFgIfCQUmamF2YXNjcmlwdDpkZXNDaGtTZWxBbGwoJ0RXTkxfY3RsMDMnKTtkZGQCAQ9kFgJmDw8WAh8BBQkzODg2NTMxMDlkZAICD2QWAmYPDxYCHwEFJERDNDgyMEM2LThGRDQtNEU1Ri1CQkQyLTI2RTY5RTVCNzk3Q2RkAgMPZBYCZg8PFgIfAQUpQU5FWE8gTsKwIDIgREVDTEFSQUNJT04gSlVSQURBIFNJTVBMRS5wZGZkZAIED2QWAmYPDxYCHwEFIEFuZXhvcyBBZG1pbmlzdHJhdGl2b3MgZGUgT2ZlcnRhZGQCBQ9kFgJmDw8WAh8BBSlBTkVYTyBOwrAgMiBERUNMQVJBQ0lPTiBKVVJBREEgU0lNUExFLnBkZmRkAgYPZBYCZg8PFgIfAQUFNTAgS2JkZAIHD2QWAmYPDxYCHwEFEzAxLTAxLTAwMDEgMDA6MDA6MDBkZAIID2QWAmYPDxYKHwpoHwsFJC4uLy4uL0luY2x1ZGVzL2ltYWdlcy9HcmlsbGEvdmVyLmdpZh8MBQtPUEVOX0FDVElPTh8NBQlWZXIgQW5leG8fDgUBMmRkAgQPZBYSZg9kFgJmDxAPZBYCHwkFJmphdmFzY3JpcHQ6ZGVzQ2hrU2VsQWxsKCdEV05MX2N0bDAzJyk7ZGRkAgEPZBYCZg8PFgIfAQUJMzg4NjUzMDcxZGQCAg9kFgJmDw8WAh8BBSRBQjM4MzI0My0zMTAyLTQ4NEItOTAzMy03MzRFQjU0QzkyMERkZAIDD2QWAmYPDxYCHwEFK0FORVhPIE7CsCAxIElERU5USUZJQ0FDSU9OIERFTCBPRkVSRU5URS5wZGZkZAIED2QWAmYPDxYCHwEFIEFuZXhvcyBBZG1pbmlzdHJhdGl2b3MgZGUgT2ZlcnRhZGQCBQ9kFgJmDw8WAh8BBStBTkVYTyBOwrAgMSBJREVOVElGSUNBQ0lPTiBERUwgT0ZFUkVOVEUucGRmZGQCBg9kFgJmDw8WAh8BBQU1NyBLYmRkAgcPZBYCZg8PFgIfAQUTMDEtMDEtMDAwMSAwMDowMDowMGRkAggPZBYCZg8PFgofCmgfCwUkLi4vLi4vSW5jbHVkZXMvaW1hZ2VzL0dyaWxsYS92ZXIuZ2lmHwwFC09QRU5fQUNUSU9OHw0FCVZlciBBbmV4bx8OBQEzZGQCBQ9kFhJmD2QWAmYPEA9kFgIfCQUmamF2YXNjcmlwdDpkZXNDaGtTZWxBbGwoJ0RXTkxfY3RsMDMnKTtkZGQCAQ9kFgJmDw8WAh8BBQkzODg2NTMwMjhkZAICD2QWAmYPDxYCHwEFJDdGQTk2MDMxLUE5MTItNDNFNC04QTlCLTMwODU0Q0MwRjQyNWRkAgMPZBYCZg8PFgIfAQUsRE9DVU1FTlRPUyBBRE1JTklTVFJBVElWT1MgREUgTEEgRU1QUkVTQS5yYXJkZAIED2QWAmYPDxYCHwEFIEFuZXhvcyBBZG1pbmlzdHJhdGl2b3MgZGUgT2ZlcnRhZGQCBQ9kFgJmDw8WAh8BBSxET0NVTUVOVE9TIEFETUlOSVNUUkFUSVZPUyBERSBMQSBFTVBSRVNBLnJhcmRkAgYPZBYCZg8PFgIfAQUHMTIzNSBLYmRkAgcPZBYCZg8PFgIfAQUTMDEtMDEtMDAwMSAwMDowMDowMGRkAggPZBYCZg8PFgofCmgfCwUkLi4vLi4vSW5jbHVkZXMvaW1hZ2VzL0dyaWxsYS92ZXIuZ2lmHwwFC09QRU5fQUNUSU9OHw0FCVZlciBBbmV4bx8OBQE0ZGQCBg9kFhJmD2QWAmYPEA9kFgIfCQUmamF2YXNjcmlwdDpkZXNDaGtTZWxBbGwoJ0RXTkxfY3RsMDMnKTtkZGQCAQ9kFgJmDw8WAh8BBQkzODg2NTI4NTdkZAICD2QWAmYPDxYCHwEFJEQwRDE1QjI5LTJFOTgtNDA2OC1BRDhELTJFRDlGRTYzNTY4RWRkAgMPZBYCZg8PFgIfAQUjREVDTEFSQUNJT04gUEFDVE8gREUgSU5URUdSSURBRC5wZGZkZAIED2QWAmYPDxYCHwEFIEFuZXhvcyBBZG1pbmlzdHJhdGl2b3MgZGUgT2ZlcnRhZGQCBQ9kFgJmDw8WAh8BBSNERUNMQVJBQ0lPTiBQQUNUTyBERSBJTlRFR1JJREFELnBkZmRkAgYPZBYCZg8PFgIfAQUGMTY2IEtiZGQCBw9kFgJmDw8WAh8BBRMwMS0wMS0wMDAxIDAwOjAwOjAwZGQCCA9kFgJmDw8WCh8KaB8LBSQuLi8uLi9JbmNsdWRlcy9pbWFnZXMvR3JpbGxhL3Zlci5naWYfDAULT1BFTl9BQ1RJT04fDQUJVmVyIEFuZXhvHw4FATVkZAIHDw8WAh4HVmlzaWJsZWhkZAIEDw8WBB4JRm9yZUNvbG9yCo0BHwYCBGRkAgYPZBYEZg9kFgJmD2QWAmYPEA8WBh8BBRFTZWxlY2Npb25hciBUb2Rvcx8EKCsEBDEwcHQfBgKACBYEHwMFSGZvbnQtZmFtaWx5OidUcmVidWNoZXQgTVMnICwgQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZixWZXJkYW5hLCBTYW5zOx8JBTdqYXZhc2NyaXB0OmNoZWNrR3JpZEl0ZW1zKCdEV05MX2dyZElkJywwLCdEV05MX2N0bDAzJyk7ZGRkAgQPZBYCZg9kFgJmDw8WCB8BBRdEZXNjYXJnYXIgc2VsZWNjaW9uYWRvcx8KaB4IQ3NzQ2xhc3MFE2Nzc0Z3a0J1dHRvbk1lZGl1bUIfBgICFgYfAwVUZm9udC1mYW1pbHk6J1RyZWJ1Y2hldCBNUycgLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmLFZlcmRhbmEsIFNhbnM7YWxpZ246cmlnaHQ7Hg5WYWxpYXRpb25Hcm91cAUMRG93bkxvYWRGaWxlHwkF2gFyZXR1cm4gbWVuc2FqZUFsZXJ0YSgnRFdOTF9ncmRJZCcsMCwxMDI0MCwzMDAwMDAsJzEnLCdFc3RpbWFkbyBVc3VhcmlvIG5vIHNlIHBlcm1pdGUgZGVzY2FyZ2FyIGFyY2hpdm9zIHF1ZSBzdXBlcmVuIGxvcyAzMDAwMDAga2IuJywnRXN0aW1hZG8gVXN1YXJpbyBsYSBkZXNjYXJnYSBzdXBlcmEgbG9zIDEwMjQwIGtiLiBEZXNlYSBjb250aW51YXIgZGUgdG9kYXMgZm9ybWFzPycpO2QCCQ8PFgIfAQVgRDQ2OTlFNEM2MTI2REQzNTkzRDRBRjY5NkYzOTZGQTJFNkFDOTUyNTBFQzlCQ0UwNDZFMjA3QUQ1NjA5NDVEN0IyNzgzMzY2MkUxMEJGQTQ4QjI4MDM1MEIwQzU0QzMzZGQCCw8PFgIfAQUCLTFkZAINDw8WAh8BBQExZGQCEQ8PFgIfAQUGQ2VycmFyFgIfCQUdd2luZG93LmNsb3NlKCk7IHJldHVybiBmYWxzZTtkGAIFHl9fQ29udHJvbHNSZXF1aXJlUG9zdEJhY2tLZXlfXxYNBRREV05MJGdyZElkJGN0bDAyJGNoawUXRFdOTCRncmRJZCRjdGwwMiRzZWFyY2gFFERXTkwkZ3JkSWQkY3RsMDMkY2hrBRdEV05MJGdyZElkJGN0bDAzJHNlYXJjaAUURFdOTCRncmRJZCRjdGwwNCRjaGsFF0RXTkwkZ3JkSWQkY3RsMDQkc2VhcmNoBRREV05MJGdyZElkJGN0bDA1JGNoawUXRFdOTCRncmRJZCRjdGwwNSRzZWFyY2gFFERXTkwkZ3JkSWQkY3RsMDYkY2hrBRdEV05MJGdyZElkJGN0bDA2JHNlYXJjaAUURFdOTCRncmRJZCRjdGwwNyRjaGsFF0RXTkwkZ3JkSWQkY3RsMDckc2VhcmNoBQpEV05MJGN0bDAzBQpEV05MJGdyZElkDzwrAAwBCAICZCpAAUtgn0QZym2oDzaswvQfB6rx" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+
+<script type="text/javascript">
+//<![CDATA[
+function checkGridItems(vargrid, cell, SelAllId) {
+		
+      var oGrid; 
+      var selAll;
+      if (document.all) {
+      oGrid = document.all[vargrid];
+      selAll = document.all[SelAllId]; 
+      }
+      else if (document.getElementById) {
+      oGrid = document.getElementById(vargrid);
+      selAll = document.getElementById(SelAllId); 
+      }
+      if (oGrid) {
+									
+      for (i = 1; i < oGrid.rows.length; i++) {
+      var oChekItem;
+      var nombre = navigator.appName;
+      if (nombre == 'Microsoft Internet Explorer') {
+      oChekItem = oGrid.rows(i).cells(cell).children(0);
+      //oChekHidden = oGrid.rows(i).cells(cell).children(1);
+									 
+      }
+      else  {
+      //alert(oGrid.rows[i].cells[0].childNodes[0].type);
+      oChekItem = oGrid.rows[i].cells[cell].childNodes[0];
+      //oChekHidden = oGrid.rows[i].cells[cell].childNodes[3]; }
+      }
+      if (selAll.checked == true) {
+      oChekItem.checked = true; 
+      }
+      else {
+      oChekItem.checked = false; 
+      } 
+      } 
+      }
+      }function mensajeAlerta(vargrid, cell, maxMesage, MaxDownload,validaPagesize, msgDesc1, msgDesc2) {
+      var lblReplace = vargrid.replace('grdId','') + 'DWNLLblMessage';
+      var lblmesage;  
+      var oGrid;  
+      var validate = true;  
+      var selected= 0; 
+      if (document.all) {
+      oGrid = document.all[vargrid];  }
+      else if (document.getElementById) {
+      oGrid     = document.getElementById(vargrid); }
+      var totalSize = 0; 
+      var vPagSize = oGrid.rows.length - parseInt(validaPagesize);
+      if (oGrid) {
+      for (i = 1; i < vPagSize; i++) {
+      var oChekItem;
+      var itemSize;
+      var nombre = navigator.appName;
+      if (nombre == 'Microsoft Internet Explorer') {
+      oChekItem = oGrid.rows(i).cells(cell).children(0);}
+      else if (nombre == 'Netscape') {
+      oChekItem = oGrid.rows[i].cells[cell].childNodes[1];}
+      if (oChekItem.checked == true) {
+      var idCtl = oChekItem.id;
+      var idFL = idCtl.substring(0,idCtl.length - 3) + 'FileLength';
+      var fileLenght = document.getElementById(idFL); 
+      var len = fileLenght.innerText.length
+      var size = fileLenght.innerText;
+      size = size.substring(0,len-3);  
+      totalSize = totalSize + parseInt(size); selected= selected + 1;}
+      } 
+      if(totalSize > maxMesage && totalSize < MaxDownload){validate = confirm(msgDesc2);} 
+      if(totalSize >  MaxDownload){ alert(msgDesc1); validate = false;} 
+      } if(selected == 0){alert('debe seleccionar al menos un archivo'); validate = false;}  return validate;}function desChkSelAll(chkSellAllId) {
+      var selAll;
+      if (document.all) {
+      selAll = document.all[chkSellAllId]; 
+      }
+      else if (document.getElementById) {
+  
+      selAll = document.getElementById(chkSellAllId); }
+      selAll.checked  = false; }//]]>
+</script>
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="63676FB6" />
+</div>
+            <table border="0" cellpadding="0" cellspacing="4" width="99%">
+            <tr>
+                <td class="cssBIDGeneralSmallHeader" style="background-image:url(../../Includes/images/popUpHeaderBack.gif);">
+                    <img border="0" src="../../Includes/images/cabezal_ch_logo.gif" /></td>
+            </tr>
+        </table>
+        <span id="_lblMessage" class="cssFwkLabelAlert"></span>
+                    <table id="tblAnexos"  cellpadding="0" cellspacing="4" class="Anexostablaingresados" width="99%">
+                           <tr>
+                               <td align="center">                                  
+                                   <span id="_LblNoAttachmentsAdded"></span>
+                               </td>
+                           </tr>
+                           <tr>
+                                <td>
+                                    <span id="DWNL" style="display:inline-block;width:100%;"><div style="Width:100%;">
+	<br><span idLbl="DWNLLblMessage" style="font-size:12pt;font-weight:bold;font-family:'Trebuchet MS' , Arial, Helvetica, sans-serif,Verdana, Sans;color:#1D4D9E;">Adjuntos Agregados a la Oferta</span><br/><div>
+		<table cellspacing="0" rules="all" border="1" id="DWNL_grdId" style="border-collapse:collapse;Width:100%;">
+			<tr>
+				<th scope="col">Sel.</th><th scope="col">Anexo</th><th scope="col">Tipo</th><th scope="col">Descripción</th><th scope="col">Tamaño</th><th scope="col">Acciones</th>
+			</tr><tr class="cssFwkItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl02_chk" type="checkbox" name="DWNL$grdId$ctl02$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl02_File">CERTIFICADOS DE ANTECEDENTES LABORALES Y PREV F30.pdf</span></td><td><span id="DWNL_grdId_ctl02_Type">Anexos Administrativos de Oferta</span></td><td><span id="DWNL_grdId_ctl02_Description">CERTIFICADOS DE ANTECEDENTES LABORALES Y PREV F30.pdf</span></td><td><span id="DWNL_grdId_ctl02_FileLength">89 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl02$search" id="DWNL_grdId_ctl02_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkAlternatingItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl03_chk" type="checkbox" name="DWNL$grdId$ctl03$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl03_File">ANEXO N° 4 DECLARACION JURADA.pdf</span></td><td><span id="DWNL_grdId_ctl03_Type">Anexos Administrativos de Oferta</span></td><td><span id="DWNL_grdId_ctl03_Description">ANEXO N° 4 DECLARACION JURADA.pdf</span></td><td><span id="DWNL_grdId_ctl03_FileLength">31 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl03$search" id="DWNL_grdId_ctl03_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl04_chk" type="checkbox" name="DWNL$grdId$ctl04$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl04_File">ANEXO N° 2 DECLARACION JURADA SIMPLE.pdf</span></td><td><span id="DWNL_grdId_ctl04_Type">Anexos Administrativos de Oferta</span></td><td><span id="DWNL_grdId_ctl04_Description">ANEXO N° 2 DECLARACION JURADA SIMPLE.pdf</span></td><td><span id="DWNL_grdId_ctl04_FileLength">50 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl04$search" id="DWNL_grdId_ctl04_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkAlternatingItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl05_chk" type="checkbox" name="DWNL$grdId$ctl05$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl05_File">ANEXO N° 1 IDENTIFICACION DEL OFERENTE.pdf</span></td><td><span id="DWNL_grdId_ctl05_Type">Anexos Administrativos de Oferta</span></td><td><span id="DWNL_grdId_ctl05_Description">ANEXO N° 1 IDENTIFICACION DEL OFERENTE.pdf</span></td><td><span id="DWNL_grdId_ctl05_FileLength">57 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl05$search" id="DWNL_grdId_ctl05_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl06_chk" type="checkbox" name="DWNL$grdId$ctl06$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl06_File">DOCUMENTOS ADMINISTRATIVOS DE LA EMPRESA.rar</span></td><td><span id="DWNL_grdId_ctl06_Type">Anexos Administrativos de Oferta</span></td><td><span id="DWNL_grdId_ctl06_Description">DOCUMENTOS ADMINISTRATIVOS DE LA EMPRESA.rar</span></td><td><span id="DWNL_grdId_ctl06_FileLength">1235 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl06$search" id="DWNL_grdId_ctl06_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkAlternatingItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl07_chk" type="checkbox" name="DWNL$grdId$ctl07$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl07_File">DECLARACION PACTO DE INTEGRIDAD.pdf</span></td><td><span id="DWNL_grdId_ctl07_Type">Anexos Administrativos de Oferta</span></td><td><span id="DWNL_grdId_ctl07_Description">DECLARACION PACTO DE INTEGRIDAD.pdf</span></td><td><span id="DWNL_grdId_ctl07_FileLength">166 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl07$search" id="DWNL_grdId_ctl07_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr style="color:Black;background-color:Silver;height:10px;">
+				<td colspan="6"><table border="0">
+					<tr>
+						<td><span>1</span></td><td><a href="javascript:__doPostBack(&#39;DWNL$grdId&#39;,&#39;Page$2&#39;)" style="color:Black;">2</a></td>
+					</tr>
+				</table></td>
+			</tr>
+		</table>
+	</div><span id="DWNL_DWNLLblMessage" style="color:Red;"></span><br/><table border="0" style="Width:100%;">
+		<tr>
+			<td align="right" colspan="2"><span style="font-size:10pt;font-family:&#39;Trebuchet MS&#39; , Arial, Helvetica, sans-serif,Verdana, Sans;"><input id="DWNL_ctl03" type="checkbox" name="DWNL$ctl03" onclick="javascript:checkGridItems(&#39;DWNL_grdId&#39;,0,&#39;DWNL_ctl03&#39;);" /><label for="DWNL_ctl03">Seleccionar Todos</label></span></td>
+		</tr><tr>
+			<td align="left" style="height:65px;width:200px;"><div style="border-width:1px;border-style:Solid;height:65px;width:200px;border-color:#D9D9D9;padding-left:20px;">
+				<img src="http://www.mercadopublico.cl/BID/Captcha/Captcha.aspx?n=1" style="border-width:0px;" />
+			</div></td><td align="left" style="vertical-align:Bottom"><span class="reloadBullet"></span><a onclick="GenerarCaptcha();" href="javascript:__doPostBack(&#39;DWNL$ctl07&#39;,&#39;&#39;)">Generar nuevo código</a></td>
+		</tr><tr>
+			<td><span class="cssRequiredSymbol">*</span><span class="cssLabelsData">Ingrese el texto de la imagen</span></td>
+		</tr><tr>
+			<td align="left" colspan="2"><input name="DWNL$ctl10" type="text" /></td>
+		</tr><tr>
+			<td align="right" colspan="2"><input type="submit" name="DWNL$ctl11" value="Descargar seleccionados" onclick="return mensajeAlerta(&#39;DWNL_grdId&#39;,0,10240,300000,&#39;1&#39;,&#39;Estimado Usuario no se permite descargar archivos que superen los 300000 kb.&#39;,&#39;Estimado Usuario la descarga supera los 10240 kb. Desea continuar de todas formas?&#39;);" class="cssFwkButtonMediumB" ValiationGroup="DownLoadFile" style="font-family:'Trebuchet MS' , Arial, Helvetica, sans-serif,Verdana, Sans;align:right;" /></td>
+		</tr>
+	</table>
+</div></span>  
+                                </td>
+                           </tr>
+                           <tr>
+                                <td class="cssDataTitle" >
+                                   <span id="_LblTitulo" class="cssFwkLabelTitleAzul" style="display:inline-block;width:100%;"></span>
+                               </td>
+                           </tr>
+                              <tr>
+                                <td valign="top">
+                                    <span id="_LblRbhCode" class="_lblRbhCode" style="display:none;">D4699E4C6126DD3593D4AF696F396FA2E6AC95250EC9BCE046E207AD560945D7B27833662E10BFA48B280350B0C54C33</span>
+                                    <span id="_DocumentType" class="_DocumentType" style="display:none;">-1</span>
+                                    <span id="_DocumentSubType" class="_DocumentSubType" style="display:none;">1</span>     
+                                        <div id="atcCHP" style="Width:100%;" class="ObjDiv">
+                                            <br />
+                                            <span style="font-size:12pt;font-weight:bold;font-family:'Trebuchet MS' , Arial, Helvetica, sans-serif,Verdana, Sans;color:#1D4D9E;">Anexos de ChileProveedores</span>
+                                            <br />
+                                            <div>
+                                            </div>
+                                        </div>                                               
+                                 </td>
+                            </tr>
+                     </table>
+                    <table cellpadding="0" cellspacing="4" width="99%">
+                        <tr>
+                            <td>
+                                <a onclick="window.close(); return false;" id="hlClose" class="cssLinkButtonProcurement" href="javascript:__doPostBack(&#39;hlClose&#39;,&#39;&#39;)">Cerrar</a>
+                            </td>
+                        </tr>
+                    </table>
+    </form>
+</body>
+</html>

@@ -1,0 +1,12 @@
+abrir https://mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=JjO5zKqb+2R21IMjm8Gxkg==
+
+presionar cuadro de ofertas:
+
+<input type="image" name="imgCuadroOferta" id="imgCuadroOferta" alt="" class="" href="/Procurement/Modules/RFB/StepsProcessAward/OpeningFrame.aspx?enc=Nk5i7NZNPaiDQf8enOfNcipug0TcA0DLCJdW4woFEm1Rm%2f2lhmJh9zwUqfz3vsZcBj4%2fsMI5AS8paX1CLZ9anh7zkE2xM3tpzlJH3bvHWVJyWmCLVA%2fpx9vTBXOM%2f9%2bz" src="../../Includes/images/FichaLight/iconos_licitacion/ic-32.png" onclick="openPopupFicha(this); return false;" style="border-width:0px;width: 46; height: 58;" tabindex="0">
+
+detectar cuantos botones <input type="image" name="grdSupplies$ctl02$_GvImgbAdministrativeAttachment" id="grdSupplies_ctl02__GvImgbAdministrativeAttachment" title="Anexos Administrativos" src="../../../Includes/images/Ofertas/adj-administrativos.gif" onclick="openPopUp('/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=UmpIxMArTyvop%2bTw9jcu7o6vKLyRapu7QGII1XPdUZDrL9kB6hsfpLq%2fnA5rsBFUKhwolLtRNqzAbJZy4C16z8W3NWERPFxKUtU5dyLpViH6zIkl4cHk35195m1rQMAacw6ZKGxb3xgLxNBiDhXe%2bg%3d%3d', 800, 520); return false;" style="border-width:0px;"> 2fsMI5AS8paX1CLZ9anh7zkE2xM3tpzlJH3bvHWVJyWmCLVA
+print para debuggear
+rut de proevedores:
+
+<a onclick="openPopUp('/BID/Modules/PopUps/InformationProvider.aspx?enc=IKRT8xqWqlcWna9KrXmNOvN9BLEc8deQdxJv%2fobcurQ4NP%2b1ZWSLsx0bdxX4Y9Q83YikskxdTrkL%2bTRNqAdU1D8T1F9litNNgc43o8e5TlPOLhWgFQb1fciv39zB6ojzo%2fO1psNIPPkvz24HN4BpUw%3d%3d'); return false;" id="grdSupplies_ctl02__GvLblRutProvider" href="javascript:__doPostBack('grdSupplies$ctl02$_GvLblRutProvider','')">77.681.122-K</a>
+

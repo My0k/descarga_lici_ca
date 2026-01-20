@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head><title>
+	Anexos
+</title><link href="../../Includes/styles/ChileCompra.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript"  language="javascript" src="../../Includes/scripts/chilecompra.js"></script>
+    <script src="../../Includes/scripts/Jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="../../Includes/scripts/GetDocumentsApertura.js" type="text/javascript"></script>
+</head>
+<body>
+    <form name="form1" method="post" action="./ViewBidAttachment.aspx?enc=0clBxgsOD1BlPe25zTV%2f3e%2bQ70gsxAdNQecy1cflwbRXMd3%2b2TMtCWBDoFAnAlm7gNZgj5E%2fhNt9eH5zuYUifEh2UqpmfUZsYn%2fjvw%2fldFu0C52b0I6rgMp4n0XBh0yO9ky%2bQyCFs4SuWcC7k4nF%2bQ%3d%3d" id="form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTU1NTc3ODY3NA8WAh4TVmFsaWRhdGVSZXF1ZXN0TW9kZQIBFgICBA9kFgwCAQ8PFgIeBFRleHRlZGQCBQ8PFgIeFU1lbnNhamVBbGVydGFEZXNjYXJnYQVMRXN0aW1hZG8gVXN1YXJpbyBubyBzZSBwZXJtaXRlIGRlc2NhcmdhciBhcmNoaXZvcyBxdWUgc3VwZXJlbiBsb3MgMzAwMDAwIGtiLmQWAmYPD2QWAh4Fc3R5bGUFC1dpZHRoOjEwMCU7FggCAQ8PFgYeCUZvbnRfU2l6ZSgqIlN5c3RlbS5XZWIuVUkuV2ViQ29udHJvbHMuRm9udFVuaXQEMTJwdB4JRm9udF9Cb2xkZx4EXyFTQgKAGBYCHwMFVmZvbnQtZmFtaWx5OidUcmVidWNoZXQgTVMnICwgQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZixWZXJkYW5hLCBTYW5zO2NvbG9yOiMxRDREOUU7ZAIDDzwrABEDAA8WBB4LXyFEYXRhQm91bmRnHgtfIUl0ZW1Db3VudAIHFgIfAwULV2lkdGg6MTAwJTsBEBYAFgAWAAwUKwAAFgJmD2QWDgIBD2QWEmYPZBYCZg8QD2QWAh4Hb25jbGljawUmamF2YXNjcmlwdDpkZXNDaGtTZWxBbGwoJ0RXTkxfY3RsMDMnKTtkZGQCAQ9kFgJmDw8WAh8BBQkzODg2NTMyNjFkZAICD2QWAmYPDxYCHwEFJEIxOTgxRUIwLTA3MzQtNERGMC04NUNELURDNTREOTM3M0I4MGRkAgMPZBYCZg8PFgIfAQUPQ0FSVEEgR0FOVFQucGRmZGQCBA9kFgJmDw8WAh8BBRpBbmV4b3MgVMOpY25pY29zIGRlIE9mZXJ0YWRkAgUPZBYCZg8PFgIfAQUPQ0FSVEEgR0FOVFQucGRmZGQCBg9kFgJmDw8WAh8BBQYyNTkgS2JkZAIHD2QWAmYPDxYCHwEFEzAxLTAxLTAwMDEgMDA6MDA6MDBkZAIID2QWAmYPDxYKHhBDYXVzZXNWYWxpZGF0aW9uaB4ISW1hZ2VVcmwFJC4uLy4uL0luY2x1ZGVzL2ltYWdlcy9HcmlsbGEvdmVyLmdpZh4LQ29tbWFuZE5hbWUFC09QRU5fQUNUSU9OHgdUb29sVGlwBQlWZXIgQW5leG8eD0NvbW1h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Dw8WAh8BBSQ1OURBMzU3Qy0xQjNFLTRBODAtQTc1NS0xMUFDQUUyODY2REJkZAIDD2QWAmYPDxYCHwEFHFRJVFVMTyBFRFVBUkRPIFNFUFVMVkVEQS5wZGZkZAIED2QWAmYPDxYCHwEFGkFuZXhvcyBUw6ljbmljb3MgZGUgT2ZlcnRhZGQCBQ9kFgJmDw8WAh8BBRxUSVRVTE8gRURVQVJETyBTRVBVTFZFREEucGRmZGQCBg9kFgJmDw8WAh8BBQU3NSBLYmRkAgcPZBYCZg8PFgIfAQUTMDEtMDEtMDAwMSAwMDowMDowMGRkAggPZBYCZg8PFgofCmgfCwUkLi4vLi4vSW5jbHVkZXMvaW1hZ2VzL0dyaWxsYS92ZXIuZ2lmHwwFC09QRU5fQUNUSU9OHw0FCVZlciBBbmV4bx8OBQE1ZGQCBw8PFgIeB1Zpc2libGVoZGQCBA8PFgQeCUZvcmVDb2xvcgqNAR8GAgRkZAIGD2QWBGYPZBYCZg9kFgJmDxAPFgYfAQURU2VsZWNjaW9uYXIgVG9kb3MfBCgrBAQxMHB0HwYCgAgWBB8DBUhmb250LWZhbWlseTonVHJlYnVjaGV0IE1TJyAsIEFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYsVmVyZGFuYSwgU2FuczsfCQU3amF2YXNjcmlwdDpjaGVja0dyaWRJdGVtcygnRFdOTF9ncmRJZCcsMCwnRFdOTF9jdGwwMycpO2RkZAIED2QWAmYPZBYCZg8PFggfAQUXRGVzY2FyZ2FyIHNlbGVjY2lvbmFkb3MfCmgeCENzc0NsYXNzBRNjc3NGd2tCdXR0b25NZWRpdW1CHwYCAhYGHwMFVGZvbnQtZmFtaWx5OidUcmVidWNoZXQgTVMnICwgQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZixWZXJkYW5hLCBTYW5zO2FsaWduOnJpZ2h0Ox4OVmFsaWF0aW9uR3JvdXAFDERvd25Mb2FkRmlsZR8JBdoBcmV0dXJuIG1lbnNhamVBbGVydGEoJ0RXTkxfZ3JkSWQnLDAsMTAyNDAsMzAwMDAwLCcxJywnRXN0aW1hZG8gVXN1YXJpbyBubyBzZSBwZXJtaXRlIGRlc2NhcmdhciBhcmNoaXZvcyBxdWUgc3VwZXJlbiBsb3MgMzAwMDAwIGtiLicsJ0VzdGltYWRvIFVzdWFyaW8gbGEgZGVzY2FyZ2Egc3VwZXJhIGxvcyAxMDI0MCBrYi4gRGVzZWEgY29udGludWFyIGRlIHRvZGFzIGZvcm1hcz8nKTtkAgkPDxYCHwEFYDYwQUQ0MzAyODEzMThBNEZEMzU0RDQ2NUY3OEMxN0I5ODY3QkZCRTJCMkY5Mzc1M0EyRURGMDRGRENFRDk4NDM2RkEwN0I2MTUxNDZBNTRCRThDRUIzREU3NkVFNzkxMGRkAgsPDxYCHwEFAi0xZGQCDQ8PFgIfAQUBMmRkAhEPDxYCHwEFBkNlcnJhchYCHwkFHXdpbmRvdy5jbG9zZSgpOyByZXR1cm4gZmFsc2U7ZBgCBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WDQUURFdOTCRncmRJZCRjdGwwMiRjaGsFF0RXTkwkZ3JkSWQkY3RsMDIkc2VhcmNoBRREV05MJGdyZElkJGN0bDAzJGNoawUXRFdOTCRncmRJZCRjdGwwMyRzZWFyY2gFFERXTkwkZ3JkSWQkY3RsMDQkY2hrBRdEV05MJGdyZElkJGN0bDA0JHNlYXJjaAUURFdOTCRncmRJZCRjdGwwNSRjaGsFF0RXTkwkZ3JkSWQkY3RsMDUkc2VhcmNoBRREV05MJGdyZElkJGN0bDA2JGNoawUXRFdOTCRncmRJZCRjdGwwNiRzZWFyY2gFFERXTkwkZ3JkSWQkY3RsMDckY2hrBRdEV05MJGdyZElkJGN0bDA3JHNlYXJjaAUKRFdOTCRjdGwwMwUKRFdOTCRncmRJZA88KwAMAQgCAmRkCfvgu22XomeNV4tRdjT5mc5scg==" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+
+<script type="text/javascript">
+//<![CDATA[
+function checkGridItems(vargrid, cell, SelAllId) {
+		
+      var oGrid; 
+      var selAll;
+      if (document.all) {
+      oGrid = document.all[vargrid];
+      selAll = document.all[SelAllId]; 
+      }
+      else if (document.getElementById) {
+      oGrid = document.getElementById(vargrid);
+      selAll = document.getElementById(SelAllId); 
+      }
+      if (oGrid) {
+									
+      for (i = 1; i < oGrid.rows.length; i++) {
+      var oChekItem;
+      var nombre = navigator.appName;
+      if (nombre == 'Microsoft Internet Explorer') {
+      oChekItem = oGrid.rows(i).cells(cell).children(0);
+      //oChekHidden = oGrid.rows(i).cells(cell).children(1);
+									 
+      }
+      else  {
+      //alert(oGrid.rows[i].cells[0].childNodes[0].type);
+      oChekItem = oGrid.rows[i].cells[cell].childNodes[0];
+      //oChekHidden = oGrid.rows[i].cells[cell].childNodes[3]; }
+      }
+      if (selAll.checked == true) {
+      oChekItem.checked = true; 
+      }
+      else {
+      oChekItem.checked = false; 
+      } 
+      } 
+      }
+      }function mensajeAlerta(vargrid, cell, maxMesage, MaxDownload,validaPagesize, msgDesc1, msgDesc2) {
+      var lblReplace = vargrid.replace('grdId','') + 'DWNLLblMessage';
+      var lblmesage;  
+      var oGrid;  
+      var validate = true;  
+      var selected= 0; 
+      if (document.all) {
+      oGrid = document.all[vargrid];  }
+      else if (document.getElementById) {
+      oGrid     = document.getElementById(vargrid); }
+      var totalSize = 0; 
+      var vPagSize = oGrid.rows.length - parseInt(validaPagesize);
+      if (oGrid) {
+      for (i = 1; i < vPagSize; i++) {
+      var oChekItem;
+      var itemSize;
+      var nombre = navigator.appName;
+      if (nombre == 'Microsoft Internet Explorer') {
+      oChekItem = oGrid.rows(i).cells(cell).children(0);}
+      else if (nombre == 'Netscape') {
+      oChekItem = oGrid.rows[i].cells[cell].childNodes[1];}
+      if (oChekItem.checked == true) {
+      var idCtl = oChekItem.id;
+      var idFL = idCtl.substring(0,idCtl.length - 3) + 'FileLength';
+      var fileLenght = document.getElementById(idFL); 
+      var len = fileLenght.innerText.length
+      var size = fileLenght.innerText;
+      size = size.substring(0,len-3);  
+      totalSize = totalSize + parseInt(size); selected= selected + 1;}
+      } 
+      if(totalSize > maxMesage && totalSize < MaxDownload){validate = confirm(msgDesc2);} 
+      if(totalSize >  MaxDownload){ alert(msgDesc1); validate = false;} 
+      } if(selected == 0){alert('debe seleccionar al menos un archivo'); validate = false;}  return validate;}function desChkSelAll(chkSellAllId) {
+      var selAll;
+      if (document.all) {
+      selAll = document.all[chkSellAllId]; 
+      }
+      else if (document.getElementById) {
+  
+      selAll = document.getElementById(chkSellAllId); }
+      selAll.checked  = false; }//]]>
+</script>
+
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="63676FB6" />
+</div>
+            <table border="0" cellpadding="0" cellspacing="4" width="99%">
+            <tr>
+                <td class="cssBIDGeneralSmallHeader" style="background-image:url(../../Includes/images/popUpHeaderBack.gif);">
+                    <img border="0" src="../../Includes/images/cabezal_ch_logo.gif" /></td>
+            </tr>
+        </table>
+        <span id="_lblMessage" class="cssFwkLabelAlert"></span>
+                    <table id="tblAnexos"  cellpadding="0" cellspacing="4" class="Anexostablaingresados" width="99%">
+                           <tr>
+                               <td align="center">                                  
+                                   <span id="_LblNoAttachmentsAdded"></span>
+                               </td>
+                           </tr>
+                           <tr>
+                                <td>
+                                    <span id="DWNL" style="display:inline-block;width:100%;"><div style="Width:100%;">
+	<br><span idLbl="DWNLLblMessage" style="font-size:12pt;font-weight:bold;font-family:'Trebuchet MS' , Arial, Helvetica, sans-serif,Verdana, Sans;color:#1D4D9E;">Adjuntos Agregados a la Oferta</span><br/><div>
+		<table cellspacing="0" rules="all" border="1" id="DWNL_grdId" style="border-collapse:collapse;Width:100%;">
+			<tr>
+				<th scope="col">Sel.</th><th scope="col">Anexo</th><th scope="col">Tipo</th><th scope="col">Descripción</th><th scope="col">Tamaño</th><th scope="col">Acciones</th>
+			</tr><tr class="cssFwkItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl02_chk" type="checkbox" name="DWNL$grdId$ctl02$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl02_File">CARTA GANTT.pdf</span></td><td><span id="DWNL_grdId_ctl02_Type">Anexos Técnicos de Oferta</span></td><td><span id="DWNL_grdId_ctl02_Description">CARTA GANTT.pdf</span></td><td><span id="DWNL_grdId_ctl02_FileLength">259 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl02$search" id="DWNL_grdId_ctl02_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkAlternatingItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl03_chk" type="checkbox" name="DWNL$grdId$ctl03$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl03_File">ANEXO N° 7 VEHICULOS.pdf</span></td><td><span id="DWNL_grdId_ctl03_Type">Anexos Técnicos de Oferta</span></td><td><span id="DWNL_grdId_ctl03_Description">ANEXO N° 7 VEHICULOS.pdf</span></td><td><span id="DWNL_grdId_ctl03_FileLength">112 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl03$search" id="DWNL_grdId_ctl03_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl04_chk" type="checkbox" name="DWNL$grdId$ctl04$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl04_File">ANEXO N° 6 CUADRO DE PERSONAL.pdf</span></td><td><span id="DWNL_grdId_ctl04_Type">Anexos Técnicos de Oferta</span></td><td><span id="DWNL_grdId_ctl04_Description">ANEXO N° 6 CUADRO DE PERSONAL.pdf</span></td><td><span id="DWNL_grdId_ctl04_FileLength">72 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl04$search" id="DWNL_grdId_ctl04_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkAlternatingItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl05_chk" type="checkbox" name="DWNL$grdId$ctl05$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl05_File">ANEXO N° 3 EXPERIENCIA.pdf</span></td><td><span id="DWNL_grdId_ctl05_Type">Anexos Técnicos de Oferta</span></td><td><span id="DWNL_grdId_ctl05_Description">ANEXO N° 3 EXPERIENCIA.pdf</span></td><td><span id="DWNL_grdId_ctl05_FileLength">121 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl05$search" id="DWNL_grdId_ctl05_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl06_chk" type="checkbox" name="DWNL$grdId$ctl06$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl06_File">RESPALDO EXPERIENCIA.rar</span></td><td><span id="DWNL_grdId_ctl06_Type">Anexos Técnicos de Oferta</span></td><td><span id="DWNL_grdId_ctl06_Description">RESPALDO EXPERIENCIA.rar</span></td><td><span id="DWNL_grdId_ctl06_FileLength">10692 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl06$search" id="DWNL_grdId_ctl06_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr class="cssFwkAlternatingItemStyle" style="font-size:9pt;font-weight:normal;">
+				<td><input id="DWNL_grdId_ctl07_chk" type="checkbox" name="DWNL$grdId$ctl07$chk" onclick="javascript:desChkSelAll(&#39;DWNL_ctl03&#39;);" /></td><td><span id="DWNL_grdId_ctl07_File">TITULO EDUARDO SEPULVEDA.pdf</span></td><td><span id="DWNL_grdId_ctl07_Type">Anexos Técnicos de Oferta</span></td><td><span id="DWNL_grdId_ctl07_Description">TITULO EDUARDO SEPULVEDA.pdf</span></td><td><span id="DWNL_grdId_ctl07_FileLength">75 Kb</span></td><td><input type="image" name="DWNL$grdId$ctl07$search" id="DWNL_grdId_ctl07_search" title="Ver Anexo" src="../../Includes/images/Grilla/ver.gif" style="border-width:0px;" /></td>
+			</tr><tr style="color:Black;background-color:Silver;height:10px;">
+				<td colspan="6"><table border="0">
+					<tr>
+						<td><span>1</span></td><td><a href="javascript:__doPostBack(&#39;DWNL$grdId&#39;,&#39;Page$2&#39;)" style="color:Black;">2</a></td>
+					</tr>
+				</table></td>
+			</tr>
+		</table>
+	</div><span id="DWNL_DWNLLblMessage" style="color:Red;"></span><br/><table border="0" style="Width:100%;">
+		<tr>
+			<td align="right" colspan="2"><span style="font-size:10pt;font-family:&#39;Trebuchet MS&#39; , Arial, Helvetica, sans-serif,Verdana, Sans;"><input id="DWNL_ctl03" type="checkbox" name="DWNL$ctl03" onclick="javascript:checkGridItems(&#39;DWNL_grdId&#39;,0,&#39;DWNL_ctl03&#39;);" /><label for="DWNL_ctl03">Seleccionar Todos</label></span></td>
+		</tr><tr>
+			<td align="left" style="height:65px;width:200px;"><div style="border-width:1px;border-style:Solid;height:65px;width:200px;border-color:#D9D9D9;padding-left:20px;">
+				<img src="http://www.mercadopublico.cl/BID/Captcha/Captcha.aspx?n=1" style="border-width:0px;" />
+			</div></td><td align="left" style="vertical-align:Bottom"><span class="reloadBullet"></span><a onclick="GenerarCaptcha();" href="javascript:__doPostBack(&#39;DWNL$ctl07&#39;,&#39;&#39;)">Generar nuevo código</a></td>
+		</tr><tr>
+			<td><span class="cssRequiredSymbol">*</span><span class="cssLabelsData">Ingrese el texto de la imagen</span></td>
+		</tr><tr>
+			<td align="left" colspan="2"><input name="DWNL$ctl10" type="text" /></td>
+		</tr><tr>
+			<td align="right" colspan="2"><input type="submit" name="DWNL$ctl11" value="Descargar seleccionados" onclick="return mensajeAlerta(&#39;DWNL_grdId&#39;,0,10240,300000,&#39;1&#39;,&#39;Estimado Usuario no se permite descargar archivos que superen los 300000 kb.&#39;,&#39;Estimado Usuario la descarga supera los 10240 kb. Desea continuar de todas formas?&#39;);" class="cssFwkButtonMediumB" ValiationGroup="DownLoadFile" style="font-family:'Trebuchet MS' , Arial, Helvetica, sans-serif,Verdana, Sans;align:right;" /></td>
+		</tr>
+	</table>
+</div></span>  
+                                </td>
+                           </tr>
+                           <tr>
+                                <td class="cssDataTitle" >
+                                   <span id="_LblTitulo" class="cssFwkLabelTitleAzul" style="display:inline-block;width:100%;"></span>
+                               </td>
+                           </tr>
+                              <tr>
+                                <td valign="top">
+                                    <span id="_LblRbhCode" class="_lblRbhCode" style="display:none;">60AD430281318A4FD354D465F78C17B9867BFBE2B2F93753A2EDF04FDCED98436FA07B615146A54BE8CEB3DE76EE7910</span>
+                                    <span id="_DocumentType" class="_DocumentType" style="display:none;">-1</span>
+                                    <span id="_DocumentSubType" class="_DocumentSubType" style="display:none;">2</span>     
+                                        <div id="atcCHP" style="Width:100%;" class="ObjDiv">
+                                            <br />
+                                            <span style="font-size:12pt;font-weight:bold;font-family:'Trebuchet MS' , Arial, Helvetica, sans-serif,Verdana, Sans;color:#1D4D9E;">Anexos de ChileProveedores</span>
+                                            <br />
+                                            <div>
+                                            </div>
+                                        </div>                                               
+                                 </td>
+                            </tr>
+                     </table>
+                    <table cellpadding="0" cellspacing="4" width="99%">
+                        <tr>
+                            <td>
+                                <a onclick="window.close(); return false;" id="hlClose" class="cssLinkButtonProcurement" href="javascript:__doPostBack(&#39;hlClose&#39;,&#39;&#39;)">Cerrar</a>
+                            </td>
+                        </tr>
+                    </table>
+    </form>
+</body>
+</html>

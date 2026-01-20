@@ -1,0 +1,36 @@
+
+<!-- saved from url=(0224)https://mercadopublico.cl/Procurement/Modules/RFB/StepsProcessAward/OpeningFrame.aspx?enc=S6YNS7FEPCgb2NPT0yREptDUYyapEzScYIDdLDAaDsDORvLwO3O5eEk3EpThTkEBOvaou246YAI1S%2fBA16Yw265Z6PU%2bxG5%2f31CgaQ35QsILeQaGbRDxSdBgEMnMg0nY -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>
+	Cuadro Comparativo
+</title>
+    <script src="./Cuadro Comparativo_files/chilecompra.js" type="text/javascript"></script>
+    <script src="./Cuadro Comparativo_files/jquery-1.11.1.js" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        //setTimeout(window.parent.parent.cambiarsubframe(), 1200);
+        //console.log("calculando apertura");
+        //setTimeout(recargar, 1000);
+
+    });
+
+    function recargar() {
+        console.log("calculando apertura");
+        var puntero = parent.document.getElementById('fraDetalle');
+        if (puntero) { // add this line to check if 'puntero' exists
+            puntero.removeAttribute('style');
+            puntero.setAttribute('style', 'margin-top:40px;height:550px;');
+        } else {
+            puntero.setAttribute('style', 'margin-top:40px;height:550px;');
+        }
+    }
+</script></head>
+
+
+<!--src="WizardAdjudication.aspx?enc=S6YNS7FEPCgb2NPT0yREptDUYyapEzScYIDdLDAaDsDORvLwO3O5eEk3EpThTkEBOvaou246YAI1S%2fBA16Yw265Z6PU%2bxG5%2f31CgaQ35QsILeQaGbRDxSdBgEMnMg0nY"-->
+    <frameset framespacing="0" border="false" rows="230,*" frameborder="no">
+		<frame id="Encabezado" name="Encabezado" scrolling="auto" noresize="" marginwidth="0" marginheight="0" src="./Cuadro Comparativo_files/OpeningHeader.html" onload="setTimeout(recargar, 1700)">
+		<frame id="Cuerpo" name="Cuerpo" scrolling="auto" marginwidth="0" marginheight="0" onload="setTimeout(recargar, 1700)">
+	</frameset>
+ 
+
+</html>
