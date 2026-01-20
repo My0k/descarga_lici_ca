@@ -4,6 +4,7 @@ import html as html_lib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -44,6 +45,30 @@ except Exception:
     except Exception:
         get_dj_ip = None
 
+LOG_LEVEL = os.environ.get("MP_LICI_LOG_LEVEL", "info").lower()
+_LEVELS = {"debug": 10, "info": 20, "warn": 30, "error": 40}
+
+
+def _log(level, message):
+    if _LEVELS.get(level, 20) >= _LEVELS.get(LOG_LEVEL, 20):
+        print(f"[{level.upper()}] {message}")
+
+
+def _log_debug(message):
+    _log("debug", message)
+
+
+def _log_info(message):
+    _log("info", message)
+
+
+def _log_warn(message):
+    _log("warn", message)
+
+
+def _log_error(message):
+    _log("error", message)
+
 
 def build_opener():
     jar = CookieJar()
@@ -68,10 +93,10 @@ def request_url(opener, url, method="GET", data=None, headers=None):
 
 
 def fetch_html(opener, url, debug_path=None):
-    print(f"[fetch] {url}")
+    _log_debug(f"fetch {url}")
     with request_url(opener, url) as resp:
-        print(
-            f"[fetch] status={getattr(resp, 'status', 'n/a')} "
+        _log_debug(
+            f"fetch status={getattr(resp, 'status', 'n/a')} "
             f"content_type={resp.headers.get('Content-Type', '')}"
         )
         raw = read_response(resp)
@@ -135,6 +160,8 @@ def should_crawl(url):
     parsed = urllib.parse.urlparse(url)
     if "mercadopublico.cl" not in parsed.netloc:
         return False
+    if parsed.path.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".css", ".js", ".ico", ".svg")):
+        return False
     return any(keyword in url for keyword in CRAWL_KEYWORDS)
 
 
@@ -149,24 +176,24 @@ def find_supply_summary(opener, start_url, max_pages=20):
         if url in visited:
             continue
         visited.add(url)
-        print(f"[crawl] {len(visited)}/{max_pages} {url}")
+        _log_debug(f"crawl {len(visited)}/{max_pages} {url}")
         debug_name = re.sub(r"[^a-zA-Z0-9]+", "_", url)[:120]
         debug_path = os.path.join(DEBUG_DIR, f"{len(visited):02d}_{debug_name}.html")
 
         try:
             html = fetch_html(opener, url, debug_path=debug_path)
         except Exception as exc:
-            print(f"[crawl] error al cargar {url}: {exc}")
+            _log_warn(f"crawl error al cargar {url}: {exc}")
             continue
 
         found_urls = extract_urls(html, url)
-        print(f"[crawl] urls encontradas: {len(found_urls)}")
+        _log_debug(f"crawl urls encontradas: {len(found_urls)}")
         if "ViewBidAttachment.aspx" in html:
-            print("[crawl] encontrado texto ViewBidAttachment.aspx en HTML")
+            _log_debug("crawl encontrado texto ViewBidAttachment.aspx en HTML")
         if "SupplySummary.aspx" in url:
             supply_url = url
             supply_html = html
-            print(f"[crawl] encontrado SupplySummary: {url}")
+            _log_info(f"SupplySummary encontrado: {url}")
             break
 
         for found in found_urls:
@@ -276,15 +303,29 @@ def ensure_unique_path(path):
     return path
 
 
-def download_attachment(opener, url, download_dir, index):
+def _guardar_debug_html(debug_dir, prefix, content):
+    if not debug_dir:
+        return ""
+    os.makedirs(debug_dir, exist_ok=True)
+    safe_prefix = sanitize_name(prefix)
+    path = os.path.join(debug_dir, f"{safe_prefix}.html")
     try:
-        print(f"[download] GET popup {url}")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return path
+    except Exception:
+        return ""
+
+
+def download_attachment(opener, url, download_dir, index, debug_dir=None, label=None):
+    try:
+        _log_debug(f"download GET popup {url}")
         with request_url(opener, url, headers={"Referer": url}) as resp:
             popup_html = read_response(resp).decode(
                 resp.headers.get_content_charset() or "utf-8", errors="replace"
             )
     except Exception as exc:
-        print(f"[download] error GET popup {url}: {exc}")
+        _log_warn(f"download error GET popup {url}: {exc}")
         return None
 
     popup_html = html_lib.unescape(popup_html)
@@ -310,6 +351,12 @@ def download_attachment(opener, url, download_dir, index):
         if "ver" in title.lower():
             image_inputs.append(name)
     if not image_inputs:
+        debug_name = f"popup_sin_botones_{label or index}"
+        debug_path = _guardar_debug_html(debug_dir, debug_name, popup_html)
+        if debug_path:
+            _log_warn(f"popup sin botones de descarga, HTML guardado en {debug_path}")
+        else:
+            _log_warn("popup sin botones de descarga")
         for name in re.findall(
             r'<input[^>]+type="image"[^>]+name="([^"]+)"[^>]*>',
             popup_html,
@@ -325,7 +372,7 @@ def download_attachment(opener, url, download_dir, index):
         form_data[f"{input_name}.y"] = "1"
         data = urllib.parse.urlencode(form_data).encode("utf-8")
         try:
-            print(f"[download] POST action {action_url} ({input_name})")
+            _log_debug(f"download POST action {action_url} ({input_name})")
             with request_url(
                 opener,
                 action_url,
@@ -335,16 +382,22 @@ def download_attachment(opener, url, download_dir, index):
             ) as resp:
                 content_type = resp.headers.get("Content-Type", "").lower()
                 payload = read_response(resp)
-                print(
-                    f"[download] status={getattr(resp, 'status', 'n/a')} "
+                _log_debug(
+                    f"download status={getattr(resp, 'status', 'n/a')} "
                     f"content_type={content_type} bytes={len(payload)}"
                 )
         except Exception as exc:
-            print(f"[download] error POST {action_url}: {exc}")
+            _log_warn(f"download error POST {action_url}: {exc}")
             continue
 
         if "text/html" in content_type:
-            print("[download] respuesta HTML, no es adjunto")
+            debug_name = f"popup_respuesta_html_{label or index}_{input_name}"
+            html_text = payload.decode("utf-8", errors="replace")
+            debug_path = _guardar_debug_html(debug_dir, debug_name, html_text)
+            if debug_path:
+                _log_warn(f"respuesta HTML inesperada, guardada en {debug_path}")
+            else:
+                _log_warn("respuesta HTML inesperada en descarga")
             continue
 
         fallback = f"adjunto_{index}.bin"
@@ -445,13 +498,13 @@ def wait_for_text(url, needle, timeout_s=40, poll_s=2):
 
 def download_pdf_from_url(url, output_path, wait_text=None):
     if wait_text:
-        print(f"[pdf] esperando texto '{wait_text}' en {url}")
+        _log_debug(f"pdf esperando texto '{wait_text}' en {url}")
         if not wait_for_text(url, wait_text):
-            print(f"[pdf] no se encontro '{wait_text}' antes del timeout: {url}")
+            _log_warn(f"pdf no se encontro '{wait_text}' antes del timeout: {url}")
             return False
     success, err = render_url_to_pdf(url, output_path)
     if not success:
-        print(f"[pdf] error {url}: {err}")
+        _log_warn(f"pdf error {url}: {err}")
     return success
 
 
@@ -465,7 +518,7 @@ def build_garantias_pdf(opener, rfb_code, bid_id, org_code, output_path):
         documentos = json.loads(fetch_html(opener, doc_url))
         proveedores = json.loads(fetch_html(opener, prov_url))
     except Exception as exc:
-        print(f"[garantias] error al obtener datos: {exc}")
+        _log_warn(f"garantias error al obtener datos: {exc}")
         return False
 
     def rows(items, keys):
@@ -509,7 +562,7 @@ def build_garantias_pdf(opener, rfb_code, bid_id, org_code, output_path):
 """
     success, err = render_html_to_pdf(html_page, output_path)
     if not success:
-        print(f"[garantias] error al generar PDF: {err}")
+        _log_warn(f"garantias error al generar PDF: {err}")
     return success
 
 
@@ -536,36 +589,55 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
         os.makedirs(download_root, exist_ok=True)
         os.makedirs(debug_root, exist_ok=True)
 
+        wkhtmltopdf_path = shutil.which("wkhtmltopdf")
+        chromedriver_path = shutil.which("chromedriver")
+        resumen["dependencias"] = {
+            "wkhtmltopdf": wkhtmltopdf_path or "",
+            "chromedriver": chromedriver_path or "",
+        }
+        if not wkhtmltopdf_path:
+            _log_warn("wkhtmltopdf no encontrado en PATH (garantias.pdf no se generara)")
+        if not chromedriver_path:
+            _log_warn("chromedriver no encontrado en PATH (DJ/IP no se generaran)")
+
         opener = build_opener()
         start_url = DETAILS_URL.format(licitacion=codigo)
         resumen["url"] = start_url
+        _log_info(f"Iniciando descarga licitacion {codigo}")
 
         try:
             details_html = fetch_html(opener, start_url)
         except Exception as exc:
             resumen["errores"].append(f"No se pudo abrir la ficha: {exc}")
+            _log_error(f"No se pudo abrir la ficha: {exc}")
             return resumen
 
         nombre_licitacion = parse_licitacion_nombre(details_html) or "licitacion"
         resumen["nombre_licitacion"] = nombre_licitacion
 
+        _log_info("Buscando SupplySummary...")
         supply_url, supply_html = find_supply_summary(opener, start_url)
         if not supply_url or not supply_html:
             resumen["errores"].append("No se pudo encontrar SupplySummary para extraer proveedores.")
+            _log_error("No se pudo encontrar SupplySummary para extraer proveedores.")
             return resumen
         resumen["supply_url"] = supply_url
 
         providers = parse_providers(supply_html)
         if not providers:
             resumen["errores"].append("No se encontraron proveedores en la tabla.")
+            _log_warn("No se encontraron proveedores en la tabla.")
             return resumen
+        _log_info(f"Proveedores detectados: {len(providers)}")
 
         try:
             token = get_access_token(opener)
             if not token:
                 resumen["errores"].append("No se pudo obtener access_token.")
+                _log_warn("No se pudo obtener access_token.")
         except Exception as exc:
             resumen["errores"].append(f"No se pudo obtener access_token: {exc}")
+            _log_warn(f"No se pudo obtener access_token: {exc}")
 
         carpeta_base = os.path.join(download_root, f"{codigo} {sanitize_name(nombre_licitacion)}")
         os.makedirs(carpeta_base, exist_ok=True)
@@ -584,6 +656,7 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
             provider_name = sanitize_name(f"{rut} {nombre}".strip())
             provider_dir = os.path.join(carpeta_base, provider_name)
             os.makedirs(provider_dir, exist_ok=True)
+            _log_info(f"Procesando proveedor: {provider_name}")
 
             prov_resumen = {
                 "rut": rut,
@@ -602,7 +675,14 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
                     continue
                 target_dir = os.path.join(provider_dir, label)
                 os.makedirs(target_dir, exist_ok=True)
-                saved = download_attachment(opener, url, target_dir, 1)
+                saved = download_attachment(
+                    opener,
+                    url,
+                    target_dir,
+                    1,
+                    debug_dir=debug_root,
+                    label=f"{provider_name}_{label}",
+                )
                 if saved:
                     count = len(saved)
                 else:
@@ -614,6 +694,7 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
             prov_resumen["total_descargados"] = total_descargados
             total_global += total_descargados
             resumen["proveedores"].append(prov_resumen)
+            _log_info(f"Adjuntos descargados para {provider_name}: {total_descargados}")
 
             if rut:
                 declaracion_url = f"https://proveedor.mercadopublico.cl/dj-requisitos/{codigo}/{rut}"
@@ -621,7 +702,7 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
                 provider["declaracion_url"] = declaracion_url
                 provider["proveedor_url"] = proveedor_url
 
-                if get_dj_ip:
+                if get_dj_ip and chromedriver_path:
                     urls = {
                         "declaracion_jurada.pdf": declaracion_url,
                         "informacion_proveedor.pdf": proveedor_url,
@@ -631,27 +712,37 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
                         "informacion_proveedor.pdf": "Estado de habilidad",
                     }
                     try:
-                        get_dj_ip.render_pdfs(urls, provider_dir, wait_texts)
+                        errores_dj = get_dj_ip.render_pdfs(urls, provider_dir, wait_texts)
+                        for err in errores_dj or []:
+                            prov_resumen["otros"]["errores"].append(f"DJ/IP: {err}")
                     except Exception as exc:
                         prov_resumen["otros"]["errores"].append(f"Error DJ/IP: {exc}")
+                        _log_warn(f"Error DJ/IP para {provider_name}: {exc}")
                 else:
-                    prov_resumen["otros"]["errores"].append("get_dj_ip no disponible")
+                    if not get_dj_ip:
+                        prov_resumen["otros"]["errores"].append("get_dj_ip no disponible")
+                    if not chromedriver_path:
+                        prov_resumen["otros"]["errores"].append("chromedriver no encontrado en PATH")
 
             garantia_vals = provider.get("garantia_vals", [])
             if len(garantia_vals) >= 2:
                 g_path = os.path.join(provider_dir, "garantias.pdf")
-                try:
-                    ok_garantia = build_garantias_pdf(
-                        opener,
-                        garantia_vals[0],
-                        garantia_vals[1],
-                        garantia_vals[2] if len(garantia_vals) > 2 else "",
-                        g_path,
-                    )
-                    if not ok_garantia:
-                        prov_resumen["otros"]["errores"].append("No se pudo generar garantias.pdf")
-                except Exception as exc:
-                    prov_resumen["otros"]["errores"].append(f"Error garantias: {exc}")
+                if not wkhtmltopdf_path:
+                    prov_resumen["otros"]["errores"].append("wkhtmltopdf no encontrado en PATH")
+                else:
+                    try:
+                        ok_garantia = build_garantias_pdf(
+                            opener,
+                            garantia_vals[0],
+                            garantia_vals[1],
+                            garantia_vals[2] if len(garantia_vals) > 2 else "",
+                            g_path,
+                        )
+                        if not ok_garantia:
+                            prov_resumen["otros"]["errores"].append("No se pudo generar garantias.pdf")
+                    except Exception as exc:
+                        prov_resumen["otros"]["errores"].append(f"Error garantias: {exc}")
+                        _log_warn(f"Error garantias para {provider_name}: {exc}")
 
         try:
             csv_path = os.path.join(carpeta_base, "proveedores.csv")
@@ -664,6 +755,7 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
         if total_global == 0:
             resumen["errores"].append("No se descargaron adjuntos.")
         resumen["ok"] = total_global > 0
+        _log_info(f"Descarga finalizada. Total adjuntos: {total_global}")
         return resumen
     finally:
         globals()["DOWNLOAD_DIR"] = prev_download

@@ -8,6 +8,26 @@ from selenium.webdriver.common.by import By
 import os
 import shutil
 
+LOG_LEVEL = os.environ.get("MP_LICI_LOG_LEVEL", "info").lower()
+_LEVELS = {"debug": 10, "info": 20, "warn": 30, "error": 40}
+
+
+def _log(level, message):
+    if _LEVELS.get(level, 20) >= _LEVELS.get(LOG_LEVEL, 20):
+        print(f"[{level.upper()}] {message}")
+
+
+def _log_debug(message):
+    _log("debug", message)
+
+
+def _log_info(message):
+    _log("info", message)
+
+
+def _log_warn(message):
+    _log("warn", message)
+
 def setup_driver():
     """Configure Chrome driver with PDF printing capabilities"""
     chrome_options = Options()
@@ -65,7 +85,7 @@ def wait_for_page_load(driver, timeout=30):
 
 def save_as_pdf(driver, filename):
     """Save current page as PDF"""
-    print(f"Guardando {filename}...")
+    _log_debug(f"Guardando {filename}...")
     
     # Ejecutar comando de impresión a PDF
     pdf_data = driver.execute_cdp_cmd("Page.printToPDF", {
@@ -88,7 +108,7 @@ def save_as_pdf(driver, filename):
         import base64
         file.write(base64.b64decode(pdf_data['data']))
     
-    print(f"✓ PDF guardado: {filename}")
+    _log_info(f"PDF guardado: {filename}")
 
 def wait_for_text(driver, needle, timeout=30):
     """Wait until text is present in page body."""
@@ -100,38 +120,38 @@ def wait_for_text(driver, needle, timeout=30):
 def render_pdfs(urls, output_dir, wait_texts=None):
     """Render URLs to PDFs using headless Chrome."""
     driver = None
+    errores = []
     wait_texts = wait_texts or {}
     try:
-        print("Iniciando navegador...")
+        _log_info("Iniciando navegador para DJ/IP...")
         driver = setup_driver()
 
         for filename, url in urls.items():
-            print(f"\n{'='*60}")
-            print(f"Procesando: {url}")
-            print(f"{'='*60}")
+            try:
+                _log_info(f"Procesando DJ/IP: {url}")
+                driver.get(url)
+                _log_debug("Esperando carga de la pagina...")
+                wait_for_page_load(driver)
 
-            driver.get(url)
+                needle = wait_texts.get(filename)
+                if needle:
+                    _log_debug(f"Esperando texto: {needle}")
+                    wait_for_text(driver, needle, timeout=40)
 
-            print("Esperando carga de la página...")
-            wait_for_page_load(driver)
+                output_path = os.path.join(output_dir, filename)
+                save_as_pdf(driver, output_path)
+                time.sleep(2)
+            except Exception as exc:
+                errores.append(f"{filename}: {exc}")
+                _log_warn(f"Error generando {filename}: {exc}")
+                continue
 
-            needle = wait_texts.get(filename)
-            if needle:
-                print(f"Esperando texto: {needle}")
-                wait_for_text(driver, needle, timeout=40)
-
-            output_path = os.path.join(output_dir, filename)
-            save_as_pdf(driver, output_path)
-            time.sleep(2)
-
-        print(f"\n{'='*60}")
-        print("✓ Proceso completado exitosamente")
-        print(f"{'='*60}")
-        print(f"Archivos guardados en: {output_dir}")
+        _log_info(f"DJ/IP finalizado. Archivos en: {output_dir}")
     finally:
         if driver:
-            print("\nCerrando navegador...")
+            _log_debug("Cerrando navegador...")
             driver.quit()
+    return errores
 
 
 def main():
