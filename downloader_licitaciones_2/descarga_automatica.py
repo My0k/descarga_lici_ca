@@ -11,6 +11,7 @@ import tempfile
 import time
 import urllib.parse
 import urllib.request
+import zipfile
 from http.cookiejar import CookieJar
 
 
@@ -47,6 +48,8 @@ except Exception:
 
 LOG_LEVEL = os.environ.get("MP_LICI_LOG_LEVEL", "info").lower()
 _LEVELS = {"debug": 10, "info": 20, "warn": 30, "error": 40}
+_WKHTMLTOPDF_BIN = None
+_CHROMEDRIVER_BIN = None
 
 
 def _log(level, message):
@@ -68,6 +71,123 @@ def _log_warn(message):
 
 def _log_error(message):
     _log("error", message)
+
+
+def _tools_dir():
+    base = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "tools"))
+    os.makedirs(base, exist_ok=True)
+    return base
+
+
+def _download_file(url, dest_path):
+    _log_info(f"Descargando: {url}")
+    with urllib.request.urlopen(url, timeout=60) as resp:
+        data = resp.read()
+    with open(dest_path, "wb") as f:
+        f.write(data)
+    return dest_path
+
+
+def _extract_zip(zip_path, dest_dir):
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        zf.extractall(dest_dir)
+
+
+def _find_chrome_version_windows():
+    try:
+        import winreg
+    except Exception:
+        return ""
+    reg_paths = [
+        (winreg.HKEY_CURRENT_USER, r"Software\Google\Chrome\BLBeacon"),
+        (winreg.HKEY_LOCAL_MACHINE, r"Software\Google\Chrome\BLBeacon"),
+        (winreg.HKEY_LOCAL_MACHINE, r"Software\WOW6432Node\Google\Chrome\BLBeacon"),
+    ]
+    for root, path in reg_paths:
+        try:
+            with winreg.OpenKey(root, path) as key:
+                value, _ = winreg.QueryValueEx(key, "version")
+                if value:
+                    return value
+        except Exception:
+            continue
+    return ""
+
+
+def _get_chromedriver_download_url(chrome_version):
+    major = ""
+    if chrome_version:
+        major = chrome_version.split(".", 1)[0]
+    latest_url = "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"
+    with urllib.request.urlopen(latest_url, timeout=60) as resp:
+        payload = resp.read().decode("utf-8", errors="replace")
+    data = json.loads(payload)
+    if major:
+        versions_url = "https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json"
+        with urllib.request.urlopen(versions_url, timeout=60) as resp:
+            payload = resp.read().decode("utf-8", errors="replace")
+        versions = json.loads(payload).get("versions") or []
+        for entry in reversed(versions):
+            version = entry.get("version", "")
+            if version.startswith(f"{major}."):
+                downloads = entry.get("downloads", {}).get("chromedriver", [])
+                for item in downloads:
+                    if item.get("platform") == "win64":
+                        return item.get("url", "")
+    downloads = data.get("channels", {}).get("Stable", {}).get("downloads", {}).get("chromedriver", [])
+    for item in downloads:
+        if item.get("platform") == "win64":
+            return item.get("url", "")
+    return ""
+
+
+def _ensure_tools_windows():
+    global _WKHTMLTOPDF_BIN, _CHROMEDRIVER_BIN
+    if os.name != "nt":
+        return
+    tools_dir = _tools_dir()
+
+    if not _WKHTMLTOPDF_BIN and not shutil.which("wkhtmltopdf"):
+        wk_dir = os.path.join(tools_dir, "wkhtmltopdf")
+        wk_bin = os.path.join(wk_dir, "wkhtmltox", "bin", "wkhtmltopdf.exe")
+        if not os.path.isfile(wk_bin):
+            url = "https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.msvc2015-win64.zip"
+            zip_path = os.path.join(wk_dir, "wkhtmltopdf.zip")
+            os.makedirs(wk_dir, exist_ok=True)
+            try:
+                _download_file(url, zip_path)
+                _extract_zip(zip_path, wk_dir)
+            except Exception as exc:
+                _log_warn(f"No se pudo descargar wkhtmltopdf: {exc}")
+        if os.path.isfile(wk_bin):
+            _WKHTMLTOPDF_BIN = wk_bin
+            os.environ["PATH"] = f"{os.path.dirname(wk_bin)};{os.environ.get('PATH', '')}"
+            _log_info(f"wkhtmltopdf listo en {wk_bin}")
+
+    if not _CHROMEDRIVER_BIN and not shutil.which("chromedriver"):
+        cd_dir = os.path.join(tools_dir, "chromedriver")
+        cd_bin = os.path.join(cd_dir, "chromedriver-win64", "chromedriver.exe")
+        if not os.path.isfile(cd_bin):
+            os.makedirs(cd_dir, exist_ok=True)
+            chrome_ver = _find_chrome_version_windows()
+            try:
+                url = _get_chromedriver_download_url(chrome_ver)
+            except Exception as exc:
+                _log_warn(f"No se pudo resolver URL chromedriver: {exc}")
+                url = ""
+            if url:
+                zip_path = os.path.join(cd_dir, "chromedriver.zip")
+                try:
+                    _download_file(url, zip_path)
+                    _extract_zip(zip_path, cd_dir)
+                except Exception as exc:
+                    _log_warn(f"No se pudo descargar chromedriver: {exc}")
+            else:
+                _log_warn("No se encontro URL para chromedriver")
+        if os.path.isfile(cd_bin):
+            _CHROMEDRIVER_BIN = cd_bin
+            os.environ["PATH"] = f"{os.path.dirname(cd_bin)};{os.environ.get('PATH', '')}"
+            _log_info(f"chromedriver listo en {cd_bin}")
 
 
 def build_opener():
@@ -455,7 +575,7 @@ def get_access_token(opener):
 
 def render_url_to_pdf(url, output_path, extra_args=None):
     args = [
-        "wkhtmltopdf",
+        _WKHTMLTOPDF_BIN or "wkhtmltopdf",
         "--enable-javascript",
         "--javascript-delay",
         "6000",
@@ -588,6 +708,8 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
         globals()["DEBUG_DIR"] = debug_root
         os.makedirs(download_root, exist_ok=True)
         os.makedirs(debug_root, exist_ok=True)
+
+        _ensure_tools_windows()
 
         wkhtmltopdf_path = shutil.which("wkhtmltopdf")
         chromedriver_path = shutil.which("chromedriver")
