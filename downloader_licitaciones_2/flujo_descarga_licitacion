@@ -1,0 +1,17 @@
+
+obtener por input id de licitacion, ej: 728-1-LE26
+
+luego ir a la ficha de licitacion, url construida con esto
+
+https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=728-1-LE26
+
+luego ir a cuadro de ofertas, que desplegará el listado de postulantes
+
+obtener la informacion de los postulantes en csv, y luego descargar la ficha del proveedor, declaracion jurada, anexos administrativos, anexos tecnicos y anexos economicos, tambien guardar las garantias
+
+debe generar una carpeta final llamada (IDLICITACION) (NOMBRELICITACION)/(nombreproveedor)/(acá los adjuntos del proveedor, separado entre tecnicos, administrativos y economicos en carpetas, además de los adjuntos correspondientes a cada uno)
+
+Implementación: `descarga_adjuntos_licitacion.py`
+- Ejecutar: `python3 descarga_adjuntos_licitacion.py` (pide el ID, por defecto `728-1-LE26`)
+- Output: `./descargas/(ID) (NOMBRE)/(PROVEEDOR)/...`
+- Nota: si algún popup de anexos exige captcha, el script te pedirá el texto por consola.

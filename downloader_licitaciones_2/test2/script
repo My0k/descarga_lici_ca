@@ -1,0 +1,546 @@
+#!/usr/bin/env python3
+"""
+Script para descargar adjuntos de licitaciones de Mercado Público Chile.
+Descarga: Declaración Jurada, Información Proveedor, Anexos Administrativos,
+Anexos Técnicos, Anexos Económicos y Garantías.
+
+IMPORTANTE: Este script requiere autenticación manual y resolver CAPTCHAs
+ya que Mercado Público tiene protección contra bots.
+"""
+
+import os
+import re
+import time
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin, urlparse, parse_qs, unquote
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
+import json
+
+
+class MercadoPublicoDownloader:
+    """
+    Descarga adjuntos de licitaciones de Mercado Público Chile.
+    """
+    
+    BASE_URL = "https://www.mercadopublico.cl"
+    PROVEEDOR_URL = "https://proveedor.mercadopublico.cl"
+    
+    # Tipos de anexos y sus carpetas
+    ANEXO_TYPES = {
+        'declaracion_jurada': 'declaracion_jurada',
+        'informacion_proveedor': 'informacion_proveedor',
+        'anexos_administrativos': 'anexos_administrativos',
+        'anexos_tecnicos': 'anexos_tecnicos',
+        'anexos_economicos': 'anexos_economicos',
+        'garantias': 'garantias'
+    }
+    
+    def __init__(self, download_folder="descargas"):
+        """
+        Inicializa el descargador.
+        
+        Args:
+            download_folder: Carpeta base para las descargas
+        """
+        self.download_folder = download_folder
+        self.session = requests.Session()
+        self.driver = None
+        
+    def setup_selenium(self, headless=False):
+        """Configura el navegador Selenium."""
+        chrome_options = Options()
+        if headless:
+            chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        
+        # Configurar carpeta de descargas
+        prefs = {
+            "download.default_directory": os.path.abspath(self.download_folder),
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+        }
+        chrome_options.add_experimental_option("prefs", prefs)
+        
+        self.driver = webdriver.Chrome(options=chrome_options)
+        self.driver.implicitly_wait(10)
+        
+    def close(self):
+        """Cierra el navegador."""
+        if self.driver:
+            self.driver.quit()
+            
+    def create_folder_structure(self, licitacion_id):
+        """
+        Crea la estructura de carpetas para una licitación.
+        
+        Estructura:
+        descargas/
+        └── {licitacion_id}/
+            ├── declaracion_jurada/
+            ├── informacion_proveedor/
+            ├── anexos_administrativos/
+            │   └── {rut_proveedor}/
+            ├── anexos_tecnicos/
+            │   └── {rut_proveedor}/
+            ├── anexos_economicos/
+            │   └── {rut_proveedor}/
+            └── garantias/
+        """
+        base_path = os.path.join(self.download_folder, licitacion_id)
+        
+        for folder_name in self.ANEXO_TYPES.values():
+            folder_path = os.path.join(base_path, folder_name)
+            os.makedirs(folder_path, exist_ok=True)
+            
+        return base_path
+        
+    def create_proveedor_subfolder(self, base_path, anexo_type, rut_proveedor):
+        """Crea subcarpeta para un proveedor dentro de un tipo de anexo."""
+        # Limpiar RUT para usar como nombre de carpeta
+        rut_clean = rut_proveedor.replace(".", "").replace("-", "_")
+        folder_path = os.path.join(base_path, anexo_type, rut_clean)
+        os.makedirs(folder_path, exist_ok=True)
+        return folder_path
+    
+    def extract_licitacion_id(self, url):
+        """
+        Extrae el ID de la licitación de la URL.
+        Ejemplo: 728-1-LE26
+        """
+        # Intentar extraer del parámetro qs
+        parsed = urlparse(url)
+        
+        # Si está en la página de detalles, buscar en el HTML
+        if "DetailsAcquisition" in url:
+            response = self.session.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Buscar el ID en el texto de la página
+            id_pattern = r'\\d{3,4}-\\d{1,2}-[A-Z]{2}\\d{2}'
+            match = re.search(id_pattern, response.text)
+            if match:
+                return match.group()
+                
+        return None
+    
+    def get_opening_frame_url(self, details_url):
+        """
+        Obtiene la URL del iframe OpeningFrame desde la página de detalles.
+        """
+        response = self.session.get(details_url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Buscar iframe con nombre PopupFicha o con OpeningFrame en src
+        iframe = soup.find('iframe', {'name': 'PopupFicha'})
+        if iframe and iframe.get('src'):
+            return urljoin(self.BASE_URL, iframe['src'])
+            
+        # Buscar por patrón en atributos href
+        for element in soup.find_all(['input', 'a'], href=True):
+            href = element.get('href', '')
+            if 'OpeningFrame' in href:
+                return urljoin(self.BASE_URL, href)
+                
+        return None
+    
+    def get_ofertas_data(self, opening_frame_url):
+        """
+        Extrae los datos de todas las ofertas de la tabla del cuadro comparativo.
+        
+        Returns:
+            Lista de diccionarios con información de cada oferta:
+            [
+                {
+                    'rut': '76.576.059-3',
+                    'proveedor': 'Patricio',
+                    'nombre_oferta': 'TRANSPORTE DE FUNCIONARIOS...',
+                    'total_oferta': '$ 29.000.000',
+                    'estado': 'Aceptada',
+                    'anexos': {
+                        'declaracion_jurada': url,
+                        'informacion_proveedor': url,
+                        'anexos_administrativos': url,
+                        ...
+                    }
+                },
+                ...
+            ]
+        """
+        self.driver.get(opening_frame_url)
+        time.sleep(3)  # Esperar carga
+        
+        ofertas = []
+        
+        # Buscar la tabla de ofertas
+        try:
+            table = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, "//table[contains(.,'Rut Proveedor')]"))
+            )
+            
+            rows = table.find_elements(By.TAG_NAME, "tr")
+            
+            for row in rows[1:]:  # Saltar encabezado
+                cells = row.find_elements(By.TAG_NAME, "td")
+                if len(cells) >= 6:
+                    oferta = {
+                        'rut': cells[0].text.strip(),
+                        'proveedor': cells[1].text.strip(),
+                        'nombre_oferta': cells[2].text.strip(),
+                        'total_oferta': cells[3].text.strip(),
+                        'estado': cells[4].text.strip(),
+                        'anexos': {}
+                    }
+                    
+                    # Buscar los iconos de anexos en la última celda
+                    anexos_cell = cells[-1]
+                    links = anexos_cell.find_elements(By.TAG_NAME, "a")
+                    images = anexos_cell.find_elements(By.CSS_SELECTOR, "img, input[type='image']")
+                    
+                    # Los anexos suelen estar en orden:
+                    # 1. Declaración Jurada, 2. Info Proveedor, 3. Admin, 4. Técnicos, 5. Económicos, 6. Garantías
+                    anexo_names = list(self.ANEXO_TYPES.keys())
+                    
+                    for i, element in enumerate(images[:6]):
+                        if i < len(anexo_names):
+                            # Obtener la URL del onclick o href
+                            onclick = element.get_attribute('onclick')
+                            parent = element.find_element(By.XPATH, "./..")
+                            href = parent.get_attribute('href') if parent.tag_name == 'a' else None
+                            
+                            oferta['anexos'][anexo_names[i]] = {
+                                'onclick': onclick,
+                                'href': href,
+                                'element': element
+                            }
+                    
+                    ofertas.append(oferta)
+                    
+        except Exception as e:
+            print(f"Error extrayendo ofertas: {e}")
+            
+        return ofertas
+    
+    def download_declaracion_jurada(self, licitacion_id, rut, output_folder):
+        """
+        Descarga la Declaración Jurada de un proveedor.
+        URL: https://proveedor.mercadopublico.cl/dj-requisitos/{licitacion_id}/{rut}
+        """
+        url = f"{self.PROVEEDOR_URL}/dj-requisitos/{licitacion_id}/{rut}"
+        
+        try:
+            self.driver.get(url)
+            time.sleep(2)
+            
+            # Buscar botón de descarga PDF o capturar la página
+            # La declaración jurada se muestra como página web, no PDF directo
+            
+            # Guardar como HTML o intentar encontrar link de PDF
+            html_path = os.path.join(output_folder, f"declaracion_jurada_{rut.replace('.', '').replace('-', '_')}.html")
+            
+            with open(html_path, 'w', encoding='utf-8') as f:
+                f.write(self.driver.page_source)
+                
+            print(f"Declaración Jurada guardada: {html_path}")
+            return True
+            
+        except Exception as e:
+            print(f"Error descargando declaración jurada para {rut}: {e}")
+            return False
+    
+    def download_anexos(self, anexo_url, anexo_type, rut, output_folder):
+        """
+        Descarga anexos (Administrativos, Técnicos, Económicos, Garantías).
+        Navega a ViewBidAttachment.aspx y descarga los archivos.
+        
+        NOTA: Requiere resolver CAPTCHA manualmente.
+        """
+        try:
+            self.driver.get(anexo_url)
+            time.sleep(2)
+            
+            # Buscar la tabla de adjuntos
+            adjuntos = []
+            
+            try:
+                table = WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, "//table[contains(.,'Anexo')]"))
+                )
+                
+                rows = table.find_elements(By.TAG_NAME, "tr")
+                
+                for row in rows[1:]:  # Saltar encabezado
+                    cells = row.find_elements(By.TAG_NAME, "td")
+                    if len(cells) >= 5:
+                        adjunto = {
+                            'checkbox': cells[0].find_element(By.CSS_SELECTOR, "input[type='checkbox']") if cells[0].find_elements(By.CSS_SELECTOR, "input[type='checkbox']") else None,
+                            'nombre': cells[1].text.strip(),
+                            'tipo': cells[2].text.strip(),
+                            'descripcion': cells[3].text.strip(),
+                            'tamano': cells[4].text.strip(),
+                            'ver_button': cells[5].find_element(By.CSS_SELECTOR, "input[type='image']") if len(cells) > 5 and cells[5].find_elements(By.CSS_SELECTOR, "input[type='image']") else None
+                        }
+                        adjuntos.append(adjunto)
+                        
+            except Exception as e:
+                print(f"Error parseando tabla de adjuntos: {e}")
+                return []
+            
+            # CAPTCHA: Pausar para que el usuario lo resuelva
+            if adjuntos:
+                print(f"\\n{'='*50}")
+                print(f"Se encontraron {len(adjuntos)} adjuntos de tipo '{anexo_type}' para RUT {rut}")
+                print("Por favor, resuelva el CAPTCHA en el navegador y presione Enter...")
+                print(f"{'='*50}\\n")
+                
+                # Esperar entrada del usuario después de resolver CAPTCHA
+                input("Presione Enter después de resolver el CAPTCHA...")
+                
+                # Seleccionar todos los checkboxes
+                for adjunto in adjuntos:
+                    if adjunto['checkbox']:
+                        try:
+                            if not adjunto['checkbox'].is_selected():
+                                adjunto['checkbox'].click()
+                        except:
+                            pass
+                
+                # Click en "Descargar seleccionados"
+                try:
+                    download_btn = self.driver.find_element(By.XPATH, "//input[@value='Descargar seleccionados'] | //button[contains(text(),'Descargar')]")
+                    download_btn.click()
+                    
+                    # Esperar descarga
+                    time.sleep(5)
+                    print(f"Descarga iniciada para {anexo_type}")
+                    
+                except Exception as e:
+                    print(f"Error al hacer clic en descargar: {e}")
+                    
+            return adjuntos
+            
+        except Exception as e:
+            print(f"Error descargando anexos {anexo_type} para {rut}: {e}")
+            return []
+    
+    def click_anexo_icon(self, oferta, anexo_type, licitacion_id):
+        """
+        Hace clic en un icono de anexo y obtiene la URL resultante.
+        """
+        try:
+            anexo_data = oferta['anexos'].get(anexo_type)
+            if not anexo_data:
+                return None
+                
+            element = anexo_data.get('element')
+            if element:
+                # Guardar ventana actual
+                original_window = self.driver.current_window_handle
+                
+                # Click en el icono
+                element.click()
+                time.sleep(2)
+                
+                # Verificar si se abrió nueva ventana/tab
+                if len(self.driver.window_handles) > 1:
+                    for handle in self.driver.window_handles:
+                        if handle != original_window:
+                            self.driver.switch_to.window(handle)
+                            new_url = self.driver.current_url
+                            self.driver.close()
+                            self.driver.switch_to.window(original_window)
+                            return new_url
+                            
+                # Si no se abrió nueva ventana, puede haber cambiado la URL actual
+                return self.driver.current_url
+                
+        except Exception as e:
+            print(f"Error haciendo clic en {anexo_type}: {e}")
+            
+        return None
+    
+    def download_licitacion(self, url):
+        """
+        Descarga todos los adjuntos de una licitación.
+        
+        Args:
+            url: URL de la ficha de licitación
+        """
+        print(f"Iniciando descarga de licitación: {url}")
+        
+        # Configurar Selenium
+        self.setup_selenium(headless=False)  # No headless para resolver CAPTCHAs
+        
+        try:
+            # Navegar a la página de detalles
+            self.driver.get(url)
+            time.sleep(3)
+            
+            # Extraer ID de licitación
+            licitacion_id = self.extract_licitacion_id(url)
+            if not licitacion_id:
+                # Intentar extraer del título o contenido de la página
+                try:
+                    title_element = self.driver.find_element(By.XPATH, "//*[contains(text(), '-LE') or contains(text(), '-LP')]")
+                    match = re.search(r'\\d{3,4}-\\d{1,2}-[A-Z]{2}\\d{2}', title_element.text)
+                    if match:
+                        licitacion_id = match.group()
+                except:
+                    pass
+                    
+            if not licitacion_id:
+                print("No se pudo extraer el ID de la licitación")
+                licitacion_id = "licitacion_desconocida"
+                
+            print(f"ID de licitación: {licitacion_id}")
+            
+            # Crear estructura de carpetas
+            base_path = self.create_folder_structure(licitacion_id)
+            print(f"Carpeta de descargas: {base_path}")
+            
+            # Obtener URL del cuadro de ofertas
+            opening_url = self.get_opening_frame_url(url)
+            
+            if not opening_url:
+                # Buscar el botón/link para abrir el cuadro de ofertas
+                try:
+                    cuadro_btn = self.driver.find_element(By.XPATH, "//input[contains(@href, 'OpeningFrame')] | //*[contains(text(), 'Cuadro Comparativo')]")
+                    cuadro_btn.click()
+                    time.sleep(2)
+                    opening_url = self.driver.current_url
+                except:
+                    print("No se encontró el cuadro de ofertas")
+                    return
+            
+            print(f"URL del Cuadro de Ofertas: {opening_url}")
+            
+            # Obtener datos de todas las ofertas
+            ofertas = self.get_ofertas_data(opening_url)
+            print(f"Se encontraron {len(ofertas)} ofertas")
+            
+            # Procesar cada oferta
+            for i, oferta in enumerate(ofertas, 1):
+                print(f"\\n{'='*50}")
+                print(f"Procesando oferta {i}/{len(ofertas)}: {oferta['proveedor']} (RUT: {oferta['rut']})")
+                print(f"{'='*50}")
+                
+                rut = oferta['rut']
+                
+                # 1. Descargar Declaración Jurada
+                print("\\n1. Descargando Declaración Jurada...")
+                dj_folder = os.path.join(base_path, self.ANEXO_TYPES['declaracion_jurada'])
+                self.download_declaracion_jurada(licitacion_id, rut, dj_folder)
+                
+                # 2. Descargar Anexos Administrativos
+                print("\\n2. Descargando Anexos Administrativos...")
+                admin_folder = self.create_proveedor_subfolder(base_path, self.ANEXO_TYPES['anexos_administrativos'], rut)
+                admin_url = self.click_anexo_icon(oferta, 'anexos_administrativos', licitacion_id)
+                if admin_url:
+                    self.download_anexos(admin_url, 'anexos_administrativos', rut, admin_folder)
+                    
+                # Volver al cuadro de ofertas
+                self.driver.get(opening_url)
+                time.sleep(2)
+                
+                # 3. Descargar Anexos Técnicos
+                print("\\n3. Descargando Anexos Técnicos...")
+                tech_folder = self.create_proveedor_subfolder(base_path, self.ANEXO_TYPES['anexos_tecnicos'], rut)
+                tech_url = self.click_anexo_icon(oferta, 'anexos_tecnicos', licitacion_id)
+                if tech_url:
+                    self.download_anexos(tech_url, 'anexos_tecnicos', rut, tech_folder)
+                    
+                # Volver al cuadro de ofertas
+                self.driver.get(opening_url)
+                time.sleep(2)
+                
+                # 4. Descargar Anexos Económicos
+                print("\\n4. Descargando Anexos Económicos...")
+                econ_folder = self.create_proveedor_subfolder(base_path, self.ANEXO_TYPES['anexos_economicos'], rut)
+                econ_url = self.click_anexo_icon(oferta, 'anexos_economicos', licitacion_id)
+                if econ_url:
+                    self.download_anexos(econ_url, 'anexos_economicos', rut, econ_folder)
+                    
+                # Volver al cuadro de ofertas
+                self.driver.get(opening_url)
+                time.sleep(2)
+                
+                # 5. Descargar Garantías
+                print("\\n5. Descargando Garantías...")
+                garant_folder = os.path.join(base_path, self.ANEXO_TYPES['garantias'])
+                garant_url = self.click_anexo_icon(oferta, 'garantias', licitacion_id)
+                if garant_url:
+                    self.download_anexos(garant_url, 'garantias', rut, garant_folder)
+                    
+                # Volver al cuadro de ofertas para la siguiente oferta
+                self.driver.get(opening_url)
+                time.sleep(2)
+                
+            print(f"\\n{'='*50}")
+            print("DESCARGA COMPLETADA")
+            print(f"Archivos guardados en: {base_path}")
+            print(f"{'='*50}\\n")
+            
+        finally:
+            self.close()
+
+
+def main():
+    """Función principal."""
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Descarga adjuntos de licitaciones de Mercado Público')
+    parser.add_argument('url', help='URL de la ficha de licitación')
+    parser.add_argument('-o', '--output', default='descargas', help='Carpeta de salida (default: descargas)')
+    
+    args = parser.parse_args()
+    
+    downloader = MercadoPublicoDownloader(download_folder=args.output)
+    downloader.download_licitacion(args.url)
+
+
+if __name__ == "__main__":
+    # Ejemplo de uso:
+    # python mercado_publico_downloader.py "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=iY4SYeZi3D9Zqn/AGgDB9Q=="
+    
+    # Si no se proporcionan argumentos, usar URL de ejemplo
+    import sys
+    if len(sys.argv) < 2:
+        print("Uso: python mercado_publico_downloader.py <URL_LICITACION> [-o CARPETA_SALIDA]")
+        print("\\nEjemplo:")
+        print('  python mercado_publico_downloader.py "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=iY4SYeZi3D9Zqn/AGgDB9Q=="')
+        sys.exit(1)
+    else:
+        main()
+```
+
+## Resumen del análisis realizado:
+
+**Estructura de URLs identificada:**
+
+1. **Declaración Jurada**: `https://proveedor.mercadopublico.cl/dj-requisitos/{codigo_licitacion}/{rut}` (ejemplo: `728-1-LE26/76.576.059-3`)
+
+2. **Anexos (Administrativos/Técnicos/Económicos/Garantías)**: `https://www.mercadopublico.cl/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc={token_encriptado}`
+
+3. **Cuadro de Ofertas**: `https://www.mercadopublico.cl/Procurement/Modules/RFB/StepsProcessAward/OpeningFrame.aspx?enc={token_encriptado}`
+
+**Estructura de carpetas generada:**
+```
+descargas/
+└── {licitacion_id}/
+    ├── declaracion_jurada/
+    ├── informacion_proveedor/
+    ├── anexos_administrativos/
+    │   ├── {rut_proveedor_1}/
+    │   └── {rut_proveedor_2}/
+    ├── anexos_tecnicos/
+    │   ├── {rut_proveedor_1}/
+    │   └── {rut_proveedor_2}/
+    ├── anexos_economicos/
+    │   ├── {rut_proveedor_1}/
+    │   └── {rut_proveedor_2}/
+    └── garantias/

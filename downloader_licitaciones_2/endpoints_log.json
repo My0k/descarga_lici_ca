@@ -1,0 +1,2217 @@
+{
+  "start_url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=728-1-LE26",
+  "started_at": "2026-01-19T21:20:39.332719+00:00",
+  "steps": [
+    {
+      "name": "page_load",
+      "timestamp": "2026-01-19T21:20:43.832214+00:00",
+      "window_handle": "56E8963644FFD5445FC494C3D4F85FA6",
+      "endpoints": [
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion=728-1-LE26",
+          "http_method": "GET",
+          "type": "Document",
+          "timestamp": 1768857640188,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=iY4SYeZi3D9Zqn/AGgDB9Q==",
+          "http_method": "GET",
+          "type": "Document",
+          "timestamp": 1768857640339,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=iY4SYeZi3D9Zqn/AGgDB9Q==",
+          "status": 200,
+          "mime_type": "text/html",
+          "type": "Document",
+          "timestamp": 1768857640436,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.googletagmanager.com/gtag/js?id=UA-51338325-2",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640448,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/JQuery/jquery-1.7.2.min.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640448,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/JQuery/jquery.blockUI.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/analytics.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/hotjar.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/FichaLight/style_principal.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/FichaLight/textos.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/FichaLight/estilo_tabla.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/MOP/mop.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/fancybox/v2.1.1/jquery.fancybox.pack.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/fancybox/v2.1.1/jquery.fancybox.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/geo-cgr.js?v=1",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/jszip.min.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640457,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://apis.google.com/js/plusone.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640463,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/ChileCompra.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857640463,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/ChileCompra.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640463,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=OIS7CaKxZTe92Q8L0RKIYEXo5lJPeHuW840p1g1kxhFo7sVpAIkNCjrrpnlh1EeLkh1gAku4KGtnMa6q8dbqJW_djuQuZArMst1-m3X_uFZgnjHALGgqA815dWQ1&t=639020982240000000",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857640463,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=86ZWE_2tbdKxTiTiTVSKyWxLQRAAt_cwdObySGeh0iQUxvF8HN_5DgkluObxD0hxEW94p-HJ7pwyDUZ3x6YwAa-pY6YJtRoQApFnoR4TGwk6h6sag38KoX_PVToEWCzm4G8rR5MURZQC-8W0jzbvFBZ_VaE1&t=639020982240000000",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857640463,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/JQuery/jquery-1.7.2.min.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857640521,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=SqZa8GYeN-voTRZ-GMsb11KKLzsM4GjYxTGAXg23ajVoLdblDojATKR_7aSBdwvGYc1HUN_gkQjb5mtE0&t=637814545746327080",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640534,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Telerik.Web.UI.WebResource.axd?_TSM_HiddenField_=RadScriptManager1_TSM&compress=1&_TSM_CombinedScripts_=%3b%3bSystem.Web.Extensions%2c+Version%3d4.0.0.0%2c+Culture%3dneutral%2c+PublicKeyToken%3d31bf3856ad364e35%3aen-US%3a9ddf364d-d65d-4f01-a69e-8b015049e026%3aea597d4b%3ab25378d2%3bTelerik.Web.UI%2c+Version%3d2010.3.1215.20%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3ac7e43360-cbc8-4666-85f6-c5101371c559%3a16e4e7cd%3a874f8ea2%3af7645509%3a24ee1bba%3af46195d3%3a19620875%3a490a9d4e%3abd8f85e4",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/top_fondo.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ofertar_bloq.PNG",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_estados/cerrada.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_01.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_02.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_04.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/csv.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/api.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ocds.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/nomegusta.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/reclamo.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/pie_fondo.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-21.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-22.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640535,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-24.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/apertura-02.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/apertura-46.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-32.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-25.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_licitacion_bloq/ic-27bloq.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_licitacion_bloq/ic-26bloq.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/cert-31.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/pie_peq_fondo.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/parte00.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/bt_ver.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/parte02.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/separacion00.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640536,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/bt_bajar_si.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640553,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/descargar.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640554,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/FichaLight/style_principal.css",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857640566,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/MOP/mop.css",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857640568,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/FichaLight/textos.css",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857640569,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/fancybox/v2.1.1/jquery.fancybox.css",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857640570,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/FichaLight/estilo_tabla.css",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857640572,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/cerrar.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640589,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/Images/menu_sup.jpg",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640589,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/Images/menu_inf.jpg",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640589,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/adjunto.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640589,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/historico_firmas.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640589,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/historial.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640589,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/ver_contratos.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640589,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/certificado.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640589,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/pdf.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640589,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/ChileCompra.css",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857640625,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/analytics.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857640628,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/JQuery/jquery.blockUI.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857640629,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=86ZWE_2tbdKxTiTiTVSKyWxLQRAAt_cwdObySGeh0iQUxvF8HN_5DgkluObxD0hxEW94p-HJ7pwyDUZ3x6YwAa-pY6YJtRoQApFnoR4TGwk6h6sag38KoX_PVToEWCzm4G8rR5MURZQC-8W0jzbvFBZ_VaE1&t=639020982240000000",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857640636,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=OIS7CaKxZTe92Q8L0RKIYEXo5lJPeHuW840p1g1kxhFo7sVpAIkNCjrrpnlh1EeLkh1gAku4KGtnMa6q8dbqJW_djuQuZArMst1-m3X_uFZgnjHALGgqA815dWQ1&t=639020982240000000",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857640639,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/hotjar.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857640640,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://static.hotjar.com/c/hotjar-637179.js?sv=5",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640640,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://static.hotjar.com/c/hotjar-637179.js?sv=6",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640642,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/fancybox/v2.1.1/jquery.fancybox.pack.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857640656,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.googletagmanager.com/gtag/js?id=UA-51338325-2",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857640666,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/jszip.min.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857640676,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://apis.google.com/js/plusone.js",
+          "status": 200,
+          "mime_type": "text/javascript",
+          "type": "Script",
+          "timestamp": 1768857640677,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/ChileCompra.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857640677,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/geo-cgr.js?v=1",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857640677,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-83DNLS44VH&cx=c&gtm=4e61e1",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640690,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.google-analytics.com/analytics.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640690,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/top_fondo.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640691,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.2kN9-TZiXrM.O/m=plusone/rt=j/sv=1/d=1/ed=1/rs=AHpOoo_B4hu0FeWRuWHfxnZ3V0WubwN7Qw/cb=gapi.loaded_0?le=scs",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857640708,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ofertar_bloq.PNG",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640709,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=SqZa8GYeN-voTRZ-GMsb11KKLzsM4GjYxTGAXg23ajVoLdblDojATKR_7aSBdwvGYc1HUN_gkQjb5mtE0&t=637814545746327080",
+          "status": 200,
+          "mime_type": "application/x-javascript",
+          "type": "Script",
+          "timestamp": 1768857640714,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/csv.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640742,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_estados/cerrada.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640744,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/api.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640765,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_02.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640766,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Telerik.Web.UI.WebResource.axd?_TSM_HiddenField_=RadScriptManager1_TSM&compress=1&_TSM_CombinedScripts_=%3b%3bSystem.Web.Extensions%2c+Version%3d4.0.0.0%2c+Culture%3dneutral%2c+PublicKeyToken%3d31bf3856ad364e35%3aen-US%3a9ddf364d-d65d-4f01-a69e-8b015049e026%3aea597d4b%3ab25378d2%3bTelerik.Web.UI%2c+Version%3d2010.3.1215.20%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3ac7e43360-cbc8-4666-85f6-c5101371c559%3a16e4e7cd%3a874f8ea2%3af7645509%3a24ee1bba%3af46195d3%3a19620875%3a490a9d4e%3abd8f85e4",
+          "status": 200,
+          "mime_type": "application/x-javascript",
+          "type": "Script",
+          "timestamp": 1768857640771,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_01.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640789,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ocds.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640801,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_04.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640801,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/Fondos/linea_fondo.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640886,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/Fondos/fondotbv.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857640886,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/MOP/fonts/gobcl_bold-webfont.woff2",
+          "http_method": "GET",
+          "type": "Font",
+          "timestamp": 1768857640886,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/MOP/fonts/gobcl_regular-webfont.woff2",
+          "http_method": "GET",
+          "type": "Font",
+          "timestamp": 1768857640887,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/MOP/fonts/gobcl_heavy-webfont.woff2",
+          "http_method": "GET",
+          "type": "Font",
+          "timestamp": 1768857640887,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/nomegusta.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640889,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-21.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640890,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/reclamo.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640891,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/pie_fondo.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640892,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-22.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640893,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/apertura-02.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640893,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-24.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640894,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/apertura-46.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857640896,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx/ObtenerEspecialidades",
+          "http_method": "POST",
+          "type": "XHR",
+          "timestamp": 1768857640902,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx/ObtenerEspecialidades",
+          "status": 200,
+          "mime_type": "application/json",
+          "type": "XHR",
+          "timestamp": 1768857641053,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_licitacion_bloq/ic-27bloq.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641054,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-32.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641055,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/ic_licitacion_bloq/ic-26bloq.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641056,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/ic-25.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641057,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/iconos_licitacion/cert-31.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641057,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/MOP/fonts/gobcl_bold-webfont.woff2",
+          "status": 200,
+          "mime_type": "application/font-woff2",
+          "type": "Font",
+          "timestamp": 1768857641058,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/Fondos/linea_fondo.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641059,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/pie_peq_fondo.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641060,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/MOP/fonts/gobcl_regular-webfont.woff2",
+          "status": 200,
+          "mime_type": "application/font-woff2",
+          "type": "Font",
+          "timestamp": 1768857641060,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/MOP/fonts/gobcl_heavy-webfont.woff2",
+          "status": 200,
+          "mime_type": "application/font-woff2",
+          "type": "Font",
+          "timestamp": 1768857641061,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/parte00.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641062,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.2kN9-TZiXrM.O/m=plusone/rt=j/sv=1/d=1/ed=1/rs=AHpOoo_B4hu0FeWRuWHfxnZ3V0WubwN7Qw/cb=gapi.loaded_0?le=scs",
+          "status": 200,
+          "mime_type": "text/javascript",
+          "type": "Script",
+          "timestamp": 1768857641077,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-83DNLS44VH&cx=c&gtm=4e61e1",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857641078,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://static.hotjar.com/c/hotjar-637179.js?sv=6",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857641079,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://static.hotjar.com/c/hotjar-637179.js?sv=5",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857641080,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.google-analytics.com/analytics.js",
+          "status": 200,
+          "mime_type": "text/javascript",
+          "type": "Script",
+          "timestamp": 1768857641080,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.2kN9-TZiXrM.O/m=auth/exm=plusone/rt=j/sv=1/d=1/ed=1/rs=AHpOoo_B4hu0FeWRuWHfxnZ3V0WubwN7Qw/cb=gapi.loaded_1?le=scs,fedcm_migration_mod",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857641104,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://apis.google.com/u/0/se/0/_/+1/fastbutton?usegapi=1&annotation=none&origin=https%3A%2F%2Fwww.mercadopublico.cl&url=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FDetailsAcquisition.aspx%3Fqs%3DiY4SYeZi3D9Zqn%2FAGgDB9Q%3D%3D&gsrc=3p&ic=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.2kN9-TZiXrM.O%2Fd%3D1%2Frs%3DAHpOoo_B4hu0FeWRuWHfxnZ3V0WubwN7Qw%2Fm%3D__features__",
+          "http_method": "GET",
+          "type": "Document",
+          "timestamp": 1768857641108,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/separacion00.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641111,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/bt_ver.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641111,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/cerrar.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641113,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/descargar.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641116,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/bt_bajar_si.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641116,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/parte02.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641127,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://analytics.google.com/g/collect?v=2&tid=G-83DNLS44VH&gtm=45je61e1v9126544534za20g&_p=1768857640629&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=849615512.1768857641&ul=en-us&sr=1920x1080&ir=1&uaa=x86&uab=64&uafvl=Not%253BA%253DBrand%3B99.0.0.0%7CGoogle%2520Chrome%3B139.0.7258.138%7CChromium%3B139.0.7258.138&uamb=0&uam=&uap=Linux&uapv=6.14.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EAAIAGA&_s=1&tag_exp=103116026~103200004~104527907~104528501~104684208~104684211~105391253~115938466~115938468~116744866~117041588&sid=1768857641&sct=1&seg=0&dl=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FDetailsAcquisition.aspx%3Fqs%3DiY4SYeZi3D9Zqn%2FAGgDB9Q%3D%3D&dt=Ficha%20Licitaci%C3%B3n&en=page_view&_fv=1&_nsi=1&_ss=1&tfd=996",
+          "http_method": "POST",
+          "type": "Fetch",
+          "timestamp": 1768857641187,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://stats.g.doubleclick.net/g/collect?v=2&tid=G-83DNLS44VH&cid=849615512.1768857641&gtm=45je61e1v9126544534za20g&aip=1&dma=0&gcd=13l3l3l3l1l1&npa=0&frm=0&tag_exp=103116026~103200004~104527907~104528501~104684208~104684211~105391253~115938466~115938468~116744866~117041588",
+          "http_method": "POST",
+          "type": "Ping",
+          "timestamp": 1768857641187,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.google.cl/ads/ga-audiences?v=1&t=sr&slf_rd=1&_r=4&tid=G-83DNLS44VH&cid=849615512.1768857641&gtm=45je61e1v9126544534za20g&aip=1&dma=0&gcd=13l3l3l3l1l1&npa=0&frm=0&tag_exp=103116026~103200004~104527907~104528501~104684208~104684211~105391253~115938466~115938468~116744866~117041588&z=1159139840",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857641187,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.2kN9-TZiXrM.O/m=auth/exm=plusone/rt=j/sv=1/d=1/ed=1/rs=AHpOoo_B4hu0FeWRuWHfxnZ3V0WubwN7Qw/cb=gapi.loaded_1?le=scs,fedcm_migration_mod",
+          "status": 200,
+          "mime_type": "text/javascript",
+          "type": "Script",
+          "timestamp": 1768857641187,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://script.hotjar.com/modules.5af39c695063f61775c4.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857641190,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://accounts.google.com/o/oauth2/postmessageRelay?parent=https%3A%2F%2Fwww.mercadopublico.cl&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.2kN9-TZiXrM.O%2Fd%3D1%2Frs%3DAHpOoo_B4hu0FeWRuWHfxnZ3V0WubwN7Qw%2Fm%3D__features__",
+          "http_method": "GET",
+          "type": "Document",
+          "timestamp": 1768857641212,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/adjunto.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857641218,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/ver_contratos.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857641219,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/historico_firmas.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857641220,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/Images/menu_inf.jpg",
+          "status": 200,
+          "mime_type": "image/jpeg",
+          "type": "Image",
+          "timestamp": 1768857641220,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/historial.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857641221,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/Images/menu_sup.jpg",
+          "status": 200,
+          "mime_type": "image/jpeg",
+          "type": "Image",
+          "timestamp": 1768857641221,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/Fondos/fondotbv.png",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857641268,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/certificado.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857641279,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ficha/pdf.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857641280,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://analytics.google.com/g/collect?v=2&tid=G-83DNLS44VH&gtm=45je61e1v9126544534za20g&_p=1768857640629&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=849615512.1768857641&ul=en-us&sr=1920x1080&ir=1&uaa=x86&uab=64&uafvl=Not%253BA%253DBrand%3B99.0.0.0%7CGoogle%2520Chrome%3B139.0.7258.138%7CChromium%3B139.0.7258.138&uamb=0&uam=&uap=Linux&uapv=6.14.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EAAIAGA&_s=1&tag_exp=103116026~103200004~104527907~104528501~104684208~104684211~105391253~115938466~115938468~116744866~117041588&sid=1768857641&sct=1&seg=0&dl=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FDetailsAcquisition.aspx%3Fqs%3DiY4SYeZi3D9Zqn%2FAGgDB9Q%3D%3D&dt=Ficha%20Licitaci%C3%B3n&en=page_view&_fv=1&_nsi=1&_ss=1&tfd=996",
+          "status": 204,
+          "mime_type": "text/plain",
+          "type": "Fetch",
+          "timestamp": 1768857641393,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://accounts.google.com/o/oauth2/postmessageRelay?parent=https%3A%2F%2Fwww.mercadopublico.cl&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.2kN9-TZiXrM.O%2Fd%3D1%2Frs%3DAHpOoo_B4hu0FeWRuWHfxnZ3V0WubwN7Qw%2Fm%3D__features__",
+          "status": 200,
+          "mime_type": "text/html",
+          "type": "Document",
+          "timestamp": 1768857641394,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.google.cl/ads/ga-audiences?v=1&t=sr&slf_rd=1&_r=4&tid=G-83DNLS44VH&cid=849615512.1768857641&gtm=45je61e1v9126544534za20g&aip=1&dma=0&gcd=13l3l3l3l1l1&npa=0&frm=0&tag_exp=103116026~103200004~104527907~104528501~104684208~104684211~105391253~115938466~115938468~116744866~117041588&z=1159139840",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857641397,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://stats.g.doubleclick.net/g/collect?v=2&tid=G-83DNLS44VH&cid=849615512.1768857641&gtm=45je61e1v9126544534za20g&aip=1&dma=0&gcd=13l3l3l3l1l1&npa=0&frm=0&tag_exp=103116026~103200004~104527907~104528501~104684208~104684211~105391253~115938466~115938468~116744866~117041588",
+          "status": 204,
+          "mime_type": "text/plain",
+          "type": "Ping",
+          "timestamp": 1768857641405,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://script.hotjar.com/modules.5af39c695063f61775c4.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857641447,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://vc.hotjar.io/sessions/637179?s=0.25&r=0.24332196584426025",
+          "http_method": "GET",
+          "type": "XHR",
+          "timestamp": 1768857641476,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/favicon.ico",
+          "http_method": "GET",
+          "type": "Other",
+          "timestamp": 1768857641811,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/favicon.ico",
+          "status": 200,
+          "mime_type": "image/x-icon",
+          "type": "Other",
+          "timestamp": 1768857643812,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://vc.hotjar.io/sessions/637179?s=0.25&r=0.24332196584426025",
+          "status": 204,
+          "mime_type": "text/plain",
+          "type": "XHR",
+          "timestamp": 1768857643812,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        }
+      ]
+    },
+    {
+      "name": "click_cuadro_ofertas",
+      "timestamp": "2026-01-19T21:20:58.273471+00:00",
+      "window_handle": "56E8963644FFD5445FC494C3D4F85FA6",
+      "endpoints": [
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/FichaLight/nomegusta_sobre.png",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656246,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/StepsProcessAward/OpeningFrame.aspx?enc=zo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%2bIhEQETtuHl%2bIS2N7qhQS5KBy1DUdvZnXG%2fVKwzK4x0415w0P%2fjD3hEe0AU4RMuSpcja1ooIHdioCBDo",
+          "http_method": "GET",
+          "type": "Document",
+          "timestamp": 1768857656246,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=8Ym2gq_LgFdTHVafZ9YVrCJfkOOCFdXmdYuiyPFfZgQ95Iy1-k25sz48Py_u9y151CtAo1_GfgFzq6kzrBfWM4q9NUeLMPrF8BSboWhIJR-9kiRuBzmzSzfBBjx_K_gjJO3kpNMqbF4tPtR2wS5bQYMsxc5Uv0SMf4rGjnoZuLCzobX50&t=639020982240000000",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656247,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=ZRH1yzuOakoHUOBu-uHCnb8OGgE1t8rUcjbomt-2WAzmGx2pdNbJbuskJP6cve6NaPfh7u7iO9VMir4J-2RxiSw8GK9JNScPnmKy1ESS2iaU8IHfVBsiL9IB3RILFodGerQsXWcNADk7dycTIVAkAJEAmqVVmdBfKuo5dCMuIo_0axNT0&t=639020982240000000",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656247,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=VDH_u7S1BTKotJxd7v0JuvC8j5UJY0nKEaKsyR6Lb1xQ63HY8z7XJs47Rc9MdOixU11OPkYSCYOFquF3hHh1nvY6aR52lQw-rADpxVZHjn3rIHMpKqs6JZaf8iGKfxseD-nLn0TEIsYVVWPs2fkbfzS0d0Ode4XRsm1MAA2&t=639020982240000000",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656247,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=W392eyE60sWlvKJ3NCrFZh9zL_Bf3dXRVHAIlw9aWi3GPmE54A3vl6h9otFfLPHQuKofZ4jtiVBiCGWfSBKDG6C_2W8Rt9C5M5GCtcohuWkMuRdNZNlw5WPuzJyKVQtqZI-XgIeWyef9PGbQVZnONqR_wUx_gmVcj8KQJc9CJZBPesrj0&t=639020982240000000",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656247,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=A1uBvKAPMkBgQQzyYnT4oPy14tWhornlK1n_PzqH_SddOWkcr2t2Tf5BhkMA8JfdSXxnwNj0p6bRVSKR6N2-uM-52mJOgyJ0yZMZ9ORRIr7J1GN934eUuKd8dJMFDOs-MECCYBSqF1BTd36CMBtcliwKF3k1&t=639020982240000000",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656247,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=VDH_u7S1BTKotJxd7v0JuvC8j5UJY0nKEaKsyR6Lb1xQ63HY8z7XJs47Rc9MdOixU11OPkYSCYOFquF3hHh1nvY6aR52lQw-rADpxVZHjn3rIHMpKqs6JZaf8iGKfxseD-nLn0TEIsYVVWPs2fkbfzS0d0Ode4XRsm1MAA2&t=639020982240000000",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656247,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=ZRH1yzuOakoHUOBu-uHCnb8OGgE1t8rUcjbomt-2WAzmGx2pdNbJbuskJP6cve6NaPfh7u7iO9VMir4J-2RxiSw8GK9JNScPnmKy1ESS2iaU8IHfVBsiL9IB3RILFodGerQsXWcNADk7dycTIVAkAJEAmqVVmdBfKuo5dCMuIo_0axNT0&t=639020982240000000",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656247,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=A1uBvKAPMkBgQQzyYnT4oPy14tWhornlK1n_PzqH_SddOWkcr2t2Tf5BhkMA8JfdSXxnwNj0p6bRVSKR6N2-uM-52mJOgyJ0yZMZ9ORRIr7J1GN934eUuKd8dJMFDOs-MECCYBSqF1BTd36CMBtcliwKF3k1&t=639020982240000000",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656247,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=8Ym2gq_LgFdTHVafZ9YVrCJfkOOCFdXmdYuiyPFfZgQ95Iy1-k25sz48Py_u9y151CtAo1_GfgFzq6kzrBfWM4q9NUeLMPrF8BSboWhIJR-9kiRuBzmzSzfBBjx_K_gjJO3kpNMqbF4tPtR2wS5bQYMsxc5Uv0SMf4rGjnoZuLCzobX50&t=639020982240000000",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857656248,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/StepsProcessAward/OpeningFrame.aspx?enc=zo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%2bIhEQETtuHl%2bIS2N7qhQS5KBy1DUdvZnXG%2fVKwzK4x0415w0P%2fjD3hEe0AU4RMuSpcja1ooIHdioCBDo",
+          "status": 200,
+          "mime_type": "text/html",
+          "type": "Document",
+          "timestamp": 1768857656248,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=W392eyE60sWlvKJ3NCrFZh9zL_Bf3dXRVHAIlw9aWi3GPmE54A3vl6h9otFfLPHQuKofZ4jtiVBiCGWfSBKDG6C_2W8Rt9C5M5GCtcohuWkMuRdNZNlw5WPuzJyKVQtqZI-XgIeWyef9PGbQVZnONqR_wUx_gmVcj8KQJc9CJZBPesrj0&t=639020982240000000",
+          "status": 200,
+          "mime_type": "image/png",
+          "type": "Image",
+          "timestamp": 1768857656248,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/chilecompra.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656248,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/JQuery/jquery-1.11.1.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656248,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/chilecompra.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656248,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/JQuery/jquery-1.11.1.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656248,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/StepsProcessAward/OpeningHeader.aspx?enc=zo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%2bIhEQETtuHl%2bIS2N7qhQS5KBy1DUdvZnXG%2fVKwzK4x0415w0P%2fjD3hEe0AU4RMuSpcja1ooIHdioCBDo",
+          "http_method": "GET",
+          "type": "Document",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/StepsProcessAward/OpeningHeader.aspx?enc=zo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%2bIhEQETtuHl%2bIS2N7qhQS5KBy1DUdvZnXG%2fVKwzK4x0415w0P%2fjD3hEe0AU4RMuSpcja1ooIHdioCBDo",
+          "status": 200,
+          "mime_type": "text/html",
+          "type": "Document",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/ChileCompra.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/ChileCompra.css",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/chilecompra.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/chilecompra.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.googletagmanager.com/gtag/js?id=UA-51338325-2",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.googletagmanager.com/gtag/js?id=UA-51338325-2",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/analytics.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/analytics.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/hotjar.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/hotjar.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656249,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://static.hotjar.com/c/hotjar-637179.js?sv=5",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://static.hotjar.com/c/hotjar-637179.js?sv=5",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=SqZa8GYeN-voTRZ-GMsb11KKLzsM4GjYxTGAXg23ajVoLdblDojATKR_7aSBdwvGYc1HUN_gkQjb5mtE0&t=637814545746327080",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/WebResource.axd?d=SqZa8GYeN-voTRZ-GMsb11KKLzsM4GjYxTGAXg23ajVoLdblDojATKR_7aSBdwvGYc1HUN_gkQjb5mtE0&t=637814545746327080",
+          "status": 200,
+          "mime_type": "application/x-javascript",
+          "type": "Script",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/StepsProcessAward/SupplySummary.aspx?enc=rNLb0ubEtwjO8QxhO7%2bMkFTxSCC36aj23%2bdlqG%2bvQBFRC8VvXEzAPbFHlt94Xw%2fpSSWpzQ7l6A8v24NUMcBX5wHj0GAxuXbLbgN0XmKIDFM88a7t97wu6HczuqArngwimictBZMkm9dL3h0hxOqM3S2SLOa4N5%2fK52psq6uOV6dHfxbUz9dufbs%2fzziGU2%2bjbYdADxygS5IRYESjaozMZMpsFYrP9wc14vE40fxuYmU%3d",
+          "http_method": "GET",
+          "type": "Document",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/respuestas-aclaratorias.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/resumen-ofertas.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/comparativos-x-linea.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/comparativos-x-proveedor.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/historialL.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656250,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://script.hotjar.com/modules.5af39c695063f61775c4.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656251,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://script.hotjar.com/modules.5af39c695063f61775c4.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656251,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/Paso3_1.jpg",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656251,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-83DNLS44VH&cx=c&gtm=4e61e1",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656251,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-83DNLS44VH&cx=c&gtm=4e61e1",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656251,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.google-analytics.com/analytics.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656251,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.google-analytics.com/analytics.js",
+          "status": 200,
+          "mime_type": "text/javascript",
+          "type": "Script",
+          "timestamp": 1768857656251,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/respuestas-aclaratorias.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656251,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/comparativos-x-proveedor.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656252,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/historialL.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656252,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/resumen-ofertas.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656252,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/comparativos-x-linea.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656252,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/Paso3_1.jpg",
+          "status": 200,
+          "mime_type": "image/jpeg",
+          "type": "Image",
+          "timestamp": 1768857656252,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/RFB/StepsProcessAward/SupplySummary.aspx?enc=rNLb0ubEtwjO8QxhO7%2bMkFTxSCC36aj23%2bdlqG%2bvQBFRC8VvXEzAPbFHlt94Xw%2fpSSWpzQ7l6A8v24NUMcBX5wHj0GAxuXbLbgN0XmKIDFM88a7t97wu6HczuqArngwimictBZMkm9dL3h0hxOqM3S2SLOa4N5%2fK52psq6uOV6dHfxbUz9dufbs%2fzziGU2%2bjbYdADxygS5IRYESjaozMZMpsFYrP9wc14vE40fxuYmU%3d",
+          "status": 200,
+          "mime_type": "text/html",
+          "type": "Document",
+          "timestamp": 1768857656252,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/ChileCompra.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857656252,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/styles/ChileCompra.css",
+          "status": 200,
+          "mime_type": "text/css",
+          "type": "Stylesheet",
+          "timestamp": 1768857656252,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/chilecompra.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656252,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/chilecompra.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/Includes/scripts/fancybox/v2.1.1/jquery.fancybox.pack.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/Includes/scripts/fancybox/v2.1.1/jquery.fancybox.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.googletagmanager.com/gtag/js?id=UA-51338325-2",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.googletagmanager.com/gtag/js?id=UA-51338325-2",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/analytics.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/analytics.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/hotjar.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/scripts/hotjar.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Scripts/jquery-2.1.1.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/search_sintexto.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/info-chileproveedores.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/adj-administrativos.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/adj-tecnicos.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/adj-economicos.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/garantia.gif",
+          "http_method": "GET",
+          "type": "Image",
+          "timestamp": 1768857656253,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/Includes/scripts/fancybox/v2.1.1/jquery.fancybox.pack.js",
+          "status": 404,
+          "mime_type": "text/html",
+          "type": "Script",
+          "timestamp": 1768857656254,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/Includes/scripts/fancybox/v2.1.1/jquery.fancybox.css",
+          "status": 404,
+          "mime_type": "text/html",
+          "type": "Stylesheet",
+          "timestamp": 1768857656254,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/info-chileproveedores.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656254,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-83DNLS44VH&cx=c&gtm=4e61e1",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656254,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.googletagmanager.com/gtag/js?id=G-83DNLS44VH&cx=c&gtm=4e61e1",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656254,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.google-analytics.com/analytics.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656255,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.google-analytics.com/analytics.js",
+          "status": 200,
+          "mime_type": "text/javascript",
+          "type": "Script",
+          "timestamp": 1768857656255,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/search_sintexto.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656255,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://static.hotjar.com/c/hotjar-637179.js?sv=5",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656255,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://static.hotjar.com/c/hotjar-637179.js?sv=5",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656255,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://script.hotjar.com/modules.5af39c695063f61775c4.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656255,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://script.hotjar.com/modules.5af39c695063f61775c4.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656255,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/adj-administrativos.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656255,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/adj-tecnicos.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656256,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/adj-economicos.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656256,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Scripts/jquery-2.1.1.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656256,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Includes/images/Ofertas/garantia.gif",
+          "status": 200,
+          "mime_type": "image/gif",
+          "type": "Image",
+          "timestamp": 1768857656256,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/estilos/estilos.css",
+          "http_method": "GET",
+          "type": "Stylesheet",
+          "timestamp": 1768857656257,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/Procurement/Modules/estilos/estilos.css",
+          "status": 404,
+          "mime_type": "text/html",
+          "type": "Stylesheet",
+          "timestamp": 1768857656257,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://script.hotjar.com/browser-perf.8417c6bba72228fa2e29.js",
+          "http_method": "GET",
+          "type": "Script",
+          "timestamp": 1768857656257,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://script.hotjar.com/browser-perf.8417c6bba72228fa2e29.js",
+          "status": 200,
+          "mime_type": "application/javascript",
+          "type": "Script",
+          "timestamp": 1768857656257,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://analytics.google.com/g/collect?v=2&tid=G-83DNLS44VH&gtm=45je61e1v9126544534za20g&_p=1768857646711&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=849615512.1768857641&ul=en-us&sr=1920x1080&ir=1&uaa=x86&uab=64&uafvl=Not%253BA%253DBrand%3B99.0.0.0%7CGoogle%2520Chrome%3B139.0.7258.138%7CChromium%3B139.0.7258.138&uamb=0&uam=&uap=Linux&uapv=6.14.0&uaw=0&are=1&frm=1&pscdl=noapi&_eu=EAAIAGQ&_s=1&tag_exp=103116026~103200004~104527907~104528500~104684208~104684211~105391252~115495940~115616985~115938465~115938469~117041588&sid=1768857641&sct=1&seg=1&dl=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FStepsProcessAward%2FOpeningHeader.aspx%3Fenc%3Dzo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%252bIhEQETtuHl%252bIS2N7qhQS5KBy1DUdvZnXG%252fVKwzK4x0415w0P%252fjD3hEe0AU4RMuSpcja1ooIHdioCBDo&dr=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FStepsProcessAward%2FOpeningFrame.aspx%3Fenc%3Dzo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%252bIhEQETtuHl%252bIS2N7qhQS5KBy1DUdvZnXG%252fVKwzK4x0415w0P%252fjD3hEe0AU4RMuSpcja1ooIHdioCBDo&dt=&en=page_view&tfd=5147",
+          "http_method": "POST",
+          "type": "Fetch",
+          "timestamp": 1768857656257,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://analytics.google.com/g/collect?v=2&tid=G-83DNLS44VH&gtm=45je61e1v9126544534za20g&_p=1768857646711&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=849615512.1768857641&ul=en-us&sr=1920x1080&ir=1&uaa=x86&uab=64&uafvl=Not%253BA%253DBrand%3B99.0.0.0%7CGoogle%2520Chrome%3B139.0.7258.138%7CChromium%3B139.0.7258.138&uamb=0&uam=&uap=Linux&uapv=6.14.0&uaw=0&are=1&frm=1&pscdl=noapi&_eu=EAAIAGQ&_s=1&tag_exp=103116026~103200004~104527907~104528500~104684208~104684211~105391252~115495940~115616985~115938465~115938469~117041588&sid=1768857641&sct=1&seg=1&dl=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FStepsProcessAward%2FOpeningHeader.aspx%3Fenc%3Dzo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%252bIhEQETtuHl%252bIS2N7qhQS5KBy1DUdvZnXG%252fVKwzK4x0415w0P%252fjD3hEe0AU4RMuSpcja1ooIHdioCBDo&dr=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FStepsProcessAward%2FOpeningFrame.aspx%3Fenc%3Dzo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%252bIhEQETtuHl%252bIS2N7qhQS5KBy1DUdvZnXG%252fVKwzK4x0415w0P%252fjD3hEe0AU4RMuSpcja1ooIHdioCBDo&dt=&en=page_view&tfd=5147",
+          "status": 204,
+          "mime_type": "text/plain",
+          "type": "Fetch",
+          "timestamp": 1768857656257,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://analytics.google.com/g/collect?v=2&tid=G-83DNLS44VH&gtm=45je61e1v9126544534za20g&_p=1768857646947&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=849615512.1768857641&ul=en-us&sr=1920x1080&ir=1&uaa=x86&uab=64&uafvl=Not%253BA%253DBrand%3B99.0.0.0%7CGoogle%2520Chrome%3B139.0.7258.138%7CChromium%3B139.0.7258.138&uamb=0&uam=&uap=Linux&uapv=6.14.0&uaw=0&are=1&frm=1&pscdl=noapi&_eu=EAAIAGQ&_s=1&tag_exp=103116026~103200004~104527906~104528501~104684208~104684211~105391252~115495940~115616986~115938466~115938468~116682877~116744866~117025847~117041588&sid=1768857641&sct=1&seg=1&dl=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FStepsProcessAward%2FSupplySummary.aspx%3Fenc%3DrNLb0ubEtwjO8QxhO7%252bMkFTxSCC36aj23%252bdlqG%252bvQBFRC8VvXEzAPbFHlt94Xw%252fpSSWpzQ7l6A8v24NUMcBX5wHj0GAxuXbLbgN0XmKIDFM88a7t97wu6HczuqArngwimictBZMkm9dL3h0hxOqM3S2SLOa4N5%252fK52psq6uOV6dHfxbUz9dufbs%252fzziGU2%252bjbYdADxygS5IRYESjaozMZMpsFYrP9wc14vE40fxuYmU%253d&dr=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FStepsProcessAward%2FOpeningHeader.aspx%3Fenc%3Dzo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%252bIhEQETtuHl%252bIS2N7qhQS5KBy1DUdvZnXG%252fVKwzK4x0415w0P%252fjD3hEe0AU4RMuSpcja1ooIHdioCBDo&dt=&en=page_view&tfd=5254",
+          "http_method": "POST",
+          "type": "Fetch",
+          "timestamp": 1768857656257,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://analytics.google.com/g/collect?v=2&tid=G-83DNLS44VH&gtm=45je61e1v9126544534za20g&_p=1768857646947&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=849615512.1768857641&ul=en-us&sr=1920x1080&ir=1&uaa=x86&uab=64&uafvl=Not%253BA%253DBrand%3B99.0.0.0%7CGoogle%2520Chrome%3B139.0.7258.138%7CChromium%3B139.0.7258.138&uamb=0&uam=&uap=Linux&uapv=6.14.0&uaw=0&are=1&frm=1&pscdl=noapi&_eu=EAAIAGQ&_s=1&tag_exp=103116026~103200004~104527906~104528501~104684208~104684211~105391252~115495940~115616986~115938466~115938468~116682877~116744866~117025847~117041588&sid=1768857641&sct=1&seg=1&dl=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FStepsProcessAward%2FSupplySummary.aspx%3Fenc%3DrNLb0ubEtwjO8QxhO7%252bMkFTxSCC36aj23%252bdlqG%252bvQBFRC8VvXEzAPbFHlt94Xw%252fpSSWpzQ7l6A8v24NUMcBX5wHj0GAxuXbLbgN0XmKIDFM88a7t97wu6HczuqArngwimictBZMkm9dL3h0hxOqM3S2SLOa4N5%252fK52psq6uOV6dHfxbUz9dufbs%252fzziGU2%252bjbYdADxygS5IRYESjaozMZMpsFYrP9wc14vE40fxuYmU%253d&dr=https%3A%2F%2Fwww.mercadopublico.cl%2FProcurement%2FModules%2FRFB%2FStepsProcessAward%2FOpeningHeader.aspx%3Fenc%3Dzo5RZCHiY7QMq99EMpRHtKKrHR2aqvHC6pvWaLW5lq6kf3WE%252bIhEQETtuHl%252bIS2N7qhQS5KBy1DUdvZnXG%252fVKwzK4x0415w0P%252fjD3hEe0AU4RMuSpcja1ooIHdioCBDo&dt=&en=page_view&tfd=5254",
+          "status": 204,
+          "mime_type": "text/plain",
+          "type": "Fetch",
+          "timestamp": 1768857656258,
+          "window_handle": "56E8963644FFD5445FC494C3D4F85FA6"
+        }
+      ]
+    },
+    {
+      "name": "click_anexos_administrativos",
+      "timestamp": "2026-01-19T21:21:09.886776+00:00",
+      "window_handle": "F0EF6BF108B89D7230573F803AACB002",
+      "endpoints": []
+    },
+    {
+      "name": "click_ver_descargar_adjunto",
+      "timestamp": "2026-01-19T21:21:16.132561+00:00",
+      "window_handle": "F0EF6BF108B89D7230573F803AACB002",
+      "endpoints": [
+        {
+          "event": "Network.requestWillBeSent",
+          "url": "https://www.mercadopublico.cl/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=QC5mgj9ARNSnFrx7a8Ibon5tIkD59T3jWzlGU2u0LwlaE8xCsRgYbZoc1S4nspI8NNp2t9F5kc9SadHbrm8OoE3g32b4Z2NmdCPXW6GVifxJ%2bNgqWvKMDVSR2diKexoVOy%2bRFMeTtjKrdPOqNP5CcA%3d%3d",
+          "http_method": "POST",
+          "type": "Document",
+          "timestamp": 1768857674129,
+          "window_handle": "F0EF6BF108B89D7230573F803AACB002"
+        },
+        {
+          "event": "Network.responseReceived",
+          "url": "https://www.mercadopublico.cl/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=QC5mgj9ARNSnFrx7a8Ibon5tIkD59T3jWzlGU2u0LwlaE8xCsRgYbZoc1S4nspI8NNp2t9F5kc9SadHbrm8OoE3g32b4Z2NmdCPXW6GVifxJ%2bNgqWvKMDVSR2diKexoVOy%2bRFMeTtjKrdPOqNP5CcA%3d%3d",
+          "status": 200,
+          "mime_type": "application/octet-stream",
+          "type": "Document",
+          "timestamp": 1768857674129,
+          "window_handle": "F0EF6BF108B89D7230573F803AACB002"
+        }
+      ]
+    }
+  ],
+  "finished_at": "2026-01-19T21:21:16.132574+00:00"
+}

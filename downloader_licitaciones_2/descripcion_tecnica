@@ -1,0 +1,130 @@
+1. Plataforma Web y Framework
+
+El sistema está construido sobre Microsoft ASP.NET Web Forms (no MVC ni .NET Core), lo que significa:
+
+Las páginas son .aspx y cada interacción client-server genera un postback completo.
+
+Los controles de servidor generan IDs dinámicos (por ejemplo grdSupplies_ctl02__GvImgbAdministrativeAttachment), una característica típica de Web Forms.
+
+El flujo no es RESTful: no hay rutas limpias ni endpoints JSON públicos por defecto.
+
+El enc=... es un parámetro cifrado que contiene estado/contexto, usado por el backend para reconstruir la sesión/operación.
+
+Este stack implica que cada acción de usuario se traduce a una llamada al servidor que recarga la vista completa o abre un popup con contenido generado en servidor.
+
+2. Frontend HTML y Comportamiento Dinámico
+
+No hay JavaScript moderno:
+
+Uso de <input type="image"> con atributos onclick="openPopup(...)"
+
+La función openPopup(...) es un helper JavaScript simple que llama a window.open(...) para mostrar otro recurso en una ventana nueva.
+
+No hay librerías SPA (React, Angular, Vue).
+
+No hay uso de Fetch API, WebSockets, ni XHR avanzada.
+
+Cualquier validación o manipulación de formulario corre en el backend.
+
+Este tipo de frontend implica:
+
+Menor complejidad de cliente.
+
+Estado de aplicación mantenido en el servidor.
+
+Interacciones sincronizadas con recarga completa.
+
+3. Manejo de Archivos y ViewBidAttachment
+
+Cuando clickeas “Anexos Administrativos” o similares, se llama a:
+
+/BID/Modules/POPUPS/ViewBidAttachment.aspx?enc=...
+
+
+Esto indica:
+
+ViewBidAttachment.aspx es otra página Generada por Web Forms, envuelta en un popup.
+
+El parámetro enc contiene un token cifrado con los datos necesarios para recuperar el archivo y contexto en el backend.
+
+El servidor procesa ese token y entrega la vista con el archivo adjunto (probablemente ya almacenado en la base de datos o en un storage interno).
+
+No se entrega un recurso directo como /files/1234.pdf. Se reconstruye el contexto usando el token del popup.
+
+4. Estado y Session Management
+
+El uso de parámetros cifrados implican:
+
+El sistema mantiene estado de navegación en el servidor, no en el cliente.
+
+Cada parámetro como qs=... o enc=... suele contener:
+
+ID de licitación
+
+ID de usuario
+
+Estado de acceso/autorización
+
+Estado de formulario
+
+El flujo Web Forms usa ViewState que se serializa y firma para evitar manipulación.
+
+5. Integración y API
+
+No existen APIs públicas REST documentadas. Cualquier posible integración programática implicaría:
+
+Emulación de formularios y postbacks desde cliente
+
+Automatización de navegadores (Selenium/Puppeteer) para tareas de extracción
+
+Parsing de HTML para obtener datos
+
+No hay JSON nativo ni endpoints API modernos observables a simple vista.
+
+6. Infraestructura Detrás del Servidor
+
+Aunque no se ve directamente en el HTML, la presencia de Web Forms indica:
+
+Aplicación corriendo en Internet Information Services (IIS) de Microsoft
+
+Backend probablemente en C# y .NET Framework (no .NET Core)
+
+Base de datos SQL Server (típico con Web Forms, pero no 100% seguro sin inspección directa)
+
+Sesiones ASP.NET estándar
+
+7. Seguridad y Firma de Parámetros
+
+Los parámetros cifrados (enc=...):
+
+Están probablemente protegidos con AES o similar para impedir manipulación desde cliente.
+
+Permiten transportar estado entre páginas y popups sin exponer IDs internos.
+
+No contienen JSON legible directamente hasta decodificarse.
+
+8. Comportamiento UX
+
+La navegación no es asíncrona:
+
+Interacciones base = recarga de página + popups
+
+No capitaliza AJAX para actualizar partes de la UI
+
+Cada recurso (anexo, declaración jurada, etc.) es otra página con su propio ciclo de servidor
+
+Síntesis técnica
+
+La tecnología es:
+
+Frontend: HTML clásico + JS mínimo para popups
+
+Framework Web: ASP.NET Web Forms
+
+Servidor: IIS + .NET Framework
+
+Estado de sesión: ViewState + parámetros cifrados en URL
+
+Integración: No REST API pública, no JSON nativo
+
+UX: Postbacks completos + ventanas emergentes
