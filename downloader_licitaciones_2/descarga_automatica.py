@@ -12,6 +12,7 @@ import time
 import urllib.parse
 import urllib.request
 import zipfile
+import base64
 from http.cookiejar import CookieJar
 
 
@@ -48,7 +49,6 @@ except Exception:
 
 LOG_LEVEL = os.environ.get("MP_LICI_LOG_LEVEL", "info").lower()
 _LEVELS = {"debug": 10, "info": 20, "warn": 30, "error": 40}
-_WKHTMLTOPDF_BIN = None
 _CHROMEDRIVER_BIN = None
 
 
@@ -142,27 +142,10 @@ def _get_chromedriver_download_url(chrome_version):
 
 
 def _ensure_tools_windows():
-    global _WKHTMLTOPDF_BIN, _CHROMEDRIVER_BIN
+    global _CHROMEDRIVER_BIN
     if os.name != "nt":
         return
     tools_dir = _tools_dir()
-
-    if not _WKHTMLTOPDF_BIN and not shutil.which("wkhtmltopdf"):
-        wk_dir = os.path.join(tools_dir, "wkhtmltopdf")
-        wk_bin = os.path.join(wk_dir, "wkhtmltox", "bin", "wkhtmltopdf.exe")
-        if not os.path.isfile(wk_bin):
-            url = "https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.msvc2015-win64.zip"
-            zip_path = os.path.join(wk_dir, "wkhtmltopdf.zip")
-            os.makedirs(wk_dir, exist_ok=True)
-            try:
-                _download_file(url, zip_path)
-                _extract_zip(zip_path, wk_dir)
-            except Exception as exc:
-                _log_warn(f"No se pudo descargar wkhtmltopdf: {exc}")
-        if os.path.isfile(wk_bin):
-            _WKHTMLTOPDF_BIN = wk_bin
-            os.environ["PATH"] = f"{os.path.dirname(wk_bin)};{os.environ.get('PATH', '')}"
-            _log_info(f"wkhtmltopdf listo en {wk_bin}")
 
     if not _CHROMEDRIVER_BIN and not shutil.which("chromedriver"):
         cd_dir = os.path.join(tools_dir, "chromedriver")
@@ -513,19 +496,39 @@ def download_attachment(opener, url, download_dir, index, debug_dir=None, label=
         return None
 
     popup_html = html_lib.unescape(popup_html)
-    pages = _extract_pagination_pages(popup_html)
     saved = []
-    current_html = popup_html
     action_url = url
+    current_html = popup_html
 
-    for page in pages:
+    # La grilla de adjuntos usa paginación ASP.NET por __doPostBack(Page$N).
+    # Algunas licitaciones muestran solo un subconjunto de páginas (con "..." / ventana deslizante).
+    # Para no perder adjuntos, avanzamos secuencialmente y vamos ampliando el máximo de páginas vistas.
+    max_page = 1
+    page = 1
+    while page <= max_page:
         action_match = re.search(r'<form[^>]+action="([^"]+)"', current_html, re.I)
         if action_match:
             action_url = urllib.parse.urljoin(url, action_match.group(1))
 
-        hidden_fields = _extract_hidden_fields(current_html)
+        pages_here = _extract_pagination_pages(current_html)
+        try:
+            max_here = max(int(p) for p in pages_here) if pages_here else 1
+        except Exception:
+            max_here = 1
+        if max_here > max_page:
+            _log_debug(f"download popup: max_page {max_page} -> {max_here}")
+            max_page = max_here
 
-        if page != "1":
+        image_inputs = _extract_download_inputs(
+            current_html,
+            label=f"{label or index}_p{page}",
+            debug_dir=debug_dir,
+        )
+        if not image_inputs:
+            if page == max_page:
+                break
+            page += 1
+            hidden_fields = _extract_hidden_fields(current_html)
             form_data = dict(hidden_fields)
             form_data["__EVENTTARGET"] = "DWNL$grdId"
             form_data["__EVENTARGUMENT"] = f"Page${page}"
@@ -544,14 +547,6 @@ def download_attachment(opener, url, download_dir, index, debug_dir=None, label=
                     )
             except Exception as exc:
                 _log_warn(f"download error paginacion {page} {action_url}: {exc}")
-                continue
-
-        image_inputs = _extract_download_inputs(
-            current_html,
-            label=f"{label or index}_p{page}",
-            debug_dir=debug_dir,
-        )
-        if not image_inputs:
             continue
 
         hidden_fields = _extract_hidden_fields(current_html)
@@ -597,6 +592,30 @@ def download_attachment(opener, url, download_dir, index, debug_dir=None, label=
                 f.write(payload)
             saved.append(path)
 
+        if page == max_page:
+            break
+
+        page += 1
+        hidden_fields = _extract_hidden_fields(current_html)
+        form_data = dict(hidden_fields)
+        form_data["__EVENTTARGET"] = "DWNL$grdId"
+        form_data["__EVENTARGUMENT"] = f"Page${page}"
+        data = urllib.parse.urlencode(form_data).encode("utf-8")
+        try:
+            _log_debug(f"download POST paginacion {page} {action_url}")
+            with request_url(
+                opener,
+                action_url,
+                method="POST",
+                data=data,
+                headers={"Referer": url, "Content-Type": "application/x-www-form-urlencoded"},
+            ) as resp:
+                current_html = read_response(resp).decode(
+                    resp.headers.get_content_charset() or "utf-8", errors="replace"
+                )
+        except Exception as exc:
+            _log_warn(f"download error paginacion {page} {action_url}: {exc}")
+
     return saved
 
 
@@ -641,10 +660,76 @@ def get_access_token(opener):
     data = json.loads(payload)
     return data.get("access_token", "")
 
+def _render_html_to_pdf_chrome(html_text, output_path, chromedriver_path=None):
+    """
+    Renderiza un HTML a PDF usando Chrome headless + DevTools (Page.printToPDF).
+    Requiere tener Chrome instalado y chromedriver disponible en PATH (o en chromedriver_path).
+    """
+    try:
+        from selenium import webdriver
+        from selenium.webdriver.chrome.service import Service
+        from selenium.webdriver.chrome.options import Options
+        from selenium.webdriver.support.ui import WebDriverWait
+    except Exception as exc:
+        return False, f"selenium no disponible: {exc}"
+
+    chromedriver_path = chromedriver_path or shutil.which("chromedriver")
+    if not chromedriver_path:
+        return False, "chromedriver no encontrado en PATH"
+
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--window-size=1280,2000")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+
+    driver = None
+    try:
+        driver = webdriver.Chrome(service=Service(chromedriver_path), options=chrome_options)
+        url = "data:text/html;charset=utf-8," + urllib.parse.quote(html_text)
+        driver.get(url)
+        WebDriverWait(driver, 30).until(
+            lambda d: d.execute_script("return document.readyState") == "complete"
+        )
+        time.sleep(1)
+        pdf_data = driver.execute_cdp_cmd(
+            "Page.printToPDF",
+            {
+                "printBackground": True,
+                "landscape": False,
+                "paperWidth": 8.27,  # A4 inches
+                "paperHeight": 11.69,  # A4 inches
+                "marginTop": 0.4,
+                "marginBottom": 0.4,
+                "marginLeft": 0.4,
+                "marginRight": 0.4,
+                "displayHeaderFooter": False,
+                "preferCSSPageSize": True,
+                "generateDocumentOutline": False,
+                "generateTaggedPDF": False,
+            },
+        )
+        data_b64 = (pdf_data or {}).get("data") or ""
+        if not data_b64:
+            return False, "Page.printToPDF no devolvio datos"
+        with open(output_path, "wb") as f:
+            f.write(base64.b64decode(data_b64))
+        return True, ""
+    except Exception as exc:
+        return False, str(exc)
+    finally:
+        try:
+            if driver:
+                driver.quit()
+        except Exception:
+            pass
+
 
 def render_url_to_pdf(url, output_path, extra_args=None):
     args = [
-        _WKHTMLTOPDF_BIN or "wkhtmltopdf",
+        "wkhtmltopdf",
         "--enable-javascript",
         "--javascript-delay",
         "6000",
@@ -749,9 +834,10 @@ def build_garantias_pdf(opener, rfb_code, bid_id, org_code, output_path):
 </body>
 </html>
 """
-    success, err = render_html_to_pdf(html_page, output_path)
+    chromedriver_path = shutil.which("chromedriver")
+    success, err = _render_html_to_pdf_chrome(html_page, output_path, chromedriver_path=chromedriver_path)
     if not success:
-        _log_warn(f"garantias error al generar PDF: {err}")
+        _log_warn(f"garantias error al generar PDF (Chrome): {err}")
     return success
 
 
@@ -780,16 +866,12 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
 
         _ensure_tools_windows()
 
-        wkhtmltopdf_path = shutil.which("wkhtmltopdf")
         chromedriver_path = shutil.which("chromedriver")
         resumen["dependencias"] = {
-            "wkhtmltopdf": wkhtmltopdf_path or "",
             "chromedriver": chromedriver_path or "",
         }
-        if not wkhtmltopdf_path:
-            _log_warn("wkhtmltopdf no encontrado en PATH (garantias.pdf no se generara)")
         if not chromedriver_path:
-            _log_warn("chromedriver no encontrado en PATH (DJ/IP no se generaran)")
+            _log_warn("chromedriver no encontrado en PATH (DJ/IP y garantias.pdf no se generaran)")
 
         opener = build_opener()
         start_url = DETAILS_URL.format(licitacion=codigo)
@@ -918,8 +1000,8 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
             garantia_vals = provider.get("garantia_vals", [])
             if len(garantia_vals) >= 2:
                 g_path = os.path.join(provider_dir, "garantias.pdf")
-                if not wkhtmltopdf_path:
-                    prov_resumen["otros"]["errores"].append("wkhtmltopdf no encontrado en PATH")
+                if not chromedriver_path:
+                    prov_resumen["otros"]["errores"].append("chromedriver no encontrado en PATH")
                 else:
                     try:
                         ok_garantia = build_garantias_pdf(
