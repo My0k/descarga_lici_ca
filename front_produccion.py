@@ -20,7 +20,7 @@ import genera_xls_ca
 import genera_xls_lici
 from downloader_licitaciones_2 import descarga_automatica as descarga_licitaciones
 
-
+#
 class DescargadorProduccionApp:
     def __init__(self, root):
         self.root = root
