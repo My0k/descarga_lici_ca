@@ -444,7 +444,11 @@ def _descargar_adjuntos_viewbid(session, url, carpeta_destino):
         html = resp.text
         state = _parse_state(html)
         search_names = re.findall(r'name="(DWNL\$grdId\$ctl\d+\$search)"', html)
-        page_links = re.findall(r"__doPostBack\\('DWNL\$grdId','Page\$(\d+)'", html)
+        page_links = re.findall(
+            r"__doPostBack\(['\"]DWNL\$grdId['\"],\s*['\"]Page\$(\d+)['\"]",
+            html,
+            re.I,
+        )
         for p in page_links:
             if p not in processed_pages and p not in pending_pages:
                 pending_pages.append(p)
@@ -547,13 +551,13 @@ def _descargar_archivo(session, url, carpeta, nombre):
         if m:
             candidato = unquote(m.group(1).strip().strip('"').strip("'"))
             if candidato:
-                nombre = candidato
+                nombre = _fix_filename_encoding(candidato)
         else:
             m = re.search(r"filename=([^;]+)", dispo)
             if m:
                 candidato = m.group(1).strip().strip('"').strip("'")
                 if candidato:
-                    nombre = candidato
+                    nombre = _fix_filename_encoding(candidato)
 
     nombre = _asegurar_nombre_unico(carpeta, _limpiar_nombre_archivo(nombre))
     ruta = os.path.join(carpeta, nombre)
@@ -595,7 +599,7 @@ def _parse_popup_metadata(html):
 
 def _filename_from_disposition(dispo):
     m = re.search(r'filename="?([^";]+)"?', dispo or "")
-    return m.group(1) if m else ""
+    return _fix_filename_encoding(m.group(1) if m else "")
 
 
 def _guess_ext(content_type):
@@ -794,6 +798,17 @@ def _limpiar_nombre_archivo(nombre, max_len=160):
     if len(nombre) > max_len:
         nombre = nombre[:max_len].rstrip()
     return nombre or "archivo"
+
+
+def _fix_filename_encoding(value):
+    if not value:
+        return value
+    # Try to repair latin1-decoded UTF-8 (e.g., "NÂº" -> "Nº").
+    try:
+        repaired = value.encode("latin1").decode("utf-8")
+    except Exception:
+        return value
+    return repaired
 
 
 if __name__ == "__main__":

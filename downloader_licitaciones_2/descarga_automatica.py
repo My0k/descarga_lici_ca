@@ -398,18 +398,82 @@ def parse_providers(html):
     return providers
 
 
+def _extract_hidden_fields(html):
+    fields = {}
+    for name, value in re.findall(
+        r'<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]+value="([^"]*)"',
+        html,
+        re.I,
+    ):
+        fields[name] = value
+    return fields
+
+
+def _extract_download_inputs(html, label=None, debug_dir=None):
+    image_inputs = []
+    for name, title in re.findall(
+        r'<input[^>]+type="image"[^>]+name="([^"]+)"[^>]*title="([^"]*)"',
+        html,
+        re.I,
+    ):
+        if "ver" in title.lower():
+            image_inputs.append(name)
+    if not image_inputs:
+        for name in re.findall(
+            r'<input[^>]+type="image"[^>]+name="([^"]+)"[^>]*>',
+            html,
+            re.I,
+        ):
+            if name.lower().endswith("$search"):
+                image_inputs.append(name)
+    if not image_inputs:
+        debug_name = f"popup_sin_botones_{label or 'descarga'}"
+        debug_path = _guardar_debug_html(debug_dir, debug_name, html)
+        if debug_path:
+            _log_warn(f"popup sin botones de descarga, HTML guardado en {debug_path}")
+        else:
+            _log_warn("popup sin botones de descarga")
+    return image_inputs
+
+
+def _extract_pagination_pages(html):
+    pages = set(
+        re.findall(
+            r"__doPostBack\(['\"]DWNL\$grdId['\"],\s*['\"]Page\$(\d+)['\"]",
+            html,
+            re.I,
+        )
+    )
+    pages.add("1")
+    try:
+        return sorted(pages, key=lambda x: int(x))
+    except ValueError:
+        return sorted(pages)
+
+
 def filename_from_headers(headers, fallback):
     content_disp = headers.get("Content-Disposition", "")
     match = re.search(r"filename\*=UTF-8''([^;]+)", content_disp, re.I)
     if match:
-        return urllib.parse.unquote(match.group(1))
+        return _fix_filename_encoding(urllib.parse.unquote(match.group(1)))
     match = re.search(r'filename="([^"]+)"', content_disp, re.I)
     if match:
-        return match.group(1)
+        return _fix_filename_encoding(match.group(1))
     match = re.search(r"filename=([^;]+)", content_disp, re.I)
     if match:
-        return match.group(1).strip()
-    return fallback
+        return _fix_filename_encoding(match.group(1).strip())
+    return _fix_filename_encoding(fallback)
+
+
+def _fix_filename_encoding(value):
+    if not value:
+        return value
+    # Try to repair latin1-decoded UTF-8 (e.g., "NÂº" -> "Nº").
+    try:
+        repaired = value.encode("latin1").decode("utf-8")
+    except Exception:
+        return value
+    return repaired
 
 
 def ensure_unique_path(path):
@@ -449,84 +513,89 @@ def download_attachment(opener, url, download_dir, index, debug_dir=None, label=
         return None
 
     popup_html = html_lib.unescape(popup_html)
-    action_match = re.search(r'<form[^>]+action="([^"]+)"', popup_html, re.I)
-    action_url = url
-    if action_match:
-        action_url = urllib.parse.urljoin(url, action_match.group(1))
-
-    hidden_fields = {}
-    for name, value in re.findall(
-        r'<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]+value="([^"]*)"',
-        popup_html,
-        re.I,
-    ):
-        hidden_fields[name] = value
-
-    image_inputs = []
-    for name, title in re.findall(
-        r'<input[^>]+type="image"[^>]+name="([^"]+)"[^>]*title="([^"]*)"',
-        popup_html,
-        re.I,
-    ):
-        if "ver" in title.lower():
-            image_inputs.append(name)
-    if not image_inputs:
-        debug_name = f"popup_sin_botones_{label or index}"
-        debug_path = _guardar_debug_html(debug_dir, debug_name, popup_html)
-        if debug_path:
-            _log_warn(f"popup sin botones de descarga, HTML guardado en {debug_path}")
-        else:
-            _log_warn("popup sin botones de descarga")
-        for name in re.findall(
-            r'<input[^>]+type="image"[^>]+name="([^"]+)"[^>]*>',
-            popup_html,
-            re.I,
-        ):
-            if name.lower().endswith("$search"):
-                image_inputs.append(name)
-
+    pages = _extract_pagination_pages(popup_html)
     saved = []
-    for input_name in image_inputs:
-        form_data = dict(hidden_fields)
-        form_data[f"{input_name}.x"] = "1"
-        form_data[f"{input_name}.y"] = "1"
-        data = urllib.parse.urlencode(form_data).encode("utf-8")
-        try:
-            _log_debug(f"download POST action {action_url} ({input_name})")
-            with request_url(
-                opener,
-                action_url,
-                method="POST",
-                data=data,
-                headers={"Referer": url, "Content-Type": "application/x-www-form-urlencoded"},
-            ) as resp:
-                content_type = resp.headers.get("Content-Type", "").lower()
-                payload = read_response(resp)
-                _log_debug(
-                    f"download status={getattr(resp, 'status', 'n/a')} "
-                    f"content_type={content_type} bytes={len(payload)}"
-                )
-        except Exception as exc:
-            _log_warn(f"download error POST {action_url}: {exc}")
+    current_html = popup_html
+    action_url = url
+
+    for page in pages:
+        action_match = re.search(r'<form[^>]+action="([^"]+)"', current_html, re.I)
+        if action_match:
+            action_url = urllib.parse.urljoin(url, action_match.group(1))
+
+        hidden_fields = _extract_hidden_fields(current_html)
+
+        if page != "1":
+            form_data = dict(hidden_fields)
+            form_data["__EVENTTARGET"] = "DWNL$grdId"
+            form_data["__EVENTARGUMENT"] = f"Page${page}"
+            data = urllib.parse.urlencode(form_data).encode("utf-8")
+            try:
+                _log_debug(f"download POST paginacion {page} {action_url}")
+                with request_url(
+                    opener,
+                    action_url,
+                    method="POST",
+                    data=data,
+                    headers={"Referer": url, "Content-Type": "application/x-www-form-urlencoded"},
+                ) as resp:
+                    current_html = read_response(resp).decode(
+                        resp.headers.get_content_charset() or "utf-8", errors="replace"
+                    )
+            except Exception as exc:
+                _log_warn(f"download error paginacion {page} {action_url}: {exc}")
+                continue
+
+        image_inputs = _extract_download_inputs(
+            current_html,
+            label=f"{label or index}_p{page}",
+            debug_dir=debug_dir,
+        )
+        if not image_inputs:
             continue
 
-        if "text/html" in content_type:
-            debug_name = f"popup_respuesta_html_{label or index}_{input_name}"
-            html_text = payload.decode("utf-8", errors="replace")
-            debug_path = _guardar_debug_html(debug_dir, debug_name, html_text)
-            if debug_path:
-                _log_warn(f"respuesta HTML inesperada, guardada en {debug_path}")
-            else:
-                _log_warn("respuesta HTML inesperada en descarga")
-            continue
+        hidden_fields = _extract_hidden_fields(current_html)
+        for input_name in image_inputs:
+            form_data = dict(hidden_fields)
+            form_data[f"{input_name}.x"] = "1"
+            form_data[f"{input_name}.y"] = "1"
+            data = urllib.parse.urlencode(form_data).encode("utf-8")
+            try:
+                _log_debug(f"download POST action {action_url} ({input_name})")
+                with request_url(
+                    opener,
+                    action_url,
+                    method="POST",
+                    data=data,
+                    headers={"Referer": url, "Content-Type": "application/x-www-form-urlencoded"},
+                ) as resp:
+                    content_type = resp.headers.get("Content-Type", "").lower()
+                    payload = read_response(resp)
+                    _log_debug(
+                        f"download status={getattr(resp, 'status', 'n/a')} "
+                        f"content_type={content_type} bytes={len(payload)}"
+                    )
+            except Exception as exc:
+                _log_warn(f"download error POST {action_url}: {exc}")
+                continue
 
-        fallback = f"adjunto_{index}.bin"
-        filename = filename_from_headers(resp.headers, fallback)
-        filename = os.path.basename(filename).strip() or fallback
-        path = ensure_unique_path(os.path.join(download_dir, filename))
-        with open(path, "wb") as f:
-            f.write(payload)
-        saved.append(path)
+            if "text/html" in content_type:
+                debug_name = f"popup_respuesta_html_{label or index}_{input_name}"
+                html_text = payload.decode("utf-8", errors="replace")
+                debug_path = _guardar_debug_html(debug_dir, debug_name, html_text)
+                if debug_path:
+                    _log_warn(f"respuesta HTML inesperada, guardada en {debug_path}")
+                else:
+                    _log_warn("respuesta HTML inesperada en descarga")
+                continue
+
+            fallback = f"adjunto_{index}.bin"
+            filename = filename_from_headers(resp.headers, fallback)
+            filename = os.path.basename(filename).strip() or fallback
+            path = ensure_unique_path(os.path.join(download_dir, filename))
+            with open(path, "wb") as f:
+                f.write(payload)
+            saved.append(path)
 
     return saved
 
