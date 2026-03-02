@@ -366,7 +366,7 @@ class DescargadorProduccionApp:
             chrome_options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
             self.driver = webdriver.Chrome(options=chrome_options)
-            self.driver.get("https://mercadopublico.cl/Home")
+            self.driver.get("https://www.mercadopublico.cl/Home")
             self._restaurar_sesion_cookies()
 
             self.navegador_iniciado = True
@@ -1011,7 +1011,7 @@ class DescargadorProduccionApp:
                 except Exception:
                     continue
         try:
-            self.driver.get("https://mercadopublico.cl/Home")
+            self.driver.get("https://www.mercadopublico.cl/Home")
         except Exception:
             pass
         return True

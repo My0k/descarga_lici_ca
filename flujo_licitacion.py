@@ -12,7 +12,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-BUSCADOR_URL = "https://mercadopublico.cl/Procurement/Modules/RFB/SearchAcquisitions.aspx"
+BUSCADOR_URL = "https://www.mercadopublico.cl/Procurement/Modules/RFB/SearchAcquisitions.aspx"
 FICHA_DIRECTA_URL = "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?idlicitacion={codigo}"
 
 

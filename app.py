@@ -53,7 +53,7 @@ class DescargadorLicitacionesApp:
         self.test_lici_url_directa = tk.BooleanVar(value=self.modo == "test")
         self.test_lici_desde_url = tk.BooleanVar(value=False)
         self.test_lici_url_valor = tk.StringVar(
-            value="https://mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=lMJBTBVx1W3Vzd7cnoBDUw=="
+            value="https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=lMJBTBVx1W3Vzd7cnoBDUw=="
         )
         self.base_descargas_dir = tk.StringVar(
             value=self._cargar_base_descargas() or os.path.abspath("Descargas")
@@ -490,15 +490,15 @@ class DescargadorLicitacionesApp:
             # Iniciar el navegador
             self.driver = webdriver.Chrome(options=chrome_options)
             print("[DEBUG] iniciar_navegador: driver creado")
-            self.driver.get("https://mercadopublico.cl/Home")
-            print("[DEBUG] iniciar_navegador: cargada https://mercadopublico.cl/Home")
+            self.driver.get("https://www.mercadopublico.cl/Home")
+            print("[DEBUG] iniciar_navegador: cargada https://www.mercadopublico.cl/Home")
 
             # Intentar restaurar cookies de sesión previa
             cookies_ok = self._restaurar_sesion_cookies()
             if cookies_ok:
                 print("[DEBUG] iniciar_navegador: cookies restauradas, refrescando Home")
                 try:
-                    self.driver.get("https://mercadopublico.cl/Home")
+                    self.driver.get("https://www.mercadopublico.cl/Home")
                 except Exception as e:
                     print(f"[DEBUG] iniciar_navegador: error refrescando tras restaurar cookies: {e}")
             
@@ -1206,7 +1206,7 @@ class DescargadorLicitacionesApp:
                     print(f"[DEBUG] No se pudo agregar cookie {cookie.get('name')} para dominio {dom}: {e}")
                     continue
         try:
-            self.driver.get("https://mercadopublico.cl/Home")
+            self.driver.get("https://www.mercadopublico.cl/Home")
         except Exception:
             pass
         return True
@@ -1424,7 +1424,7 @@ class DescargadorLicitacionesApp:
                         )
                         return
                 elif self.test_lici_url_directa.get():
-                    url_directa = "https://mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=JjO5zKqb+2R21IMjm8Gxkg=="
+                    url_directa = "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=JjO5zKqb+2R21IMjm8Gxkg=="
 
                 # Construir URL si viene de código
                 if not url_directa:
@@ -1487,7 +1487,7 @@ class DescargadorLicitacionesApp:
             return None
 
         print(f"[TEST LICITACION] Abriendo buscador para código {codigo_lici}")
-        driver.get("https://mercadopublico.cl/Procurement/Modules/RFB/SearchAcquisitions.aspx")
+        driver.get("https://www.mercadopublico.cl/Procurement/Modules/RFB/SearchAcquisitions.aspx")
 
         try:
             campo_codigo = wait.until(EC.presence_of_element_located((By.ID, "txt_Nombre")))
