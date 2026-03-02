@@ -29,7 +29,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 import descarga_ca
 
-URL = "https://mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=5vvQo+7VGfY18eev2hYLBQ=="
+URL = "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=5vvQo+7VGfY18eev2hYLBQ=="
 BASE = "https://www.mercadopublico.cl"
 DOWNLOAD_DIR = "adjuntos"
 USER_AGENT = (
