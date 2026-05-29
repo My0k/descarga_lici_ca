@@ -1474,6 +1474,228 @@ def descargar_declaracion_jurada_licitacion_a_carpeta(
     return descargar_pdf_a_archivo(url, destino_pdf, driver=driver, tag="[DJ]")
 
 
+def _expandir_modal_para_impresion(driver, tag="[PDF]"):
+    """
+    Aplana el modal/overlay actual para que Page.printToPDF capture TODO su contenido.
+
+    El comprobante de Compra Ágil ("Ver detalle") se muestra en un modal con
+    position:fixed y un cuerpo con scroll interno (overflow-y:auto y altura acotada
+    al viewport). En ese caso printToPDF solo renderiza la porción visible del scroll
+    y repite el modal fijo en cada página, perdiendo el final del detalle (incluido el
+    TOTAL de la cotización). Subir el tamaño de papel no ayuda: el recorte lo causa el
+    scroll interno + position:fixed, no la altura de la hoja.
+
+    Esta función quita los límites de altura/overflow y el posicionamiento fijo para
+    que el contenido fluya completo en el documento antes de imprimir a página completa.
+    """
+    if not driver:
+        return False
+    script = r"""
+    try {
+      var cambiados = 0;
+      var nodos = document.querySelectorAll('body *');
+      for (var i = 0; i < nodos.length; i++) {
+        var el = nodos[i];
+        var cs = window.getComputedStyle(el);
+        if (!cs) continue;
+        var oy = cs.overflowY, ov = cs.overflow;
+        var scrolleable = (oy === 'auto' || oy === 'scroll' || ov === 'auto' || ov === 'scroll');
+        if (scrolleable && el.scrollHeight > el.clientHeight + 4) {
+          el.style.setProperty('overflow', 'visible', 'important');
+          el.style.setProperty('overflow-y', 'visible', 'important');
+          el.style.setProperty('max-height', 'none', 'important');
+          el.style.setProperty('height', 'auto', 'important');
+          cambiados++;
+        } else if (cs.maxHeight && cs.maxHeight !== 'none') {
+          el.style.setProperty('max-height', 'none', 'important');
+        }
+        if (cs.position === 'fixed') {
+          el.style.setProperty('position', 'static', 'important');
+          cambiados++;
+        }
+      }
+      var de = document.documentElement, b = document.body;
+      de.style.setProperty('height', 'auto', 'important');
+      de.style.setProperty('overflow', 'visible', 'important');
+      b.style.setProperty('height', 'auto', 'important');
+      b.style.setProperty('overflow', 'visible', 'important');
+      return cambiados;
+    } catch (e) { return -1; }
+    """
+    try:
+        cambiados = driver.execute_script(script)
+        # Dar tiempo a reflow / lazy-render del contenido que ahora queda visible.
+        time.sleep(0.6)
+        print(f"{tag} Modal aplanado para impresión (ajustes aplicados: {cambiados}).")
+        return cambiados not in (None, -1)
+    except Exception as e:
+        print(f"{tag} No se pudo aplanar el modal antes de imprimir: {e}")
+        return False
+
+
+def _aislar_y_marcar_comprobante(driver, monto_total=None, tag="[PDF]"):
+    """
+    Prepara el modal "Ver detalle" (Cotización enviada por ...) para imprimir un
+    comprobante LIMPIO y con el TOTAL visible.
+
+    Problema que resuelve: aplanar toda la página (convertir todo position:fixed a
+    static y quitar overflow) hacía que el modal cayera al flujo del documento y se
+    intercalara con la página de fondo, produciendo texto encimado, contenido
+    duplicado y el TOTAL de la oferta cortado/perdido.
+
+    Estrategia (opción C):
+      1) Localiza SOLO el nodo del modal del comprobante (por el texto
+         "Cotización enviada por").
+      2) Calcula/recibe el monto total y estampa un banner inequívoco
+         "TOTAL OFERTA: $X" para que nunca se confunda con un subtotal.
+      3) Aísla el modal: deja únicamente ese nodo en el <body> y le quita los
+         límites de scroll/altura, sin tocar el resto de la página (que se descarta).
+    """
+    if not driver:
+        return False
+    script = r"""
+    (function(){
+      var montoTotal = (arguments[0] || '').toString().trim();
+
+      function findDialog(){
+        // 1) Contenedores típicos de modal/diálogo que contengan el texto del comprobante.
+        var sels = '[role="dialog"], .MuiDialog-paper, .MuiDialog-container, .MuiModal-root, .MuiDrawer-paper';
+        var candidatos = Array.prototype.slice.call(document.querySelectorAll(sels));
+        for (var i=0;i<candidatos.length;i++){
+          var t = (candidatos[i].innerText||'');
+          if (t.indexOf('Cotización enviada')!==-1 || t.indexOf('Cotizacion enviada')!==-1){
+            return candidatos[i];
+          }
+        }
+        // 2) Fallback: ubicar el encabezado "Cotización enviada por" y subir al ancestro overlay.
+        var all = document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,div');
+        var marca = null;
+        for (var k=0;k<all.length;k++){
+          var tx=(all[k].textContent||'').trim();
+          if (tx.indexOf('Cotización enviada por')===0 || tx.indexOf('Cotizacion enviada por')===0){ marca=all[k]; break; }
+        }
+        if (marca){
+          var el = marca, overlay = null, conSubtotal = null;
+          while (el && el !== document.body){
+            var cs = window.getComputedStyle(el);
+            var cls = (el.className && el.className.toString) ? el.className.toString() : '';
+            if (cs.position==='fixed' || cs.position==='absolute' || /Dialog|Modal|Drawer/.test(cls)){ overlay = el; }
+            // Menor ancestro que contiene el comprobante completo (encabezado + items).
+            if (!conSubtotal){
+              var it = (el.innerText||'');
+              if ((it.indexOf('Cotización enviada')!==-1 || it.indexOf('Cotizacion enviada')!==-1) && /subtotal/i.test(it)){
+                conSubtotal = el;
+              }
+            }
+            el = el.parentElement;
+          }
+          // Preferir el overlay (modal). Si no hay (detalle en página completa),
+          // usar el bloque que contiene encabezado + items. Último recurso: la marca.
+          return overlay || conSubtotal || marca;
+        }
+        return null;
+      }
+
+      function leaves(root){
+        var out=[]; var all=root.querySelectorAll('*');
+        for(var i=0;i<all.length;i++){
+          if(all[i].children.length===0){
+            var tx=(all[i].textContent||'').trim();
+            if(tx) out.push({el:all[i], tx:tx});
+          }
+        }
+        return out;
+      }
+
+      // Suma de subtotales como respaldo si no recibimos monto_total desde Python.
+      function sumarSubtotales(root){
+        var ls = leaves(root), total=0, n=0;
+        for(var i=0;i<ls.length;i++){
+          if(/^subtotal$/i.test(ls[i].tx)){
+            for(var j=i+1; j<ls.length && j<=i+4; j++){
+              if(/^\$\s*[\d. ]+$/.test(ls[j].tx)){
+                total += parseInt(ls[j].tx.replace(/[^0-9]/g,''),10)||0; n++; break;
+              }
+            }
+          }
+        }
+        return n>0 ? total : 0;
+      }
+
+      var dialog = findDialog();
+      if(!dialog) return 'no-dialog';
+
+      // Determinar el total: prioridad al valor scrapeado en Python; si no, sumar subtotales.
+      var textoTotal = montoTotal;
+      if(!textoTotal){
+        var suma = sumarSubtotales(dialog);
+        if(suma>0){ textoTotal = '$ ' + suma.toLocaleString('es-CL'); }
+      }
+
+      // Clonar el modal para desacoplarlo de ancestros con overflow/transform.
+      var clone = dialog.cloneNode(true);
+
+      // Estampar banner de TOTAL inequívoco.
+      if(textoTotal){
+        var banner = document.createElement('div');
+        banner.id = '__mp_total_oferta__';
+        banner.style.cssText = 'margin:18px 0;padding:14px 18px;border:2px solid #000;border-radius:8px;'+
+          'font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:bold;text-align:center;'+
+          'background:#f2f2f2;color:#000;';
+        banner.textContent = 'TOTAL OFERTA: ' + textoTotal;
+        clone.appendChild(banner);
+      }
+
+      // Aislar: dejar SOLO el comprobante en el body.
+      document.body.innerHTML = '';
+      document.body.appendChild(clone);
+
+      // Quitar recortes de scroll/altura y posicionamientos que descuadran el PDF.
+      function fix(el){
+        el.style.setProperty('position','static','important');
+        el.style.setProperty('max-height','none','important');
+        el.style.setProperty('height','auto','important');
+        el.style.setProperty('overflow','visible','important');
+        el.style.setProperty('overflow-y','visible','important');
+      }
+      fix(clone);
+      var desc = clone.querySelectorAll('*');
+      for(var d=0; d<desc.length; d++){
+        var c = window.getComputedStyle(desc[d]);
+        if(c.position==='fixed' || c.position==='absolute') desc[d].style.setProperty('position','static','important');
+        if(c.maxHeight && c.maxHeight!=='none') desc[d].style.setProperty('max-height','none','important');
+        var oy=c.overflowY, ov=c.overflow;
+        if(oy==='auto'||oy==='scroll'||ov==='auto'||ov==='scroll'){
+          desc[d].style.setProperty('overflow','visible','important');
+          desc[d].style.setProperty('overflow-y','visible','important');
+        }
+      }
+
+      clone.style.setProperty('width','820px','important');
+      clone.style.setProperty('max-width','820px','important');
+      clone.style.setProperty('margin','0 auto','important');
+      document.documentElement.style.setProperty('overflow','visible','important');
+      document.documentElement.style.setProperty('height','auto','important');
+      document.body.style.setProperty('overflow','visible','important');
+      document.body.style.setProperty('height','auto','important');
+      document.body.style.setProperty('background','#ffffff','important');
+
+      return textoTotal ? ('ok:'+textoTotal) : 'ok:sin-total';
+    })();
+    """
+    try:
+        resultado = driver.execute_script(script, (monto_total or ""))
+        time.sleep(0.6)  # reflow / lazy-render del contenido ya visible
+        if resultado == "no-dialog":
+            print(f"{tag} No se encontró el modal del comprobante para aislar.")
+            return False
+        print(f"{tag} Comprobante aislado para impresión ({resultado}).")
+        return True
+    except Exception as e:
+        print(f"{tag} No se pudo aislar/marcar el comprobante: {e}")
+        return False
+
+
 def imprimir_pagina_actual_a_pdf(
     destino_pdf,
     driver,
@@ -1798,14 +2020,21 @@ def descargar_comprobante_oferta_compra_agil_por_proveedor(proveedor, carpeta_pr
     except Exception:
         pass
 
-    # Importante: preferCSSPageSize=True (como en test_comprobanteorden.py) suele ser más estable que
-    # forzar un "full_page" con paperWidth/paperHeight enormes.
+    # El modal "Ver detalle" tiene scroll interno + position:fixed. Antes se aplanaba toda
+    # la página, lo que mezclaba el modal con el fondo y cortaba/perdía el TOTAL de la oferta.
+    # Ahora aislamos SOLO el comprobante y estampamos el TOTAL inequívoco (opción C).
+    _aislar_y_marcar_comprobante(
+        driver,
+        monto_total=proveedor.get("monto_total"),
+        tag="[VOUCHER_CA]",
+    )
+
     ok = imprimir_pagina_actual_a_pdf(
         destino_pdf,
         driver,
         tag="[VOUCHER_CA]",
-        full_page=False,
-        prefer_css_page_size=True,
+        full_page=True,
+        prefer_css_page_size=False,
     )
 
     # Cerrar detalle según el modo detectado (método inspirado en test_comprobanteorden.py).
