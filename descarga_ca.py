@@ -24,6 +24,12 @@ import json
 
 # Constantes para llamadas API (Compra Ágil)
 API_BASE_CA = "https://servicios-compra-agil.mercadopublico.cl/v1/compra-agil"
+# Tamaño de página al pedir ofertas: la API acepta valores altos, así que en la práctica
+# basta una sola petición. El bucle de paginación queda igual como red de seguridad.
+PAGE_SIZE_OFERTAS = 200
+MAX_PAGINAS_OFERTAS = 25
+# Tope de hojas a recorrer en el paginador de proveedores de la UI.
+MAX_PAGINAS_PROVEEDORES_UI = 30
 DEFAULT_COOKIE = "cf8fc9f9992a81aa1f6cd62d77d1d62b=19395daaa97624eb1f7f9f9e68b099e5"
 CERT_BASE_URL = "https://proveedor.mercadopublico.cl/ficha/certificado"
 DECLARACION_JURADA_BASE_URL = "https://proveedor.mercadopublico.cl/BeneficiariosFinales/lectura"
@@ -379,10 +385,21 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
     else:
         print(f"[API] Candidatos encontrados: {len(candidatos)}")
 
+    # Un mismo proveedor puede presentar más de una oferta; cada una necesita su propia
+    # carpeta o los adjuntos de ambas se mezclarían bajo el mismo nombre.
+    carpetas_usadas = {}
+
     for candidato in candidatos:
         candidato_id = candidato.get("id")
         etiqueta = candidato.get("label") or f"Postulante_{candidato_id}"
-        carpeta_candidato = os.path.join(carpeta_base, limpiar_nombre_archivo(etiqueta))
+        nombre_carpeta = limpiar_nombre_archivo(etiqueta)
+        repetidas = carpetas_usadas.get(nombre_carpeta, 0)
+        carpetas_usadas[nombre_carpeta] = repetidas + 1
+        if repetidas:
+            sufijo = f" (oferta {repetidas + 1})"
+            nombre_carpeta = f"{limpiar_nombre_archivo(etiqueta)[:100 - len(sufijo)]}{sufijo}"
+            print(f"[API] {etiqueta} presentó más de una oferta; se usa la carpeta '{nombre_carpeta}'")
+        carpeta_candidato = os.path.join(carpeta_base, nombre_carpeta)
         os.makedirs(carpeta_candidato, exist_ok=True)
 
         try:
@@ -575,21 +592,405 @@ def navegar_a_compra_agil(codigo_ca, driver):
         print(f"Error al navegar a compra ágil: {str(e)}")
         return False
 
+def _enlaces_ver_detalle(driver):
+    """Enlaces 'Ver detalle' visibles en la hoja actual del listado de proveedores."""
+    enlaces = driver.find_elements(By.XPATH, "//a[normalize-space()='Ver detalle']")
+    if not enlaces:
+        enlaces = driver.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
+    return enlaces
+
+
+def _paginador_proveedores(driver):
+    """Devuelve el <nav> del paginador MUI del listado de proveedores, o None si no hay."""
+    for selector in ("nav.MuiPagination-root", "ul.MuiPagination-ul", ".MuiTablePagination-root"):
+        elementos = driver.find_elements(By.CSS_SELECTOR, selector)
+        if elementos:
+            return elementos[0]
+    return None
+
+
+def _boton_paginador(driver, etiquetas):
+    """Busca un botón del paginador por su aria-label (MUI los emite en inglés)."""
+    paginador = _paginador_proveedores(driver)
+    if not paginador:
+        return None
+    for etiqueta in etiquetas:
+        for boton in paginador.find_elements(By.CSS_SELECTOR, f'button[aria-label="{etiqueta}"]'):
+            return boton
+    return None
+
+
+def _boton_deshabilitado(boton):
+    if boton is None:
+        return True
+    try:
+        if boton.get_attribute("disabled") or boton.get_attribute("aria-disabled") == "true":
+            return True
+        return "Mui-disabled" in (boton.get_attribute("class") or "")
+    except StaleElementReferenceException:
+        return True
+
+
+def _pagina_actual_proveedores(driver):
+    """Número (1-based) de la hoja activa del paginador. 1 si no hay paginador."""
+    paginador = _paginador_proveedores(driver)
+    if not paginador:
+        return 1
+    for boton in paginador.find_elements(By.TAG_NAME, "button"):
+        try:
+            seleccionado = (
+                boton.get_attribute("aria-current") == "true"
+                or "Mui-selected" in (boton.get_attribute("class") or "")
+            )
+            if not seleccionado:
+                continue
+            texto = (boton.text or "").strip()
+            if texto.isdigit():
+                return int(texto)
+            m = re.search(r"page (\d+)$", boton.get_attribute("aria-label") or "")
+            if m:
+                return int(m.group(1))
+        except StaleElementReferenceException:
+            continue
+    return 1
+
+
+def _firma_pagina_proveedores(driver):
+    """Huella del contenido de la hoja actual, para detectar que un cambio de página ya se aplicó."""
+    partes = []
+    for enlace in _enlaces_ver_detalle(driver):
+        try:
+            tarjeta = enlace.find_element(
+                By.XPATH,
+                "./ancestor::*[.//a[contains(@href,'proveedor.mercadopublico.cl/ficha')]][1]",
+            )
+            texto = (tarjeta.text or "")[:120]
+        except Exception:
+            texto = ""
+        partes.append(texto)
+    return f"{_pagina_actual_proveedores(driver)}|{len(partes)}|" + "||".join(partes)
+
+
+def _esperar_cambio_pagina(driver, firma_previa, timeout=20):
+    """Espera a que la hoja cambie realmente (React recicla nodos: staleness_of no sirve)."""
+    fin = time.time() + timeout
+    while time.time() < fin:
+        try:
+            actual = _firma_pagina_proveedores(driver)
+            if actual != firma_previa and _enlaces_ver_detalle(driver):
+                time.sleep(0.6)  # dejar asentar el render
+                return True
+        except StaleElementReferenceException:
+            pass
+        time.sleep(0.3)
+    return False
+
+
+def _avanzar_pagina_proveedores(driver):
+    """Avanza a la siguiente hoja. False si ya es la última o no hay paginador."""
+    boton = _boton_paginador(driver, ("Go to next page", "Ir a la página siguiente"))
+    if _boton_deshabilitado(boton):
+        return False
+    firma = _firma_pagina_proveedores(driver)
+    try:
+        driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'}); arguments[0].click();", boton
+        )
+    except Exception as e:
+        print(f"[PAGINACION] No se pudo avanzar de hoja: {e}")
+        return False
+    if not _esperar_cambio_pagina(driver, firma):
+        print("[PAGINACION] La hoja no cambió tras pulsar 'siguiente'")
+        return False
+    return True
+
+
+def _ir_a_pagina_proveedores(driver, numero):
+    """
+    Sitúa el listado en la hoja `numero` (1-based).
+
+    Navega con 'primera hoja' + N-1 clicks en 'siguiente' en vez de usar los botones
+    numéricos, porque MUI colapsa los números en elipsis cuando hay muchas hojas.
+    """
+    if not numero or numero < 1:
+        numero = 1
+    if _pagina_actual_proveedores(driver) == numero and _enlaces_ver_detalle(driver):
+        return True
+
+    primera = _boton_paginador(driver, ("Go to first page", "Ir a la primera página"))
+    if primera is not None and not _boton_deshabilitado(primera):
+        firma = _firma_pagina_proveedores(driver)
+        try:
+            driver.execute_script(
+                "arguments[0].scrollIntoView({block:'center'}); arguments[0].click();", primera
+            )
+            _esperar_cambio_pagina(driver, firma)
+        except Exception:
+            pass
+
+    for _ in range(numero - 1):
+        if not _avanzar_pagina_proveedores(driver):
+            break
+    return _pagina_actual_proveedores(driver) == numero
+
+
+def _orden_por_hoja(proveedores):
+    """Ordena por hoja e índice para recorrer el paginador de ida, sin saltos."""
+    return sorted(
+        proveedores or [],
+        key=lambda p: (p.get("pagina") or 1, p.get("idx_en_pagina") or 0),
+    )
+
+
+def _tarjeta_de_enlace(enlace):
+    """Tarjeta (contenedor) del proveedor a partir de su enlace 'Ver detalle'."""
+    for xp in (
+        "./ancestor::*[.//a[contains(@href,'proveedor.mercadopublico.cl/ficha')]][1]",
+        "./ancestor::*[self::div or self::section or self::article][1]",
+    ):
+        try:
+            return enlace.find_element(By.XPATH, xp)
+        except Exception:
+            continue
+    return None
+
+
+def _tarjeta_coincide(tarjeta, rut_key, nombre_key):
+    """True si la tarjeta corresponde al RUT (preferente) o al nombre buscado."""
+    try:
+        texto = (tarjeta.text or "").strip() if tarjeta else ""
+    except Exception:
+        texto = ""
+    if not texto:
+        return False
+    if rut_key:
+        return rut_key in texto.replace(".", "").replace(" ", "").upper()
+    if nombre_key:
+        return nombre_key in _normalizar_texto_busqueda(texto)
+    return False
+
+
+def _buscar_ver_detalle_en_pagina_actual(driver, proveedor):
+    """
+    Busca el enlace 'Ver detalle' del proveedor dentro de la hoja visible.
+
+    Prioriza el match por RUT/nombre. El respaldo por posición solo se usa tras
+    comprobar que la tarjeta en esa posición es realmente la del proveedor: con
+    varias hojas, un índice a ciegas devolvería el enlace de OTRO proveedor.
+    """
+    rut_obj = _normalizar_rut(proveedor.get("rut")) or (proveedor.get("rut") or "").strip()
+    rut_key = (rut_obj or "").strip().upper().replace(".", "").replace(" ", "")
+    nombre_key = _normalizar_texto_busqueda(proveedor.get("nombre"))
+    idx_en_pagina = proveedor.get("idx_en_pagina")
+    if idx_en_pagina is None:
+        idx_en_pagina = proveedor.get("idx_ver_detalle")
+
+    try:
+        driver.execute_script("window.scrollTo(0, 0);")
+    except Exception:
+        pass
+    time.sleep(0.2)
+
+    last_y = None
+    for _ in range(12):
+        enlaces = _enlaces_ver_detalle(driver)
+
+        # 1) Match por RUT/nombre (no depende del índice ni del orden).
+        if enlaces and (rut_key or nombre_key):
+            for enlace in enlaces:
+                if _tarjeta_coincide(_tarjeta_de_enlace(enlace), rut_key, nombre_key):
+                    return enlace
+
+        # 2) Respaldo por posición, SOLO si la tarjeta de esa posición verifica.
+        if idx_en_pagina is not None and enlaces and 0 <= idx_en_pagina < len(enlaces):
+            candidato = enlaces[idx_en_pagina]
+            if not (rut_key or nombre_key):
+                return candidato
+            if _tarjeta_coincide(_tarjeta_de_enlace(candidato), rut_key, nombre_key):
+                return candidato
+
+        # 3) Scroll incremental para casos con lazy-render / virtualización.
+        try:
+            y = driver.execute_script("return window.scrollY") or 0
+            if last_y is not None and y == last_y:
+                break
+            last_y = y
+            driver.execute_script("window.scrollBy(0, 700);")
+        except Exception:
+            break
+        time.sleep(0.4)
+
+    return None
+
+
+def _localizar_ver_detalle(driver, proveedor):
+    """
+    Localiza el enlace 'Ver detalle' de un proveedor, cambiando de hoja si hace falta.
+
+    Los WebElement guardados en obtener_proveedores_ca quedan stale al paginar, así que
+    el enlace SIEMPRE se vuelve a buscar aquí en lugar de reutilizar la referencia.
+    """
+    pagina = proveedor.get("pagina") or 1
+
+    # 1) Su hoja de origen.
+    if _ir_a_pagina_proveedores(driver, pagina):
+        enlace = _buscar_ver_detalle_en_pagina_actual(driver, proveedor)
+        if enlace is not None:
+            return enlace
+
+    # 2) Barrido completo: la distribución por hojas pudo cambiar entre corridas.
+    _ir_a_pagina_proveedores(driver, 1)
+    for hoja in range(1, MAX_PAGINAS_PROVEEDORES_UI + 1):
+        if hoja != pagina:
+            enlace = _buscar_ver_detalle_en_pagina_actual(driver, proveedor)
+            if enlace is not None:
+                return enlace
+        if not _avanzar_pagina_proveedores(driver):
+            break
+
+    print(
+        f"[PAGINACION] No se encontró 'Ver detalle' para {proveedor.get('nombre')} "
+        f"({proveedor.get('rut')}) en ninguna hoja"
+    )
+    return None
+
+
+def _extraer_proveedores_pagina_actual(driver, pagina, vistos_por_rut):
+    """
+    Extrae los proveedores de la hoja que está visible en este momento.
+
+    `vistos_por_rut` es compartido entre hojas para deduplicar globalmente.
+    """
+    encontrados = []
+    ver_detalle_pagina = _enlaces_ver_detalle(driver)
+
+    for idx, elemento_ver_detalle in enumerate(ver_detalle_pagina, 1):
+        tarjeta = None
+        try:
+            tarjeta = elemento_ver_detalle.find_element(
+                By.XPATH,
+                "./ancestor::*[.//a[contains(@href,'proveedor.mercadopublico.cl/ficha')] and .//a[normalize-space()='Ver detalle']][1]",
+            )
+        except Exception:
+            try:
+                tarjeta = elemento_ver_detalle.find_element(
+                    By.XPATH,
+                    "./ancestor::div[.//a[contains(normalize-space(),'Ver detalle')]][1]",
+                )
+            except Exception:
+                tarjeta = None
+
+        try:
+            # Nombre del proveedor (enlace a ficha de proveedor)
+            try:
+                if tarjeta:
+                    elemento_nombre = tarjeta.find_element(
+                        By.XPATH,
+                        ".//a[contains(@href,'proveedor.mercadopublico.cl/ficha')]",
+                    )
+                    nombre = elemento_nombre.text.strip()
+                else:
+                    nombre = ""
+            except NoSuchElementException:
+                nombre = ""
+
+            # RUT del proveedor: buscar patrón de RUT chileno dentro del texto de la tarjeta.
+            # El marcador de respaldo incluye la hoja para que dos tarjetas sin RUT en hojas
+            # distintas no colisionen entre sí.
+            rut = f"PROVEEDOR_P{pagina}_{idx}"
+            texto_tarjeta = ""
+            try:
+                texto_tarjeta = (tarjeta.text or "").strip() if tarjeta else ""
+            except Exception:
+                texto_tarjeta = ""
+            if texto_tarjeta:
+                for linea in texto_tarjeta.splitlines():
+                    rut_match = re.search(r"(\d{1,2}\.\d{3}\.\d{3}-[\dkK])", linea)
+                    if rut_match:
+                        rut = rut_match.group(1)
+                        break
+
+            if not nombre:
+                nombre = extraer_nombre_proveedor(texto_tarjeta, rut)
+
+            # Evitar duplicados por RUT. Un proveedor puede presentar más de una oferta y
+            # aparecer dos veces; la ruta API descarga los adjuntos de ambas en carpetas
+            # separadas, pero aquí se conserva una sola entrada por RUT porque los
+            # consumidores de UI (comprobantes, Excel) indexan por RUT.
+            if rut in vistos_por_rut:
+                print(f"[PAGINACION] {nombre} ({rut}) aparece más de una vez (varias ofertas); se omite la repetida")
+                continue
+            vistos_por_rut.add(rut)
+
+            # Descripción (texto más largo del proveedor)
+            descripcion = ""
+            try:
+                if tarjeta:
+                    elemento_desc = tarjeta.find_element(
+                        By.XPATH,
+                        ".//p[contains(@class,'MuiTypography-body2')][string-length(normalize-space())>40]",
+                    )
+                    descripcion = elemento_desc.text.strip()
+            except NoSuchElementException:
+                pass
+
+            # Monto total (h3 asociado al texto "Monto total")
+            monto_total = ""
+            try:
+                if tarjeta:
+                    elemento_monto = tarjeta.find_element(
+                        By.XPATH,
+                        ".//p[contains(normalize-space(),'Monto total')]/ancestor::div[1]/preceding-sibling::div//h3",
+                    )
+                    monto_total = elemento_monto.text.strip()
+            except NoSuchElementException:
+                pass
+
+            proveedor = {
+                'nombre': nombre,
+                'rut': rut,
+                'descripcion': descripcion,
+                'monto_total': monto_total,
+                # Solo válido mientras no se cambie de hoja; usar _localizar_ver_detalle().
+                'elemento_ver_detalle': elemento_ver_detalle,
+                # Índice DENTRO de su hoja (no global): así lo esperan _js_click_ver_detalle
+                # y el respaldo por posición de _localizar_ver_detalle.
+                'idx_ver_detalle': idx - 1,
+                'idx_en_pagina': idx - 1,
+                'pagina': pagina,
+                'carpeta_path': '',
+                'ruta_zip': '',
+                'adjuntos_descargados': []
+            }
+
+            encontrados.append(proveedor)
+
+        except Exception as e:
+            print(f"Error al procesar proveedor {idx} de la hoja {pagina}: {str(e)}")
+            continue
+
+    return encontrados
+
+
 def obtener_proveedores_ca(driver):
     """
-    Obtiene la lista de proveedores participantes en la compra ágil
-    
+    Obtiene la lista de proveedores participantes en la compra ágil, recorriendo TODAS
+    las hojas del paginador (la UI muestra 20 por hoja).
+
+    Cada proveedor incluye 'pagina' (1-based) e 'idx_en_pagina', necesarios para volver
+    a localizar su enlace 'Ver detalle': los WebElement quedan stale al cambiar de hoja.
+
     Args:
         driver: Instancia del navegador Selenium
-    
+
     Returns:
         list: Lista de diccionarios con información de proveedores
     """
     proveedores = []
-    
+
     try:
         wait = WebDriverWait(driver, 20)
-        
+
         # Intentar localizar el encabezado "Listado de proveedores que cotizaron"
         try:
             encabezado = wait.until(
@@ -603,119 +1004,44 @@ def obtener_proveedores_ca(driver):
         except TimeoutException:
             print("Advertencia: no se encontró el encabezado del listado de proveedores.")
 
-        # Basar la detección en los links "Ver detalle" (como test_comprobanteorden.py),
-        # evitando depender de clases (MuiPaper-root) que cambian con frecuencia.
-        ver_detalle_global = driver.find_elements(By.XPATH, "//a[normalize-space()='Ver detalle']")
-        if not ver_detalle_global:
-            ver_detalle_global = driver.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
+        # Partir siempre desde la primera hoja del paginador.
+        _ir_a_pagina_proveedores(driver, 1)
 
-        if not ver_detalle_global:
+        if not _enlaces_ver_detalle(driver):
             print("No se encontraron enlaces 'Ver detalle' en la página.")
             return []
 
         vistos_por_rut = set()
+        firmas_vistas = set()
+        pagina = 1
 
-        for idx, elemento_ver_detalle in enumerate(ver_detalle_global, 1):
-            tarjeta = None
-            try:
-                tarjeta = elemento_ver_detalle.find_element(
-                    By.XPATH,
-                    "./ancestor::*[.//a[contains(@href,'proveedor.mercadopublico.cl/ficha')] and .//a[normalize-space()='Ver detalle']][1]",
-                )
-            except Exception:
-                try:
-                    tarjeta = elemento_ver_detalle.find_element(
-                        By.XPATH,
-                        "./ancestor::div[.//a[contains(normalize-space(),'Ver detalle')]][1]",
-                    )
-                except Exception:
-                    tarjeta = None
+        while pagina <= MAX_PAGINAS_PROVEEDORES_UI:
+            firma = _firma_pagina_proveedores(driver)
+            if firma in firmas_vistas:
+                print(f"[PAGINACION] La hoja {pagina} repite contenido ya leído; se detiene el recorrido")
+                break
+            firmas_vistas.add(firma)
 
-            try:
-                # Nombre del proveedor (enlace a ficha de proveedor)
-                try:
-                    if tarjeta:
-                        elemento_nombre = tarjeta.find_element(
-                            By.XPATH,
-                            ".//a[contains(@href,'proveedor.mercadopublico.cl/ficha')]",
-                        )
-                        nombre = elemento_nombre.text.strip()
-                    else:
-                        nombre = ""
-                except NoSuchElementException:
-                    nombre = ""
-                
-                # RUT del proveedor: buscar patrón de RUT chileno dentro del texto de la tarjeta
-                rut = f"PROVEEDOR_{idx}"
-                texto_tarjeta = ""
-                try:
-                    texto_tarjeta = (tarjeta.text or "").strip() if tarjeta else ""
-                except Exception:
-                    texto_tarjeta = ""
-                if texto_tarjeta:
-                    for linea in texto_tarjeta.splitlines():
-                        rut_match = re.search(r"(\d{1,2}\.\d{3}\.\d{3}-[\dkK])", linea)
-                        if rut_match:
-                            rut = rut_match.group(1)
-                            break
-                
-                if not nombre:
-                    nombre = extraer_nombre_proveedor(texto_tarjeta, rut)
+            de_esta_hoja = _extraer_proveedores_pagina_actual(driver, pagina, vistos_por_rut)
+            proveedores.extend(de_esta_hoja)
+            print(f"[PAGINACION] Hoja {pagina}: {len(de_esta_hoja)} proveedores (acumulado {len(proveedores)})")
 
-                # Evitar duplicados por RUT
-                if rut in vistos_por_rut:
-                    continue
-                vistos_por_rut.add(rut)
-                
-                # Descripción (texto más largo del proveedor)
-                descripcion = ""
-                try:
-                    if tarjeta:
-                        elemento_desc = tarjeta.find_element(
-                            By.XPATH,
-                            ".//p[contains(@class,'MuiTypography-body2')][string-length(normalize-space())>40]",
-                        )
-                        descripcion = elemento_desc.text.strip()
-                except NoSuchElementException:
-                    pass
-                
-                # Monto total (h3 asociado al texto "Monto total")
-                monto_total = ""
-                try:
-                    if tarjeta:
-                        elemento_monto = tarjeta.find_element(
-                            By.XPATH,
-                            ".//p[contains(normalize-space(),'Monto total')]/ancestor::div[1]/preceding-sibling::div//h3",
-                        )
-                        monto_total = elemento_monto.text.strip()
-                except NoSuchElementException:
-                    pass
+            if not _avanzar_pagina_proveedores(driver):
+                break
+            pagina += 1
+        else:
+            print(f"[PAGINACION] AVISO: se alcanzó el tope de {MAX_PAGINAS_PROVEEDORES_UI} hojas")
 
-                idx_ver_detalle = idx - 1
+        # Dejar el listado en un estado conocido para los siguientes pasos.
+        _ir_a_pagina_proveedores(driver, 1)
 
-                proveedor = {
-                    'nombre': nombre,
-                    'rut': rut,
-                    'descripcion': descripcion,
-                    'monto_total': monto_total,
-                    'elemento_ver_detalle': elemento_ver_detalle,
-                    'idx_ver_detalle': idx_ver_detalle,
-                    'carpeta_path': '',
-                    'ruta_zip': '',
-                    'adjuntos_descargados': []
-                }
-                
-                proveedores.append(proveedor)
-                
-            except Exception as e:
-                print(f"Error al procesar proveedor {idx}: {str(e)}")
-                continue
-        
+        print(f"Proveedores encontrados: {len(proveedores)} en {pagina} hoja(s)")
         return proveedores
-        
+
     except Exception as e:
         print(f"Error al obtener proveedores: {str(e)}")
-        return []
+        return proveedores
+
 
 def extraer_nombre_proveedor(texto, rut):
     """
@@ -768,8 +1094,12 @@ def descargar_adjuntos_proveedor(proveedor, carpeta_destino, driver):
             f"monto_total='{proveedor.get('monto_total')}'"
         )
         
-        # Hacer clic en "Ver detalle" para ver los adjuntos de la cotización
-        elemento_ver_detalle = proveedor.get('elemento_ver_detalle') or proveedor.get('elemento')
+        # Hacer clic en "Ver detalle" para ver los adjuntos de la cotización.
+        # Se re-localiza en lugar de reutilizar la referencia guardada: si se cambió de
+        # hoja del paginador, el WebElement original está stale.
+        elemento_ver_detalle = _localizar_ver_detalle(driver, proveedor)
+        if not elemento_ver_detalle:
+            elemento_ver_detalle = proveedor.get('elemento_ver_detalle') or proveedor.get('elemento')
         if not elemento_ver_detalle:
             print("No se encontró el enlace 'Ver detalle' para el proveedor")
             return []
@@ -1046,11 +1376,28 @@ def _listar_adjuntos_api(codigo_ca, token):
     return archivos, payload
 
 
-def _descargar_archivo_api(file_id, token, nombre_archivo):
+def _descargar_archivo_api(file_id, token, nombre_archivo, intentos=5):
     url = f"{API_BASE_CA}/comprador/descargar?id={file_id}"
-    resp = requests.get(url, headers=_headers_api(token), timeout=60, stream=True)
-    if resp.status_code != 200:
-        raise RuntimeError(f"HTTP {resp.status_code}: {resp.text}")
+
+    resp = None
+    for intento in range(1, intentos + 1):
+        resp = requests.get(url, headers=_headers_api(token), timeout=60, stream=True)
+        if resp.status_code == 200:
+            break
+        # 429 (throttling) y 5xx son transitorios: al bajar muchos proveedores seguidos
+        # la API limita el ritmo y sin reintento se perderían adjuntos en silencio.
+        if resp.status_code not in (429, 500, 502, 503, 504) or intento == intentos:
+            raise RuntimeError(f"HTTP {resp.status_code}: {resp.text}")
+        espera = min(60, 5 * (2 ** (intento - 1)))
+        try:
+            espera = max(espera, int(resp.headers.get("retry-after") or 0))
+        except (TypeError, ValueError):
+            pass
+        print(f"[API] HTTP {resp.status_code} al bajar {nombre_archivo}; reintento {intento}/{intentos - 1} en {espera}s")
+        time.sleep(espera)
+
+    if resp is None or resp.status_code != 200:
+        raise RuntimeError(f"No se pudo descargar {file_id}")
 
     # Si Content-Disposition trae nombre de archivo, respetarlo
     disposition = resp.headers.get("content-disposition") or resp.headers.get("Content-Disposition")
@@ -1075,12 +1422,90 @@ def _descargar_archivo_api(file_id, token, nombre_archivo):
     return resp.content, nombre_archivo, content_type
 
 
-def _obtener_info_compra(codigo_compra, token):
-    url = f"{API_BASE_CA}/solicitud/{codigo_compra}?size=20&page=0"
-    resp = requests.get(url, headers=_headers_api(token), timeout=40)
-    if resp.status_code != 200:
-        raise RuntimeError(f"HTTP {resp.status_code}: {resp.text}")
-    return resp.json()
+def _clave_oferta(oferta):
+    """Identificador único de una oferta, con la misma prioridad que extract_candidate_ids."""
+    if not isinstance(oferta, dict):
+        return None
+    for campo in ("idEntidad", "idRespuesta", "id", "codigoEmpresa", "codigoSucursalEmpresa"):
+        valor = oferta.get(campo)
+        if valor is not None:
+            return str(valor).strip()
+    return None
+
+
+def _obtener_info_compra(codigo_compra, token, size=PAGE_SIZE_OFERTAS, max_pages=MAX_PAGINAS_OFERTAS):
+    """
+    Obtiene la información de una compra ágil recorriendo TODAS las páginas de ofertas.
+
+    La API pagina únicamente la lista 'ofertas'; el resto del payload (detalleSolicitud,
+    ofertasSeleccionadas, ofertasInadmisibles, detalleOfertasProveedor, ...) viene completo
+    e idéntico en cada página, por lo que se conserva el de la primera y solo se fusiona
+    'ofertas'. Sin paginar, una compra con más de `size` proveedores se truncaba en silencio.
+    """
+    base = None
+    ofertas = []
+    vistos = set()
+    total_items = None
+    page = 0
+
+    while page < max_pages:
+        url = f"{API_BASE_CA}/solicitud/{codigo_compra}?size={size}&page={page}"
+        resp = requests.get(url, headers=_headers_api(token), timeout=40)
+        if resp.status_code != 200:
+            if page == 0:
+                raise RuntimeError(f"HTTP {resp.status_code}: {resp.text}")
+            print(f"[API] Aviso: HTTP {resp.status_code} al pedir la página {page} de ofertas; se usa lo acumulado")
+            break
+
+        data = resp.json()
+        payload = data.get("payload") or {}
+        if base is None:
+            base = data
+
+        lote = payload.get("ofertas") or []
+        if not lote:
+            break
+
+        antes = len(ofertas)
+        for oferta in lote:
+            clave = _clave_oferta(oferta)
+            if clave is not None:
+                if clave in vistos:
+                    continue
+                vistos.add(clave)
+            ofertas.append(oferta)
+
+        if len(ofertas) == antes:
+            # La página no aportó ofertas nuevas: la API no está avanzando.
+            break
+
+        if isinstance(payload.get("totalItems"), int):
+            total_items = payload["totalItems"]
+        total_pages = payload.get("totalPages")
+
+        page += 1
+        if isinstance(total_pages, int) and page >= total_pages:
+            break
+        if total_items is not None and len(ofertas) >= total_items:
+            break
+    else:
+        print(f"[API] AVISO: se alcanzó el máximo de {max_pages} páginas de ofertas para {codigo_compra}")
+
+    if not isinstance(base, dict):
+        raise RuntimeError(f"Respuesta inesperada de la API para {codigo_compra}")
+    if not isinstance(base.get("payload"), dict):
+        base["payload"] = {}
+
+    if total_items is not None and len(ofertas) < total_items:
+        print(
+            f"[API] AVISO: se recuperaron {len(ofertas)} de {total_items} ofertas para {codigo_compra}. "
+            "La descarga puede quedar incompleta."
+        )
+
+    base["payload"]["ofertas"] = ofertas
+    base["payload"]["totalItems"] = len(ofertas)
+    base["payload"]["totalPages"] = 1
+    return base
 
 
 def _obtener_documentos_por_cotizacion(id_objetivo, token):
@@ -1141,7 +1566,7 @@ def _verificar_adjuntos_con_ui(codigo_ca, driver, manifest):
     faltantes_total = 0
     proveedores_con_faltantes = 0
 
-    for proveedor in proveedores_ui:
+    for proveedor in _orden_por_hoja(proveedores_ui):
         rut_ui = _normalizar_rut(proveedor.get("rut")) or (proveedor.get("rut") or "").strip()
         label_ui = (proveedor.get("nombre") or "").strip().upper()
 
@@ -1215,7 +1640,10 @@ def _listar_nombres_adjuntos_ui(proveedor, driver):
     """
     Abre el detalle del proveedor y devuelve los nombres visibles en la sección 'Adjuntos de la cotización'.
     """
-    elemento_ver_detalle = proveedor.get("elemento_ver_detalle") or proveedor.get("elemento")
+    # Re-localizar: la referencia guardada queda stale al cambiar de hoja del paginador.
+    elemento_ver_detalle = _localizar_ver_detalle(driver, proveedor)
+    if not elemento_ver_detalle:
+        elemento_ver_detalle = proveedor.get("elemento_ver_detalle") or proveedor.get("elemento")
     if not elemento_ver_detalle:
         return []
 
@@ -1827,75 +2255,8 @@ def descargar_comprobante_oferta_compra_agil_por_proveedor(proveedor, carpeta_pr
     destino_pdf = os.path.join(carpeta_certificados, "ComprobanteOferta.pdf")
 
     def _buscar_enlace_ver_detalle():
-        idx_ver_detalle = proveedor.get("idx_ver_detalle")
-        rut_obj = _normalizar_rut(proveedor.get("rut")) or (proveedor.get("rut") or "").strip()
-        rut_key = (rut_obj or "").strip().upper().replace(".", "").replace(" ", "")
-        nombre_key = _normalizar_texto_busqueda(proveedor.get("nombre"))
+        return _localizar_ver_detalle(driver, proveedor)
 
-        try:
-            driver.execute_script("window.scrollTo(0, 0);")
-        except Exception:
-            pass
-        time.sleep(0.2)
-
-        last_y = None
-
-        for _ in range(12):
-            enlaces = driver.find_elements(By.XPATH, "//a[normalize-space()='Ver detalle']")
-            if not enlaces:
-                enlaces = driver.find_elements(By.XPATH, "//a[contains(normalize-space(),'Ver detalle')]")
-
-            # 1) Preferir match por RUT/nombre (evita depender del índice).
-            if enlaces and (rut_key or nombre_key):
-                for enlace in enlaces:
-                    tarjeta = None
-                    for xp in (
-                        "./ancestor::*[.//a[contains(@href,'proveedor.mercadopublico.cl/ficha')]][1]",
-                        "./ancestor::*[self::div or self::section or self::article][1]",
-                    ):
-                        try:
-                            tarjeta = enlace.find_element(By.XPATH, xp)
-                            break
-                        except Exception:
-                            tarjeta = None
-
-                    texto_tarjeta = ""
-                    try:
-                        texto_tarjeta = (tarjeta.text or "").strip() if tarjeta else ""
-                    except Exception:
-                        texto_tarjeta = ""
-
-                    if rut_key:
-                        texto_rut = texto_tarjeta.replace(".", "").replace(" ", "").upper()
-                        if rut_key in texto_rut:
-                            return enlace
-                    if nombre_key and texto_tarjeta:
-                        if nombre_key in _normalizar_texto_busqueda(texto_tarjeta):
-                            return enlace
-
-            # 2) Luego intentar por índice (si existe y está en rango).
-            if idx_ver_detalle is not None and enlaces and 0 <= idx_ver_detalle < len(enlaces):
-                return enlaces[idx_ver_detalle]
-
-            # 3) Scroll incremental para casos con lazy-render / virtualización.
-            try:
-                y = driver.execute_script("return window.scrollY") or 0
-                if last_y is not None and y == last_y:
-                    break
-                last_y = y
-                driver.execute_script("window.scrollBy(0, 700);")
-            except Exception:
-                break
-            time.sleep(0.4)
-
-        # Fallback al XPath conocido (último recurso).
-        try:
-            return driver.find_element(
-                By.XPATH,
-                "/html/body/div[1]/div/main/div[2]/div[1]/div/div[2]/div/div/div[7]/div/div[1]/a",
-            )
-        except Exception:
-            return None
 
     elemento_ver_detalle = None
     click_ok = False
@@ -2112,7 +2473,7 @@ def descargar_comprobantes_oferta_compra_agil(codigo_ca, driver, base_dir="Desca
 
     ok_any = False
     max_intentos_por_proveedor = 4
-    for prov in proveedores:
+    for prov in _orden_por_hoja(proveedores):
         rut = _normalizar_rut(prov.get("rut")) or (prov.get("rut") or "").strip()
         carpeta_prov = None
         if rut and rut in manifest_by_rut:
