@@ -32,6 +32,9 @@ import descarga_ca
 URL = "https://www.mercadopublico.cl/Procurement/Modules/RFB/DetailsAcquisition.aspx?qs=5vvQo+7VGfY18eev2hYLBQ=="
 BASE = "https://www.mercadopublico.cl"
 DOWNLOAD_DIR = "adjuntos"
+FILAS_CUADRO_CSS = (
+    "#grdSupplies tr.cssFwkItemStyle, #grdSupplies tr.cssFwkAlternatingItemStyle"
+)
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
@@ -294,38 +297,176 @@ def _normalize_provider_dir(provider_name: str, idx: int | None = None) -> str:
     return nombre or (f"Proveedor_{idx}" if idx else "Proveedor")
 
 
-def _count_elements_with_providers(driver: webdriver.Chrome) -> Tuple[int, List[dict]]:
+def _pager_cuadro_info(driver: webdriver.Chrome) -> dict:
     """
-    Cuenta, lista y descarga adjuntos; retorna (total_descargados, proveedores_meta).
+    Lee el estado del paginador del cuadro de ofertas (user control WucPagerGrid).
 
-    proveedores_meta: lista de dicts {rut, nombre, carpeta_rel}
-    donde carpeta_rel es el nombre de carpeta del proveedor bajo DOWNLOAD_DIR.
+    El cuadro muestra 10 proveedores por hoja (hidMaxRowCount) y el resto queda en
+    hojas siguientes, así que sin esto solo se procesa la hoja 1.
+    Retorna {} si no hay paginador.
     """
-    print(f"URL actual: {driver.current_url}")
-    rows = driver.find_elements(
-        By.CSS_SELECTOR,
-        "#grdSupplies tr.cssFwkItemStyle, #grdSupplies tr.cssFwkAlternatingItemStyle",
-    )
+    try:
+        hidden = driver.find_elements(By.CSS_SELECTOR, "input[type='hidden'][id$='_hidIndex']")
+    except Exception:
+        hidden = []
+
+    for el in hidden:
+        try:
+            name = el.get_attribute("name") or ""
+            if "$hid" not in name:
+                continue
+            pager_name = name.rsplit("$hid", 1)[0]
+            pager_id = pager_name.replace("$", "_")
+
+            def _num(sufijo: str, default: int) -> int:
+                try:
+                    valor = driver.find_element(
+                        By.CSS_SELECTOR, f"input[name='{pager_name}${sufijo}']"
+                    ).get_attribute("value")
+                    return int((valor or "").strip())
+                except Exception:
+                    return default
+
+            por_hoja = _num("hidMaxRowCount", 0)
+            if por_hoja <= 0:
+                continue
+            total_filas = _num("hidCountRows", 0)
+            total_hojas = max(1, -(-total_filas // por_hoja)) if total_filas > 0 else 1
+            return {
+                "pager_name": pager_name,
+                "pager_id": pager_id,
+                "indice": _num("hidIndex", 0),
+                "total_filas": total_filas,
+                "por_hoja": por_hoja,
+                "total_hojas": total_hojas,
+            }
+        except Exception:
+            continue
+    return {}
+
+
+def _hojas_enlazadas(driver: webdriver.Chrome, pager_id: str) -> List[int]:
+    """
+    Índices de hoja que ofrece el paginador visible. Se leen de los propios
+    enlaces (fnMovePage(indice, pager)) en vez de asumir el rango, porque el
+    paginador muestra solo una ventana de números cuando hay muchas hojas.
+    """
+    indices: List[int] = []
+    try:
+        anclas = driver.find_elements(By.CSS_SELECTOR, f"#{pager_id}__TblPages a")
+    except Exception:
+        anclas = []
+    for a in anclas:
+        try:
+            attrs = f"{a.get_attribute('href') or ''} {a.get_attribute('onclick') or ''}"
+        except Exception:
+            continue
+        m = re.search(r"fnMovePage\(\s*(\d+)", attrs)
+        if m:
+            idx = int(m.group(1))
+            if idx not in indices:
+                indices.append(idx)
+    return indices
+
+
+def _ir_a_hoja_cuadro(driver: webdriver.Chrome, pager: dict, indice: int) -> bool:
+    """
+    Cambia de hoja en el cuadro de ofertas. El sitio pagina con
+    fnMovePage(indice, pager) -> __doPostBack('<pager>$btn_GoToPage', '<indice>').
+    Retorna True si la grilla quedó en la hoja pedida.
+    """
+    pager_name = pager.get("pager_name") or ""
+    pager_id = pager.get("pager_id") or ""
+    if not pager_name:
+        return False
+
+    try:
+        filas = driver.find_elements(By.CSS_SELECTOR, FILAS_CUADRO_CSS)
+    except Exception:
+        filas = []
+    ancla = filas[0] if filas else None
+
+    disparado = False
+    # 1) Click en el enlace del paginador: usa el JS del sitio tal cual.
+    try:
+        for a in driver.find_elements(By.CSS_SELECTOR, f"#{pager_id}__TblPages a"):
+            attrs = f"{a.get_attribute('href') or ''} {a.get_attribute('onclick') or ''}"
+            m = re.search(r"fnMovePage\(\s*(\d+)", attrs)
+            if m and int(m.group(1)) == indice:
+                a.click()
+                disparado = True
+                break
+    except Exception:
+        disparado = False
+
+    # 2) Respaldo: postback directo, por si la hoja no tiene enlace visible.
+    if not disparado:
+        try:
+            driver.execute_script(
+                "__doPostBack(arguments[0] + '$btn_GoToPage', arguments[1]);",
+                pager_name,
+                str(indice),
+            )
+            disparado = True
+        except Exception as exc:
+            print(f"No se pudo cambiar a la hoja de índice {indice}: {exc}")
+            return False
+
+    if ancla is not None:
+        try:
+            WebDriverWait(driver, 20).until(EC.staleness_of(ancla))
+        except Exception:
+            pass
+    try:
+        WebDriverWait(driver, 20).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, FILAS_CUADRO_CSS))
+        )
+    except Exception:
+        pass
+
+    # El postback recarga el frame; si se perdió el contexto, se vuelve a ubicar.
+    try:
+        driver.find_element(By.CSS_SELECTOR, "#grdSupplies")
+    except Exception:
+        try:
+            driver.switch_to.default_content()
+            _switch_to_frame_containing_css(driver, "#grdSupplies", max_depth=8)
+        except Exception:
+            pass
+
+    # El índice ya no debe aparecer como enlace: esa es la hoja actual.
+    return indice not in _hojas_enlazadas(driver, pager_id)
+
+
+def _leer_filas_cuadro(
+    driver: webdriver.Chrome,
+    hoja: int,
+    proveedores_meta: List[dict],
+    all_attachment_urls: List[Tuple[str, str, str, str]],
+) -> int:
+    """
+    Lee las filas de proveedores de la hoja visible del cuadro, acumulando en
+    proveedores_meta y all_attachment_urls. Retorna cuántas filas procesó.
+    """
+    rows = driver.find_elements(By.CSS_SELECTOR, FILAS_CUADRO_CSS)
     if not rows:
-        print("No se encontraron filas de proveedores en grdSupplies.")
-        return 0, []
+        print(f"No se encontraron filas de proveedores en grdSupplies (hoja {hoja}).")
+        return 0
 
     # Imprime solo RUT en bloque para fácil lectura
     rut_links = driver.find_elements(By.CSS_SELECTOR, "#grdSupplies a[id$='_GvLblRutProvider']")
     ruts = [el.text.strip() for el in rut_links if el.text.strip()]
-    print(f"RUT proveedores ({len(ruts)}): {', '.join(ruts)}")
-    print(f"Total filas: {len(rows)}")
+    print(f"[hoja {hoja}] RUT proveedores ({len(ruts)}): {', '.join(ruts)}")
+    print(f"[hoja {hoja}] Total filas: {len(rows)}")
 
     admin_attach = driver.find_elements(By.CSS_SELECTOR, "input[id$='_GvImgbAdministrativeAttachment']")
-    print(f"Botones 'Anexos Administrativos' detectados: {len(admin_attach)}")
+    print(f"[hoja {hoja}] Botones 'Anexos Administrativos' detectados: {len(admin_attach)}")
     # Log de primeros botones admin
     for idx, btn in enumerate(admin_attach[:5]):
         print(f" Admin btn {idx} id={btn.get_attribute('id')} title={btn.get_attribute('title')} onclick={btn.get_attribute('onclick')}")
 
     # Detalle por fila
-    print("Detalle por fila:")
-    all_attachment_urls: List[Tuple[str, str, str, str]] = []  # (url, rut, prov, title_hint)
-    proveedores_meta: List[dict] = []
+    print(f"[hoja {hoja}] Detalle por fila:")
     for row in rows:
         rut = _safe_text(row.find_elements(By.CSS_SELECTOR, "a[id$='_GvLblRutProvider']"))
         prov = _safe_text(row.find_elements(By.CSS_SELECTOR, "a[id$='_GvLblProvider']"))
@@ -361,6 +502,7 @@ def _count_elements_with_providers(driver: webdriver.Chrome) -> Tuple[int, List[
                 "nombre": (prov or "").strip(),
                 "carpeta_rel": carpeta_rel,
                 "voucher_url": voucher_url,
+                "hoja": hoja,
             }
         )
         attachments = _extract_attachments(row)
@@ -374,12 +516,81 @@ def _count_elements_with_providers(driver: webdriver.Chrome) -> Tuple[int, List[
         By.CSS_SELECTOR,
         "input[id*='ImgbAdministrativeAttachment'], input[title*='Anexos Administrativos'], input[src*='adj-administrativos']",
     )
-    print(f"Fallback botones admin encontrados: {len(fallback_admin_btns)}")
+    print(f"[hoja {hoja}] Fallback botones admin encontrados: {len(fallback_admin_btns)}")
     for btn in fallback_admin_btns:
         onclick = btn.get_attribute("onclick") or ""
         url = _extract_url_from_onclick(onclick)
         if url:
             all_attachment_urls.append((url, "", "", btn.get_attribute("title") or ""))
+
+    return len(rows)
+
+
+def _count_elements_with_providers(driver: webdriver.Chrome) -> Tuple[int, List[dict]]:
+    """
+    Cuenta, lista y descarga adjuntos; retorna (total_descargados, proveedores_meta).
+
+    proveedores_meta: lista de dicts {rut, nombre, carpeta_rel, voucher_url, hoja}
+    donde carpeta_rel es el nombre de carpeta del proveedor bajo DOWNLOAD_DIR.
+
+    Recorre todas las hojas del paginador del cuadro de ofertas: primero junta las
+    filas y URLs de adjuntos de cada hoja y recién después descarga, porque al
+    cambiar de hoja los WebElement quedan stale (las URLs de ViewBidAttachment son
+    autocontenidas, así que sirven después del postback).
+    """
+    print(f"URL actual: {driver.current_url}")
+
+    all_attachment_urls: List[Tuple[str, str, str, str]] = []  # (url, rut, prov, title_hint)
+    proveedores_meta: List[dict] = []
+
+    pager = _pager_cuadro_info(driver)
+    pager_id = pager.get("pager_id", "")
+    total_filas = pager.get("total_filas", 0)
+    if pager:
+        print(
+            f"Paginador cuadro: {total_filas} proveedores, "
+            f"{pager['por_hoja']} por hoja, {pager['total_hojas']} hoja(s)."
+        )
+    else:
+        print("No se detectó paginador en el cuadro; se procesa la hoja visible.")
+
+    # Hoja visible
+    hoja = 1
+    filas_leidas = _leer_filas_cuadro(driver, hoja, proveedores_meta, all_attachment_urls)
+    if not filas_leidas and not proveedores_meta:
+        return 0, []
+
+    # Resto de las hojas: se recorren por los índices que declara el paginador y
+    # se vuelven a leer en cada hoja, porque muestra solo una ventana de números.
+    pendientes = _hojas_enlazadas(driver, pager_id) if pager else []
+    visitadas: set[int] = set()
+    while pendientes:
+        indice = pendientes.pop(0)
+        if indice in visitadas:
+            continue
+        visitadas.add(indice)
+
+        if not _ir_a_hoja_cuadro(driver, pager, indice):
+            print(
+                f"ADVERTENCIA: no se pudo abrir la hoja de índice {indice}; "
+                f"la descarga puede quedar incompleta "
+                f"({len(proveedores_meta)} de {total_filas or '?'} proveedores)."
+            )
+            continue
+
+        hoja += 1
+        if not _leer_filas_cuadro(driver, hoja, proveedores_meta, all_attachment_urls):
+            print(f"Hoja de índice {indice} sin filas.")
+        for nuevo in _hojas_enlazadas(driver, pager_id):
+            if nuevo not in visitadas and nuevo not in pendientes:
+                pendientes.append(nuevo)
+
+    if total_filas > 0 and len(proveedores_meta) < total_filas:
+        print(
+            f"ADVERTENCIA: se leyeron {len(proveedores_meta)} proveedores de "
+            f"{total_filas} que declara el cuadro."
+        )
+    print(f"Total proveedores leídos: {len(proveedores_meta)}")
 
     # Descarga de todos los adjuntos (incluidos administrativos)
     sess = _requests_session_from_driver(driver)
