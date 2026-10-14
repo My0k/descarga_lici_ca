@@ -484,25 +484,50 @@ def _extract_pager_grid(html):
     return control, indices
 
 
-def _total_filas_cuadro(html):
-    """Total de proveedores que declara el paginador (hidCountRows), o 0."""
+def _hidden_num(html, sufijo, default=0):
+    """Valor numérico de un hidden del paginador (hidCountRows, hidIndex, ...)."""
     for name, value in _extract_hidden_fields(html).items():
-        if name.endswith("$hidCountRows"):
+        if name.endswith(f"${sufijo}"):
             try:
                 return int((value or "").strip())
             except ValueError:
-                return 0
-    return 0
+                return default
+    return default
 
 
-def _firma_provider(provider):
-    """Identidad de una fila del cuadro: un proveedor puede tener varias ofertas."""
-    return (
-        provider.get("rut") or "",
-        provider.get("nombre") or "",
-        provider.get("suministro") or "",
-        provider.get("oferta") or "",
-        tuple(sorted((provider.get("attachments") or {}).items())),
+def _total_filas_cuadro(html):
+    """Total de proveedores que declara el paginador (hidCountRows), o 0."""
+    return _hidden_num(html, "hidCountRows", 0)
+
+
+def _total_hojas_cuadro(html):
+    """Hojas del cuadro según hidCountRows/hidMaxRowCount, o 0 si no se sabe."""
+    total_filas = _total_filas_cuadro(html)
+    por_hoja = _hidden_num(html, "hidMaxRowCount", 0)
+    if total_filas <= 0 or por_hoja <= 0:
+        return 0
+    return max(1, -(-total_filas // por_hoja))
+
+
+def _firma_hoja(providers):
+    """
+    Identidad del CONJUNTO de filas de una hoja, para detectar que un postback
+    devolvió una hoja ya leída.
+
+    No entran las URLs de los adjuntos: su 'enc=' se regenera en cada render, así
+    que la misma fila cambia de URL entre pedidos. Y se compara la hoja completa,
+    no fila por fila, porque un proveedor puede presentar dos ofertas con los
+    mismos datos visibles y esas dos filas son legítimas.
+    """
+    return tuple(
+        (
+            p.get("rut") or "",
+            p.get("nombre") or "",
+            p.get("suministro") or "",
+            p.get("oferta") or "",
+            p.get("estado") or "",
+        )
+        for p in providers
     )
 
 
@@ -515,12 +540,29 @@ def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
     ASP.NET, igual que la grilla de adjuntos en download_attachment.
     """
     providers = list(parse_providers(supply_html))
-    vistos = {_firma_provider(p) for p in providers}
+    hojas_vistas = {_firma_hoja(providers)}
 
-    control, pendientes = _extract_pager_grid(supply_html)
+    control, enlazadas = _extract_pager_grid(supply_html)
     if not control:
         _log_debug("cuadro de ofertas sin paginador: una sola hoja")
         return providers
+
+    total_hojas = _total_hojas_cuadro(supply_html)
+
+    # La hoja de entrada ya está leída: si no se marca como visitada, el
+    # paginador de la hoja 2 enlaza de vuelta a ella y se vuelve a descargar.
+    visitadas = {_hidden_num(supply_html, "hidIndex", 0)}
+
+    def _encolar(pendientes, candidatas):
+        for indice in candidatas:
+            if indice in visitadas or indice in pendientes:
+                continue
+            # El paginador tambien enlaza hojas ya leidas; y si se conoce el
+            # total, un indice fuera de rango no se pide.
+            if total_hojas and indice >= total_hojas:
+                continue
+            pendientes.append(indice)
+        return pendientes
 
     action_url = supply_url
     accion = re.search(r'<form[^>]+action="([^"]+)"', supply_html, re.I)
@@ -528,7 +570,7 @@ def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
         action_url = urllib.parse.urljoin(supply_url, accion.group(1))
 
     current_html = supply_html
-    visitadas = set()
+    pendientes = _encolar([], enlazadas)
     hoja = 1
     while pendientes:
         indice = pendientes.pop(0)
@@ -567,24 +609,19 @@ def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
             continue
 
         current_html = nuevo_html
-        hoja += 1
-        nuevos = 0
-        for provider in de_la_hoja:
-            firma = _firma_provider(provider)
-            if firma in vistos:
-                continue
-            vistos.add(firma)
-            providers.append(provider)
-            nuevos += 1
-        _log_info(f"Cuadro de ofertas hoja {hoja}: {nuevos} proveedor(es) nuevos")
-        if not nuevos:
-            # El postback devolvió la misma hoja: no se sigue ampliando por ahí.
+        firma = _firma_hoja(de_la_hoja)
+        if firma in hojas_vistas:
+            # El postback devolvió una hoja ya leída: no se suma ni se sigue por ahí.
+            _log_debug(f"la hoja de indice {indice} repite una ya leida; se descarta")
             continue
+        hojas_vistas.add(firma)
+
+        providers.extend(de_la_hoja)
+        hoja += 1
+        _log_info(f"Cuadro de ofertas hoja {hoja}: {len(de_la_hoja)} proveedor(es)")
 
         _, mas_hojas = _extract_pager_grid(current_html)
-        for nuevo in mas_hojas:
-            if nuevo not in visitadas and nuevo not in pendientes:
-                pendientes.append(nuevo)
+        pendientes = _encolar(pendientes, mas_hojas)
 
     return providers
 
@@ -871,8 +908,6 @@ def _render_html_to_pdf_chrome(html_text, output_path, chromedriver_path=None):
         return False, f"selenium no disponible: {exc}"
 
     chromedriver_path = chromedriver_path or shutil.which("chromedriver")
-    if not chromedriver_path:
-        return False, "chromedriver no encontrado en PATH"
 
     chrome_options = Options()
     chrome_options.add_argument("--headless=new")
@@ -884,7 +919,20 @@ def _render_html_to_pdf_chrome(html_text, output_path, chromedriver_path=None):
 
     driver = None
     try:
-        driver = webdriver.Chrome(service=Service(chromedriver_path), options=chrome_options)
+        # Si el chromedriver del sistema no abre sesion (Chrome se autoactualizo
+        # y el driver quedo viejo), se deja que Selenium Manager resuelva el que calza.
+        if chromedriver_path:
+            try:
+                driver = webdriver.Chrome(
+                    service=Service(chromedriver_path), options=chrome_options
+                )
+            except Exception as exc:
+                _log_warn(
+                    f"chromedriver del sistema no sirvio para el PDF "
+                    f"({exc.__class__.__name__}); se intenta con Selenium Manager."
+                )
+        if driver is None:
+            driver = webdriver.Chrome(options=chrome_options)
         url = "data:text/html;charset=utf-8," + urllib.parse.quote(html_text)
         driver.get(url)
         WebDriverWait(driver, 30).until(
@@ -1068,7 +1116,10 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
             "chromedriver": chromedriver_path or "",
         }
         if not chromedriver_path:
-            _log_warn("chromedriver no encontrado en PATH (DJ/IP y garantias.pdf no se generaran)")
+            _log_warn(
+                "chromedriver no encontrado en PATH; se intentara con Selenium Manager "
+                "al generar DJ/IP y garantias.pdf"
+            )
 
         opener = build_opener()
         start_url = DETAILS_URL.format(licitacion=codigo)
@@ -1108,6 +1159,13 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
             aviso = (
                 f"Solo se leyeron {len(providers)} de {total_declarado} proveedores "
                 f"del cuadro de ofertas: la descarga queda incompleta."
+            )
+            resumen["errores"].append(aviso)
+            _log_warn(aviso)
+        elif total_declarado and len(providers) > total_declarado:
+            aviso = (
+                f"Se leyeron {len(providers)} proveedores y el cuadro declara "
+                f"{total_declarado}: hay hojas repetidas."
             )
             resumen["errores"].append(aviso)
             _log_warn(aviso)
@@ -1190,7 +1248,7 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
                 provider["declaracion_url"] = declaracion_url
                 provider["proveedor_url"] = proveedor_url
 
-                if get_dj_ip and chromedriver_path:
+                if get_dj_ip:
                     urls = {
                         "declaracion_jurada.pdf": declaracion_url,
                         "informacion_proveedor.pdf": proveedor_url,
@@ -1215,22 +1273,19 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
             garantia_vals = provider.get("garantia_vals", [])
             if len(garantia_vals) >= 2:
                 g_path = os.path.join(provider_dir, "garantias.pdf")
-                if not chromedriver_path:
-                    prov_resumen["otros"]["errores"].append("chromedriver no encontrado en PATH")
-                else:
-                    try:
-                        ok_garantia = build_garantias_pdf(
-                            opener,
-                            garantia_vals[0],
-                            garantia_vals[1],
-                            garantia_vals[2] if len(garantia_vals) > 2 else "",
-                            g_path,
-                        )
-                        if not ok_garantia:
-                            prov_resumen["otros"]["errores"].append("No se pudo generar garantias.pdf")
-                    except Exception as exc:
-                        prov_resumen["otros"]["errores"].append(f"Error garantias: {exc}")
-                        _log_warn(f"Error garantias para {provider_name}: {exc}")
+                try:
+                    ok_garantia = build_garantias_pdf(
+                        opener,
+                        garantia_vals[0],
+                        garantia_vals[1],
+                        garantia_vals[2] if len(garantia_vals) > 2 else "",
+                        g_path,
+                    )
+                    if not ok_garantia:
+                        prov_resumen["otros"]["errores"].append("No se pudo generar garantias.pdf")
+                except Exception as exc:
+                    prov_resumen["otros"]["errores"].append(f"Error garantias: {exc}")
+                    _log_warn(f"Error garantias para {provider_name}: {exc}")
 
         try:
             csv_path = os.path.join(carpeta_base, "proveedores.csv")

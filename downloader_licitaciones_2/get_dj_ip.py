@@ -59,14 +59,23 @@ def setup_driver():
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     
-    # Inicializar driver (usar chromedriver del sistema)
+    # Inicializar driver. Se intenta primero el chromedriver del sistema y, si no
+    # abre sesion (el caso tipico es que Chrome se autoactualizo y el driver
+    # quedo viejo), se deja que Selenium Manager resuelva el que corresponde.
     chromedriver_path = shutil.which("chromedriver")
-    if not chromedriver_path:
-        raise RuntimeError("chromedriver no encontrado en PATH")
-    service = Service(chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-    
-    return driver
+    if chromedriver_path:
+        try:
+            return webdriver.Chrome(
+                service=Service(chromedriver_path), options=chrome_options
+            )
+        except Exception as exc:
+            _log_warn(
+                f"chromedriver del sistema no sirvio ({exc.__class__.__name__}); "
+                f"se intenta con Selenium Manager."
+            )
+
+    # Sin service: selenium descarga/ubica el driver que calza con el Chrome local.
+    return webdriver.Chrome(options=chrome_options)
 
 def wait_for_page_load(driver, timeout=30):
     """Wait for page to be completely loaded"""
