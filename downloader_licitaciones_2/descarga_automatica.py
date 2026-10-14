@@ -141,36 +141,98 @@ def _get_chromedriver_download_url(chrome_version):
     return ""
 
 
+def _chromedriver_major(path):
+    """Major de un chromedriver ya instalado, o '' si no se puede leer."""
+    if not path or not os.path.isfile(path):
+        return ""
+    kwargs = {}
+    if os.name == "nt":
+        # Sin esto se abre una consola en cada chequeo.
+        kwargs["creationflags"] = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    try:
+        salida = subprocess.run(
+            [path, "--version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=20,
+            **kwargs,
+        ).stdout
+    except Exception as exc:
+        _log_debug(f"no se pudo leer la version de {path}: {exc}")
+        return ""
+    match = re.search(r"ChromeDriver\s+(\d+)\.", salida or "")
+    return match.group(1) if match else ""
+
+
 def _ensure_tools_windows():
     global _CHROMEDRIVER_BIN
     if os.name != "nt":
         return
     tools_dir = _tools_dir()
 
-    if not _CHROMEDRIVER_BIN and not shutil.which("chromedriver"):
-        cd_dir = os.path.join(tools_dir, "chromedriver")
-        cd_bin = os.path.join(cd_dir, "chromedriver-win64", "chromedriver.exe")
-        if not os.path.isfile(cd_bin):
-            os.makedirs(cd_dir, exist_ok=True)
-            chrome_ver = _find_chrome_version_windows()
+    chrome_ver = _find_chrome_version_windows()
+    chrome_major = chrome_ver.split(".", 1)[0] if chrome_ver else ""
+
+    # Un chromedriver ya presente solo sirve si su major calza con el Chrome
+    # instalado: Chrome se autoactualiza solo y el driver viejo deja de abrir
+    # sesion ("only supports Chrome version N"), asi que hay que renovarlo.
+    existente = _CHROMEDRIVER_BIN or shutil.which("chromedriver")
+    if existente and chrome_major:
+        major_drv = _chromedriver_major(existente)
+        if major_drv and major_drv != chrome_major:
+            _log_warn(
+                f"chromedriver {major_drv} no calza con Chrome {chrome_major}; se renueva."
+            )
+            _CHROMEDRIVER_BIN = None
+            existente = ""
+    if existente:
+        return
+
+    cd_dir = os.path.join(tools_dir, "chromedriver")
+    cd_bin = os.path.join(cd_dir, "chromedriver-win64", "chromedriver.exe")
+
+    necesita_descarga = not os.path.isfile(cd_bin)
+    if not necesita_descarga and chrome_major:
+        major_propio = _chromedriver_major(cd_bin)
+        if major_propio and major_propio != chrome_major:
+            _log_info(
+                f"chromedriver propio {major_propio} quedo viejo frente a Chrome "
+                f"{chrome_major}; se descarga de nuevo."
+            )
+            necesita_descarga = True
+
+    if necesita_descarga:
+        os.makedirs(cd_dir, exist_ok=True)
+        try:
+            url = _get_chromedriver_download_url(chrome_ver)
+        except Exception as exc:
+            _log_warn(f"No se pudo resolver URL chromedriver: {exc}")
+            url = ""
+        if url:
+            zip_path = os.path.join(cd_dir, "chromedriver.zip")
             try:
-                url = _get_chromedriver_download_url(chrome_ver)
+                _download_file(url, zip_path)
+                _extract_zip(zip_path, cd_dir)
             except Exception as exc:
-                _log_warn(f"No se pudo resolver URL chromedriver: {exc}")
-                url = ""
-            if url:
-                zip_path = os.path.join(cd_dir, "chromedriver.zip")
-                try:
-                    _download_file(url, zip_path)
-                    _extract_zip(zip_path, cd_dir)
-                except Exception as exc:
-                    _log_warn(f"No se pudo descargar chromedriver: {exc}")
-            else:
-                _log_warn("No se encontro URL para chromedriver")
-        if os.path.isfile(cd_bin):
-            _CHROMEDRIVER_BIN = cd_bin
-            os.environ["PATH"] = f"{os.path.dirname(cd_bin)};{os.environ.get('PATH', '')}"
-            _log_info(f"chromedriver listo en {cd_bin}")
+                _log_warn(f"No se pudo descargar chromedriver: {exc}")
+        else:
+            _log_warn(
+                f"No se encontro chromedriver para Chrome {chrome_major or '?'}: "
+                f"DJ/IP y garantias.pdf no se generaran."
+            )
+
+    if os.path.isfile(cd_bin):
+        _CHROMEDRIVER_BIN = cd_bin
+        os.environ["PATH"] = f"{os.path.dirname(cd_bin)};{os.environ.get('PATH', '')}"
+        major_final = _chromedriver_major(cd_bin)
+        if chrome_major and major_final and major_final != chrome_major:
+            _log_warn(
+                f"chromedriver quedo en {major_final} y Chrome es {chrome_major}: "
+                f"DJ/IP puede seguir fallando."
+            )
+        else:
+            _log_info(f"chromedriver listo en {cd_bin} (v{major_final or '?'})")
 
 
 def build_opener():
@@ -382,14 +444,149 @@ def parse_providers(html):
 
 
 def _extract_hidden_fields(html):
+    # Se parsean los atributos sin depender del orden: los hidden del paginador
+    # del cuadro vienen como name=... type="hidden" ... value=..., al revés que
+    # __VIEWSTATE, y con un patrón posicional quedaban fuera del postback.
     fields = {}
-    for name, value in re.findall(
-        r'<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]+value="([^"]*)"',
-        html,
-        re.I,
-    ):
-        fields[name] = value
+    for tag in re.findall(r"<input\b[^>]*>", html, re.I):
+        attrs = {
+            k.lower(): v
+            for k, v in re.findall(r'([A-Za-z_:][-\w:.]*)\s*=\s*"([^"]*)"', tag)
+        }
+        if (attrs.get("type") or "").lower() != "hidden":
+            continue
+        name = attrs.get("name")
+        if name:
+            fields[name] = attrs.get("value", "")
     return fields
+
+
+def _extract_pager_grid(html):
+    """
+    Paginador del cuadro de ofertas (user control WucPagerGrid).
+
+    Retorna (nombre_control, [indices de hoja enlazados]). Los índices se leen de
+    los propios enlaces (fnMovePage(indice, '<control>')) para no asumir el rango
+    ni la base: el paginador muestra solo una ventana de números cuando hay
+    muchas hojas.
+    """
+    control = ""
+    indices = []
+    for idx, ctrl in re.findall(
+        r"fnMovePage\(\s*(\d+)\s*,\s*['\"]([^'\"]+)['\"]", html, re.I
+    ):
+        control = control or ctrl
+        if ctrl != control:
+            continue
+        valor = int(idx)
+        if valor not in indices:
+            indices.append(valor)
+    return control, indices
+
+
+def _total_filas_cuadro(html):
+    """Total de proveedores que declara el paginador (hidCountRows), o 0."""
+    for name, value in _extract_hidden_fields(html).items():
+        if name.endswith("$hidCountRows"):
+            try:
+                return int((value or "").strip())
+            except ValueError:
+                return 0
+    return 0
+
+
+def _firma_provider(provider):
+    """Identidad de una fila del cuadro: un proveedor puede tener varias ofertas."""
+    return (
+        provider.get("rut") or "",
+        provider.get("nombre") or "",
+        provider.get("suministro") or "",
+        provider.get("oferta") or "",
+        tuple(sorted((provider.get("attachments") or {}).items())),
+    )
+
+
+def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
+    """
+    Proveedores de TODAS las hojas del cuadro de ofertas.
+
+    parse_providers lee un solo HTML, y ese HTML trae únicamente la hoja visible
+    (10 filas, hidMaxRowCount), así que las hojas siguientes se piden por postback
+    ASP.NET, igual que la grilla de adjuntos en download_attachment.
+    """
+    providers = list(parse_providers(supply_html))
+    vistos = {_firma_provider(p) for p in providers}
+
+    control, pendientes = _extract_pager_grid(supply_html)
+    if not control:
+        _log_debug("cuadro de ofertas sin paginador: una sola hoja")
+        return providers
+
+    action_url = supply_url
+    accion = re.search(r'<form[^>]+action="([^"]+)"', supply_html, re.I)
+    if accion:
+        action_url = urllib.parse.urljoin(supply_url, accion.group(1))
+
+    current_html = supply_html
+    visitadas = set()
+    hoja = 1
+    while pendientes:
+        indice = pendientes.pop(0)
+        if indice in visitadas:
+            continue
+        visitadas.add(indice)
+
+        form_data = _extract_hidden_fields(current_html)
+        form_data["__EVENTTARGET"] = f"{control}$btn_GoToPage"
+        form_data["__EVENTARGUMENT"] = str(indice)
+        data = urllib.parse.urlencode(form_data).encode("utf-8")
+        try:
+            _log_debug(f"cuadro POST hoja indice {indice} {action_url}")
+            with request_url(
+                opener,
+                action_url,
+                method="POST",
+                data=data,
+                headers={
+                    "Referer": supply_url,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            ) as resp:
+                nuevo_html = read_response(resp).decode(
+                    resp.headers.get_content_charset() or "utf-8", errors="replace"
+                )
+        except Exception as exc:
+            _log_warn(f"No se pudo abrir la hoja de indice {indice} del cuadro: {exc}")
+            continue
+
+        de_la_hoja = parse_providers(nuevo_html)
+        if not de_la_hoja:
+            # Respuesta sin filas: se conserva el HTML anterior, porque el
+            # __VIEWSTATE del siguiente postback tiene que salir de uno válido.
+            _log_warn(f"La hoja de indice {indice} del cuadro no trajo proveedores.")
+            continue
+
+        current_html = nuevo_html
+        hoja += 1
+        nuevos = 0
+        for provider in de_la_hoja:
+            firma = _firma_provider(provider)
+            if firma in vistos:
+                continue
+            vistos.add(firma)
+            providers.append(provider)
+            nuevos += 1
+        _log_info(f"Cuadro de ofertas hoja {hoja}: {nuevos} proveedor(es) nuevos")
+        if not nuevos:
+            # El postback devolvió la misma hoja: no se sigue ampliando por ahí.
+            continue
+
+        _, mas_hojas = _extract_pager_grid(current_html)
+        for nuevo in mas_hojas:
+            if nuevo not in visitadas and nuevo not in pendientes:
+                pendientes.append(nuevo)
+
+    return providers
 
 
 def _extract_download_inputs(html, label=None, debug_dir=None):
@@ -896,12 +1093,24 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
             return resumen
         resumen["supply_url"] = supply_url
 
-        providers = parse_providers(supply_html)
+        providers = parse_providers_todas_las_hojas(opener, supply_url, supply_html)
         if not providers:
             resumen["errores"].append("No se encontraron proveedores en la tabla.")
             _log_warn("No se encontraron proveedores en la tabla.")
             return resumen
-        _log_info(f"Proveedores detectados: {len(providers)}")
+
+        total_declarado = _total_filas_cuadro(supply_html)
+        _log_info(
+            f"Proveedores detectados: {len(providers)}"
+            + (f" de {total_declarado} que declara el cuadro" if total_declarado else "")
+        )
+        if total_declarado and len(providers) < total_declarado:
+            aviso = (
+                f"Solo se leyeron {len(providers)} de {total_declarado} proveedores "
+                f"del cuadro de ofertas: la descarga queda incompleta."
+            )
+            resumen["errores"].append(aviso)
+            _log_warn(aviso)
 
         try:
             token = get_access_token(opener)
@@ -923,10 +1132,16 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
         }
 
         total_global = 0
+        carpetas_usadas = {}
         for provider in providers:
             rut = provider["rut"] or provider["rut_firma"] or ""
             nombre = provider["nombre"] or "proveedor"
             provider_name = sanitize_name(f"{rut} {nombre}".strip())
+            # Un proveedor puede presentar más de una oferta: sin esto las dos
+            # filas caen en la misma carpeta y se mezclan sus documentos.
+            carpetas_usadas[provider_name] = carpetas_usadas.get(provider_name, 0) + 1
+            if carpetas_usadas[provider_name] > 1:
+                provider_name = f"{provider_name} (oferta {carpetas_usadas[provider_name]})"
             provider_dir = os.path.join(carpeta_base, provider_name)
             os.makedirs(provider_dir, exist_ok=True)
             _log_info(f"Procesando proveedor: {provider_name}")
