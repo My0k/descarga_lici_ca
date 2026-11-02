@@ -15,6 +15,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+import actualizador
 import descarga_ca
 import genera_xls_ca
 import genera_xls_lici
@@ -40,6 +41,7 @@ class DescargadorProduccionApp:
         self._token_poll_after_id = None
         self._compra_agil_clicked = False
         self._procesando = False
+        self.reiniciar_al_salir = False
 
         self.status_var = tk.StringVar(value="Listo para iniciar navegador")
         self.token_estado = tk.StringVar(value="Token no detectado")
@@ -194,6 +196,27 @@ class DescargadorProduccionApp:
             font=("Segoe UI", 10, "bold"),
         )
         subtitle.grid(row=1, column=1, sticky="w", pady=(4, 0))
+
+        # Actualizador: boton pequeño arriba a la derecha y la version instalada.
+        header_content.grid_columnconfigure(1, weight=1)
+        self.btn_actualizar = tk.Button(
+            header_content,
+            text="Buscar actualización",
+            command=self.buscar_actualizacion,
+            font=("Segoe UI", 8),
+            padx=6,
+            pady=1,
+            cursor="hand2",
+        )
+        self.btn_actualizar.grid(row=0, column=2, sticky="ne")
+        self.version_var = tk.StringVar(value=actualizador.texto_version(actualizador.version_local()))
+        tk.Label(
+            header_content,
+            textvariable=self.version_var,
+            bg=colors["card"],
+            fg=colors["muted"],
+            font=("Segoe UI", 7),
+        ).grid(row=1, column=2, sticky="ne", pady=(4, 0))
 
         # Bloque: navegador
         navegador_frame = tk.Frame(
@@ -1191,6 +1214,116 @@ class DescargadorProduccionApp:
         self.btn_listo.configure(state="normal")
         self._actualizar_estado_procesar()
 
+    # ---------------- Actualizador ----------------
+    def _en_segundo_plano(self, tarea, al_terminar):
+        """
+        Corre tarea() en un hilo y llama al_terminar(resultado, error) en el hilo de
+        la interfaz (tkinter no admite que otro hilo toque la ventana).
+        """
+        estado = {}
+
+        def _trabajo():
+            try:
+                estado["resultado"] = tarea()
+            except Exception as exc:
+                estado["error"] = exc
+            estado["listo"] = True
+
+        def _revisar():
+            if estado.get("listo"):
+                al_terminar(estado.get("resultado"), estado.get("error"))
+            else:
+                self.root.after(200, _revisar)
+
+        threading.Thread(target=_trabajo, daemon=True).start()
+        self.root.after(200, _revisar)
+
+    def buscar_actualizacion(self):
+        if self._procesando:
+            messagebox.showwarning(
+                "Actualizacion", "Espere a que termine el procesamiento antes de actualizar."
+            )
+            return
+        self.btn_actualizar.configure(state="disabled", text="Buscando...")
+        self.status_var.set("Buscando actualizacion...")
+        self._en_segundo_plano(actualizador.consultar_ultima_version, self._resultado_busqueda)
+
+    def _resultado_busqueda(self, remota, error):
+        self.btn_actualizar.configure(state="normal", text="Buscar actualización")
+        if error:
+            self.status_var.set("No se pudo buscar actualizacion")
+            messagebox.showerror("Actualizacion", f"No se pudo buscar la actualizacion.\n\n{error}")
+            return
+
+        local = actualizador.version_local()
+        if not actualizador.hay_actualizacion(local, remota):
+            self.status_var.set("El programa esta actualizado")
+            messagebox.showinfo(
+                "Actualizacion",
+                f"Ya tiene la ultima version.\n\n{actualizador.texto_version(remota)}",
+            )
+            return
+
+        resumen = (remota.get("mensaje") or "").splitlines()[0][:200]
+        if not local.get("sha"):
+            encabezado = "No hay registro de la version instalada. Version disponible:"
+        else:
+            encabezado = "Hay una actualizacion disponible:"
+        self.status_var.set("Actualizacion disponible")
+        if not messagebox.askyesno(
+            "Actualizacion",
+            f"{encabezado}\n\n{resumen}\n{actualizador.texto_version(remota)}\n\n"
+            "Se descargara, se cerrara el navegador y el programa se reiniciara.\n"
+            "¿Desea actualizar ahora?",
+        ):
+            self.status_var.set("Actualizacion pospuesta")
+            return
+        if self._procesando:
+            messagebox.showwarning(
+                "Actualizacion", "Espere a que termine el procesamiento antes de actualizar."
+            )
+            return
+
+        self.btn_actualizar.configure(state="disabled", text="Actualizando...")
+        self.btn_procesar.configure(state="disabled")
+        self.status_var.set("Descargando actualizacion...")
+        self._en_segundo_plano(
+            lambda: actualizador.instalar_version(remota),
+            lambda resultado, error: self._resultado_instalacion(remota, resultado, error),
+        )
+
+    def _resultado_instalacion(self, remota, resultado, error):
+        self.btn_actualizar.configure(state="normal", text="Buscar actualización")
+        self._actualizar_estado_procesar()
+        if error:
+            self.status_var.set("Fallo la actualizacion")
+            messagebox.showerror("Actualizacion", f"No se pudo actualizar.\n\n{error}")
+            return
+
+        print(f"[UPDATE] Instalada {remota.get('sha')} ({(resultado or {}).get('archivos')} archivos)")
+        self.version_var.set(actualizador.texto_version(remota))
+        messagebox.showinfo(
+            "Actualizacion",
+            "Actualizacion instalada.\n\nEl programa se reiniciara ahora "
+            "(puede tardar unos segundos mientras revisa las dependencias).",
+        )
+        try:
+            self.cerrar_navegador()
+            self._guardar_base_descargas()
+        except Exception:
+            pass
+        try:
+            actualizador.reiniciar_programa()
+        except Exception as exc:
+            messagebox.showerror(
+                "Actualizacion",
+                f"La actualizacion se instalo, pero no se pudo reiniciar solo.\n\n{exc}\n\n"
+                "Cierre el programa y abralo de nuevo con run.bat.",
+            )
+            return
+        self.reiniciar_al_salir = True
+        self.root.destroy()
+
     def on_closing(self):
         try:
             self.cerrar_navegador()
@@ -1272,6 +1405,11 @@ def main():
     app = DescargadorProduccionApp(root)
     root.protocol("WM_DELETE_WINDOW", app.on_closing)
     root.mainloop()
+    if app.reiniciar_al_salir:
+        # run.bat reconoce este codigo y cierra su consola sin pedir una tecla.
+        import sys
+
+        sys.exit(actualizador.CODIGO_SALIDA_REINICIO)
 
 
 if __name__ == "__main__":

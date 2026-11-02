@@ -706,9 +706,38 @@ def filename_from_headers(headers, fallback):
     return _fix_filename_encoding(fallback)
 
 
+_PALABRA_MIME_SANEADA = re.compile(r"=_([A-Za-z0-9-]+)_([BbQq])_([A-Za-z0-9+/=_%.-]+?)_=")
+
+
+def decodificar_nombre_mime(nombre):
+    """
+    Decodifica nombres de archivo en formato MIME (RFC 2047), por ejemplo
+    "=?utf-8?B?U2VsbG9fbXVqZXIucGRm?=" -> "Sello_mujer.pdf". Mercado Público entrega
+    así algunos nombres con tildes, y sin decodificar quedaban como "=_utf-8_B_...".
+    También repara la forma ya saneada (con "_" en vez de "?") de descargas anteriores.
+    """
+    if not nombre or "=" not in nombre:
+        return nombre
+    texto = str(nombre)
+    if "=?" not in texto and _PALABRA_MIME_SANEADA.search(texto):
+        texto = _PALABRA_MIME_SANEADA.sub(lambda m: f"=?{m.group(1)}?{m.group(2)}?{m.group(3)}?=", texto)
+    if "=?" not in texto:
+        return nombre
+    try:
+        from email.header import decode_header, make_header
+
+        decodificado = str(make_header(decode_header(texto))).strip()
+        return decodificado or nombre
+    except Exception:
+        return nombre
+
+
 def _fix_filename_encoding(value):
     if not value:
         return value
+    decodificado = decodificar_nombre_mime(value)
+    if decodificado != value:
+        return decodificado
     # Try to repair latin1-decoded UTF-8 (e.g., "NÂº" -> "Nº").
     try:
         repaired = value.encode("latin1").decode("utf-8")
@@ -1465,17 +1494,29 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None, d
             "economicos": "economico",
         }
 
+        def _nombre_base(prov):
+            rut_prov = prov["rut"] or prov["rut_firma"] or ""
+            return sanitize_name(f"{rut_prov} {prov['nombre'] or 'proveedor'}".strip())
+
+        ofertas_por_proveedor = {}
+        for provider in providers:
+            base = _nombre_base(provider)
+            ofertas_por_proveedor[base] = ofertas_por_proveedor.get(base, 0) + 1
+
         total_global = 0
         carpetas_usadas = {}
         for provider in providers:
             rut = provider["rut"] or provider["rut_firma"] or ""
             nombre = provider["nombre"] or "proveedor"
-            provider_name = sanitize_name(f"{rut} {nombre}".strip())
-            # Un proveedor puede presentar más de una oferta: sin esto las dos
-            # filas caen en la misma carpeta y se mezclan sus documentos.
+            provider_name = _nombre_base(provider)
+            # Un proveedor puede presentar más de una oferta: cada una va en su propia
+            # carpeta, numerada y con el monto, para que se vea que no es un duplicado.
             carpetas_usadas[provider_name] = carpetas_usadas.get(provider_name, 0) + 1
-            if carpetas_usadas[provider_name] > 1:
-                provider_name = f"{provider_name} (oferta {carpetas_usadas[provider_name]})"
+            if ofertas_por_proveedor[provider_name] > 1:
+                numero = carpetas_usadas[provider_name]
+                oferta = (provider.get("oferta") or "").strip()
+                monto = sanitize_name(oferta) if oferta else ""
+                provider_name = f"{provider_name} (oferta {numero}" + (f" {monto})" if monto else ")")
             provider_dir = os.path.join(carpeta_base, provider_name)
             os.makedirs(provider_dir, exist_ok=True)
             _log_info(f"Procesando proveedor: {provider_name}")

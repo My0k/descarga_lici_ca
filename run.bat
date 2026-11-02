@@ -46,11 +46,20 @@ REM Asegurar PyQt para compatibilidad en Windows (Tkinter ya viene con Python)
 echo [INFO] Asegurando instalacion de PyQt5...
 pip install --upgrade PyQt5 PyQt5-Qt5 PyQt5-sip
 
-REM Ejecutar la aplicacion (front de produccion)
-echo [INFO] Lanzando aplicacion de produccion: front_produccion.py
-python "%~dp0front_produccion.py"
-
-echo [INFO] Proceso finalizado. Pulse una tecla para cerrar.
-pause
-
-endlocal
+REM Ejecutar la aplicacion (front de produccion).
+REM Todo va en un bloque entre parentesis: cmd lo lee completo antes de ejecutarlo.
+REM Asi, si el actualizador reemplaza este archivo mientras el programa corre, cmd
+REM no sigue leyendo lineas del archivo nuevo. El codigo 3 significa que el programa
+REM se reinicio tras actualizarse: esta consola se cierra sin pedir una tecla.
+(
+    echo [INFO] Lanzando aplicacion de produccion: front_produccion.py
+    python "%~dp0front_produccion.py"
+    if "!ERRORLEVEL!"=="3" (
+        endlocal
+        exit
+    )
+    echo [INFO] Proceso finalizado. Pulse una tecla para cerrar.
+    pause
+    endlocal
+    exit /b
+)

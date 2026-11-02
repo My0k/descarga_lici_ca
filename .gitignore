@@ -22,3 +22,8 @@ test_api/
 # Token de sesión local de Mercado Público; nunca versionar.
 /token
 logs/
+
+# Actualizador: version instalada y respaldo temporal de cada equipo.
+/.version_instalada.json
+/.respaldo_actualizacion/
+*.actualizando

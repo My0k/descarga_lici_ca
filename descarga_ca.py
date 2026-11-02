@@ -53,12 +53,38 @@ def _asegurar_nombre_unico(carpeta_destino, nombre_archivo):
     return candidato
 
 
+_PALABRA_MIME_SANEADA = re.compile(r"=_([A-Za-z0-9-]+)_([BbQq])_([A-Za-z0-9+/=_%.-]+?)_=")
+
+
+def decodificar_nombre_mime(nombre):
+    """
+    Decodifica nombres de archivo en formato MIME (RFC 2047), por ejemplo
+    "=?utf-8?B?U2VsbG9fbXVqZXIucGRm?=" -> "Sello_mujer.pdf". Mercado Público entrega
+    así algunos nombres con tildes, y sin decodificar quedaban como "=_utf-8_B_...".
+    También repara la forma ya saneada (con "_" en vez de "?") de descargas anteriores.
+    """
+    if not nombre or "=" not in nombre:
+        return nombre
+    texto = str(nombre)
+    if "=?" not in texto and _PALABRA_MIME_SANEADA.search(texto):
+        texto = _PALABRA_MIME_SANEADA.sub(lambda m: f"=?{m.group(1)}?{m.group(2)}?{m.group(3)}?=", texto)
+    if "=?" not in texto:
+        return nombre
+    try:
+        from email.header import decode_header, make_header
+
+        decodificado = str(make_header(decode_header(texto))).strip()
+        return decodificado or nombre
+    except Exception:
+        return nombre
+
+
 def _limpiar_nombre_archivo_con_extension(nombre, max_len=160):
     """
     Limpia nombres de archivo intentando preservar la extensión y el sufijo del nombre,
     evitando truncar justo donde va el diferenciador (ej: "... 1.jpg", "... 2.jpg").
     """
-    nombre = (nombre or "").strip()
+    nombre = decodificar_nombre_mime((nombre or "").strip()).strip()
     if not nombre:
         return "archivo"
     base, ext = os.path.splitext(nombre)
@@ -1467,13 +1493,13 @@ def _descargar_archivo_api(file_id, token, nombre_archivo, intentos=5):
             # Soporta filename= y filename*=UTF-8''...
             m_star = re.search(r"filename\\*=(?:UTF-8''|utf-8'')?([^;]+)", disposition)
             if m_star:
-                candidato = unquote(m_star.group(1).strip().strip('"').strip("'"))
+                candidato = decodificar_nombre_mime(unquote(m_star.group(1).strip().strip('"').strip("'")))
                 if candidato:
                     nombre_archivo = candidato
             else:
                 m = re.search(r"filename=([^;]+)", disposition)
                 if m:
-                    candidato = m.group(1).strip().strip('"').strip("'")
+                    candidato = decodificar_nombre_mime(m.group(1).strip().strip('"').strip("'"))
                     if candidato:
                         nombre_archivo = candidato
         except Exception:
