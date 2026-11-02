@@ -1422,7 +1422,68 @@ def _activar_registro():
         RUTA_LOG = None
 
 
+def _ruta_descargas_config(ruta_config, app_dir):
+    """
+    download_path de un config.conf, o None si no tiene o es la de defecto
+    (<carpeta del programa>/Descargas).
+    """
+    config = configparser.ConfigParser()
+    try:
+        config.read(ruta_config, encoding="utf-8")
+        valor = config.get("PATH", "download_path", fallback="").strip().strip('"').strip("'")
+    except Exception:
+        return None
+    if not valor:
+        return None
+    defecto = os.path.normcase(os.path.abspath(os.path.join(app_dir, "Descargas")))
+    if os.path.normcase(os.path.abspath(valor)) == defecto:
+        return None
+    return valor
+
+
+def _fijar_carpeta_de_trabajo():
+    """
+    Trabaja siempre desde la carpeta del programa. config.conf (ruta de descargas),
+    token y sesion se leen de la carpeta actual; si el programa se abria desde otra
+    (p. ej. un acceso directo con otro "Iniciar en"), al reiniciarse tras una
+    actualizacion ya no los encontraba y la ruta de descargas volvia a la de defecto.
+    Si estan en la carpeta desde donde se abrio y no en la del programa, se copian.
+    """
+    app_dir = os.path.dirname(os.path.abspath(__file__))
+    try:
+        origen = os.getcwd()
+    except OSError:
+        origen = app_dir
+    if os.path.normcase(os.path.abspath(origen)) != os.path.normcase(app_dir):
+        for nombre in ("config.conf", "token"):
+            desde = os.path.join(origen, nombre)
+            hacia = os.path.join(app_dir, nombre)
+            if not os.path.isfile(desde):
+                continue
+            copiar = not os.path.exists(hacia)
+            if nombre == "config.conf" and not copiar:
+                # Tras una actualizacion el programa reiniciado pudo guardar la ruta por
+                # defecto en la carpeta del programa: gana la ruta elegida por el usuario.
+                copiar = _ruta_descargas_config(hacia, app_dir) is None and (
+                    _ruta_descargas_config(desde, app_dir) is not None
+                )
+            if copiar:
+                try:
+                    shutil.copy2(desde, hacia)
+                except OSError:
+                    pass
+        desde = os.path.join(origen, "sesion")
+        hacia = os.path.join(app_dir, "sesion")
+        if os.path.isdir(desde) and not os.path.exists(hacia):
+            try:
+                shutil.copytree(desde, hacia)
+            except OSError:
+                pass
+    os.chdir(app_dir)
+
+
 def main():
+    _fijar_carpeta_de_trabajo()
     _activar_registro()
     root = tk.Tk()
     app = DescargadorProduccionApp(root)
