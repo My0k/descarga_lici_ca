@@ -553,6 +553,19 @@ def _firma_hoja(providers):
     )
 
 
+def _clave_fila(provider):
+    """Identidad de una oferta del cuadro, sin las URL de adjuntos (cambian en cada pedido)."""
+    def _n(valor):
+        return re.sub(r"\s+", " ", (valor or "").strip()).upper()
+
+    return (
+        re.sub(r"[^0-9K]", "", _n(provider.get("rut") or provider.get("rut_firma"))),
+        _n(provider.get("nombre")),
+        re.sub(r"[^0-9]", "", provider.get("oferta") or ""),
+        _n(provider.get("suministro")),
+    )
+
+
 def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
     """
     Proveedores de TODAS las hojas del cuadro de ofertas.
@@ -563,6 +576,7 @@ def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
     """
     providers = list(parse_providers(supply_html, supply_url))
     hojas_vistas = {_firma_hoja(providers)}
+    filas_vistas = {_clave_fila(p) for p in providers}
 
     control, enlazadas = _extract_pager_grid(supply_html)
     if not control:
@@ -640,9 +654,24 @@ def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
             continue
         hojas_vistas.add(firma)
 
-        providers.extend(de_la_hoja)
+        # Una fila idéntica a otra de una hoja ya leída (mismo RUT, nombre, monto y
+        # nombre de oferta) es la misma oferta repetida por el paginador, no una
+        # segunda oferta: sin este filtro se creaba una carpeta "(oferta 2)" duplicada.
+        nuevas = []
+        for fila in de_la_hoja:
+            clave = _clave_fila(fila)
+            if clave in filas_vistas:
+                _log_warn(
+                    f"Fila repetida entre hojas del cuadro, se descarta: "
+                    f"{fila.get('rut')} {fila.get('nombre')} {fila.get('oferta')}"
+                )
+                continue
+            filas_vistas.add(clave)
+            nuevas.append(fila)
+
+        providers.extend(nuevas)
         hoja += 1
-        _log_info(f"Cuadro de ofertas hoja {hoja}: {len(de_la_hoja)} proveedor(es)")
+        _log_info(f"Cuadro de ofertas hoja {hoja}: {len(nuevas)} proveedor(es)")
 
         _, mas_hojas = _extract_pager_grid(current_html)
         pendientes = _encolar(pendientes, mas_hojas)
@@ -1364,6 +1393,35 @@ def guardar_comprobante_pdf(driver, url, output_path):
             pass
 
 
+def apartar_carpeta_anterior(carpeta):
+    """
+    Si la carpeta ya tiene una descarga anterior, la renombra a
+    "<carpeta> (anterior AAAA-MM-DD HHMM)" para que la descarga nueva parta limpia y
+    no se mezclen archivos o carpetas de ejecuciones distintas. No borra nada.
+    Retorna (ruta_apartada o None, aviso de error o "").
+    """
+    try:
+        if not os.path.isdir(carpeta) or not os.listdir(carpeta):
+            return None, ""
+    except OSError:
+        return None, ""
+    sello = time.strftime("%Y-%m-%d %H%M")
+    destino = f"{carpeta} (anterior {sello})"
+    n = 2
+    while os.path.exists(destino):
+        destino = f"{carpeta} (anterior {sello} {n})"
+        n += 1
+    try:
+        os.rename(carpeta, destino)
+        return destino, ""
+    except OSError as exc:
+        return None, (
+            f"No se pudo apartar la descarga anterior ({exc}); los archivos nuevos quedan "
+            f"junto a los anteriores en {carpeta}. Cierre las ventanas o archivos abiertos "
+            "de esa carpeta y vuelva a procesar si quiere una descarga limpia."
+        )
+
+
 def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None, driver=None):
     """
     driver: Chrome (Selenium) con la sesión del comprador iniciada. Es opcional, pero
@@ -1485,6 +1543,13 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None, d
             _log_warn(comprobantes["aviso"])
 
         carpeta_base = os.path.join(download_root, f"{codigo} {sanitize_name(nombre_licitacion)}")
+        apartada, aviso_carpeta = apartar_carpeta_anterior(carpeta_base)
+        if apartada:
+            resumen["carpeta_anterior"] = apartada
+            _log_info(f"Descarga anterior apartada en {apartada}")
+        if aviso_carpeta:
+            resumen["errores"].append(aviso_carpeta)
+            _log_warn(aviso_carpeta)
         os.makedirs(carpeta_base, exist_ok=True)
         resumen["carpeta_base"] = carpeta_base
 

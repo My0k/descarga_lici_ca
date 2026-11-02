@@ -351,7 +351,7 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
     """
     if diagnostico is None:
         diagnostico = {}
-    diagnostico.update({"motivo": "", "detalle": ""})
+    diagnostico.update({"motivo": "", "detalle": "", "avisos": [], "carpeta_anterior": ""})
     fallas_api = []
 
     try:
@@ -385,6 +385,13 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
             pass
 
     carpeta_base = resolver_carpeta_base(base_dir, "ComprasAgiles", codigo_ca, nombre_proyecto)
+    apartada, aviso_carpeta = apartar_carpeta_anterior(carpeta_base)
+    if apartada:
+        print(f"[API] Descarga anterior apartada en {apartada}")
+        diagnostico["carpeta_anterior"] = apartada
+    if aviso_carpeta:
+        print(f"[API] {aviso_carpeta}")
+        diagnostico["avisos"].append(aviso_carpeta)
     os.makedirs(carpeta_base, exist_ok=True)
 
     exitosos = 0
@@ -2839,6 +2846,35 @@ def construir_nombre_carpeta_base(codigo, nombre_proyecto=None):
     base = limpiar_nombre_archivo(base)
     return base or codigo_str or "sin_codigo"
 
+def apartar_carpeta_anterior(carpeta):
+    """
+    Si la carpeta ya tiene una descarga anterior, la renombra a
+    "<carpeta> (anterior AAAA-MM-DD HHMM)" para que la descarga nueva parta limpia y
+    no se mezclen archivos o carpetas de ejecuciones distintas. No borra nada.
+    Retorna (ruta_apartada o None, aviso de error o "").
+    """
+    try:
+        if not os.path.isdir(carpeta) or not os.listdir(carpeta):
+            return None, ""
+    except OSError:
+        return None, ""
+    sello = datetime.now().strftime("%Y-%m-%d %H%M")
+    destino = f"{carpeta} (anterior {sello})"
+    n = 2
+    while os.path.exists(destino):
+        destino = f"{carpeta} (anterior {sello} {n})"
+        n += 1
+    try:
+        os.rename(carpeta, destino)
+        return destino, ""
+    except OSError as exc:
+        return None, (
+            f"No se pudo apartar la descarga anterior ({exc}); los archivos nuevos quedan "
+            f"junto a los anteriores en {carpeta}. Cierre las ventanas o archivos abiertos "
+            "de esa carpeta y vuelva a procesar si quiere una descarga limpia."
+        )
+
+
 def resolver_carpeta_base(base_dir, subdir, codigo, nombre_proyecto=None):
     base_dir = base_dir or "Descargas"
     subdir = subdir or ""
@@ -2855,6 +2891,9 @@ def resolver_carpeta_base(base_dir, subdir, codigo, nombre_proyecto=None):
     candidatos = []
     try:
         for nombre_dir in os.listdir(carpeta_root):
+            if "(anterior " in nombre_dir:
+                # Descargas anteriores apartadas por apartar_carpeta_anterior.
+                continue
             if nombre_dir == codigo_str:
                 pass
             elif nombre_dir.startswith(f"{codigo_str} "):

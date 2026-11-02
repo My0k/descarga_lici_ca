@@ -669,12 +669,21 @@ class DescargadorProduccionApp:
             base_dir=base_dir,
             carpeta_base=carpeta,
         )
+        nota = ""
+        if diagnostico.get("carpeta_anterior"):
+            nota += (
+                "\n\nLa descarga anterior de esta compra se guardo aparte en:\n"
+                f"{diagnostico['carpeta_anterior']}"
+            )
+        if diagnostico.get("avisos"):
+            nota += "\n\nAvisos:\n- " + "\n- ".join(diagnostico["avisos"][:5])
         if ruta_excel:
             self.status_var.set(f"Flujo completado: {codigo}")
             if mostrar_mensaje:
-                messagebox.showinfo(
+                mostrar = messagebox.showwarning if diagnostico.get("avisos") else messagebox.showinfo
+                mostrar(
                     "Proceso completado",
-                    f"Compra agil {codigo} procesada.\n\nExcel generado en:\n{ruta_excel}",
+                    f"Compra agil {codigo} procesada.\n\nExcel generado en:\n{ruta_excel}{nota}",
                 )
             return True
         else:
@@ -743,11 +752,25 @@ class DescargadorProduccionApp:
                 f"de {comprobantes.get('total', 0)}."
             )
         faltan_comprobantes = comprobantes.get("descargados", 0) < comprobantes.get("total", 0)
+        otros_avisos = [
+            e for e in (resumen.get("errores") or []) if e and e != comprobantes.get("aviso")
+        ]
+        if resumen.get("carpeta_anterior"):
+            nota_comprobantes += (
+                "\n\nLa descarga anterior de esta licitacion se guardo aparte en:\n"
+                f"{resumen['carpeta_anterior']}"
+            )
+        if otros_avisos:
+            nota_comprobantes += "\n\nAvisos:\n- " + "\n- ".join(otros_avisos[:5])
 
         if ruta_excel:
             self.status_var.set(f"Flujo completado: {codigo}")
             if mostrar_mensaje:
-                mostrar = messagebox.showwarning if faltan_comprobantes else messagebox.showinfo
+                mostrar = (
+                    messagebox.showwarning
+                    if faltan_comprobantes or otros_avisos
+                    else messagebox.showinfo
+                )
                 mostrar(
                     "Proceso completado",
                     f"Licitacion {codigo} procesada.\n\nExcel generado en:\n{ruta_excel}"
