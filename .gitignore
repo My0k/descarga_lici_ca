@@ -21,3 +21,4 @@ test_api/
 
 # Token de sesión local de Mercado Público; nunca versionar.
 /token
+logs/

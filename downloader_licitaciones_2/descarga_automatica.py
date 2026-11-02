@@ -390,9 +390,30 @@ def parse_url_dj(html):
     return extract_first(r'id="UrlDj"[^>]*value="([^"]+)"', html)
 
 
-def parse_providers(html):
+def _extract_vouchers(html, base_url=BASE_URL):
+    """
+    URL del comprobante de oferta (voucherview.aspx) de cada fila del cuadro, por
+    índice de fila ('02', '03', ...). El botón solo aparece cuando el cuadro se pide
+    con la sesión del comprador; sin sesión el resultado es vacío.
+
+    Se busca por etiqueta y no por un id fijo, porque el orden de los atributos y el
+    id del botón no son estables.
+    """
+    vouchers = {}
+    for match in re.finditer(r'<(?:input|a|img)\b[^>]*voucherview\.aspx[^>]*>', html, re.I):
+        tag = match.group(0)
+        fila = re.search(r'grdSupplies[_$]ctl(\d{2})', tag)
+        url = re.search(r'([^\'"\s(]*voucherview\.aspx\?[^\'"\s)]+)', tag, re.I)
+        if not fila or not url:
+            continue
+        vouchers.setdefault(fila.group(1), urllib.parse.urljoin(base_url, url.group(1)))
+    return vouchers
+
+
+def parse_providers(html, base_url=BASE_URL):
     html = html_lib.unescape(html)
     indices = sorted(set(re.findall(r'grdSupplies_ctl(\d{2})__GvLblProvider', html)))
+    vouchers = _extract_vouchers(html, base_url)
     providers = []
     for idx in indices:
         rut = extract_first(rf'id="grdSupplies_ctl{idx}__GvLblRutProvider"[^>]*>([^<]+)<', html)
@@ -438,6 +459,7 @@ def parse_providers(html):
                 "rut_firma": firma,
                 "rut_ficha": ficha,
                 "garantia_vals": garantia_vals,
+                "voucher_url": vouchers.get(idx, ""),
             }
         )
     return providers
@@ -539,7 +561,7 @@ def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
     (10 filas, hidMaxRowCount), así que las hojas siguientes se piden por postback
     ASP.NET, igual que la grilla de adjuntos en download_attachment.
     """
-    providers = list(parse_providers(supply_html))
+    providers = list(parse_providers(supply_html, supply_url))
     hojas_vistas = {_firma_hoja(providers)}
 
     control, enlazadas = _extract_pager_grid(supply_html)
@@ -549,9 +571,11 @@ def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
 
     total_hojas = _total_hojas_cuadro(supply_html)
 
-    # La hoja de entrada ya está leída: si no se marca como visitada, el
-    # paginador de la hoja 2 enlaza de vuelta a ella y se vuelve a descargar.
-    visitadas = {_hidden_num(supply_html, "hidIndex", 0)}
+    # Los enlaces del paginador (fnMovePage) llevan el NÚMERO de hoja, desde 1,
+    # mientras que hidIndex es la hoja visible contando desde 0. La hoja de entrada
+    # ya está leída: si no se marca como visitada, el paginador de la hoja 2 enlaza
+    # de vuelta a ella y se vuelve a descargar.
+    visitadas = {_hidden_num(supply_html, "hidIndex", 0) + 1}
 
     def _encolar(pendientes, candidatas):
         for indice in candidatas:
@@ -559,7 +583,7 @@ def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
                 continue
             # El paginador tambien enlaza hojas ya leidas; y si se conoce el
             # total, un indice fuera de rango no se pide.
-            if total_hojas and indice >= total_hojas:
+            if total_hojas and indice > total_hojas:
                 continue
             pendientes.append(indice)
         return pendientes
@@ -601,7 +625,7 @@ def parse_providers_todas_las_hojas(opener, supply_url, supply_html):
             _log_warn(f"No se pudo abrir la hoja de indice {indice} del cuadro: {exc}")
             continue
 
-        de_la_hoja = parse_providers(nuevo_html)
+        de_la_hoja = parse_providers(nuevo_html, supply_url)
         if not de_la_hoja:
             # Respuesta sin filas: se conserva el HTML anterior, porque el
             # __VIEWSTATE del siguiente postback tiene que salir de uno válido.
@@ -866,6 +890,7 @@ def write_providers_csv(csv_path, providers):
         "declaracion_url",
         "proveedor_url",
         "garantia_info",
+        "comprobante_url",
     ]
     with open(csv_path, "w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -883,6 +908,7 @@ def write_providers_csv(csv_path, providers):
                 "declaracion_url": item.get("declaracion_url", ""),
                 "proveedor_url": item.get("proveedor_url", ""),
                 "garantia_info": ",".join(item.get("garantia_vals", [])),
+                "comprobante_url": item.get("voucher_url", ""),
             }
             writer.writerow(row)
 
@@ -1086,7 +1112,235 @@ def build_garantias_pdf(opener, rfb_code, bid_id, org_code, output_path):
     return success
 
 
-def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
+COMPROBANTE_FILENAME = "comprobante_oferta.pdf"
+COMPROBANTE_TEXTO = "Comprobante de Ingreso de Oferta"
+
+
+def opener_from_driver(driver):
+    """
+    Opener urllib con las cookies de mercadopublico.cl del Chrome donde el usuario
+    inició sesión. Network.getAllCookies trae también las de otros dominios y las
+    HttpOnly, que driver.get_cookies() no entrega si la pestaña está en otro sitio.
+    """
+    from http.cookiejar import Cookie
+
+    jar = CookieJar()
+    cookies = []
+    try:
+        cookies = (driver.execute_cdp_cmd("Network.getAllCookies", {}) or {}).get("cookies") or []
+    except Exception as exc:
+        _log_debug(f"Network.getAllCookies fallo ({exc}); se usa driver.get_cookies()")
+        try:
+            cookies = driver.get_cookies() or []
+        except Exception:
+            cookies = []
+
+    cargadas = 0
+    for c in cookies:
+        dominio = (c.get("domain") or "").strip()
+        if "mercadopublico.cl" not in dominio:
+            continue
+        expira = c.get("expires", c.get("expiry"))
+        try:
+            expira = int(expira) if expira is not None and float(expira) > 0 else None
+        except (TypeError, ValueError):
+            expira = None
+        jar.set_cookie(
+            Cookie(
+                version=0,
+                name=c.get("name", ""),
+                value=c.get("value", ""),
+                port=None,
+                port_specified=False,
+                domain=dominio,
+                domain_specified=True,
+                domain_initial_dot=dominio.startswith("."),
+                path=c.get("path") or "/",
+                path_specified=True,
+                secure=bool(c.get("secure")),
+                expires=expira,
+                discard=expira is None,
+                comment=None,
+                comment_url=None,
+                rest={"HttpOnly": None} if c.get("httpOnly") else {},
+            )
+        )
+        cargadas += 1
+    _log_debug(f"cookies de mercadopublico.cl copiadas desde Chrome: {cargadas}")
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
+    return opener, cargadas
+
+
+def leer_comprobantes_con_sesion(driver, start_url):
+    """
+    Relee el cuadro de ofertas (todas las hojas) con la sesión del comprador para
+    obtener las URL de los comprobantes de oferta, que no aparecen sin sesión.
+
+    Retorna (proveedores_con_sesion, error). Cada proveedor trae rut y voucher_url.
+    """
+    try:
+        opener, cargadas = opener_from_driver(driver)
+    except Exception as exc:
+        return [], f"No se pudieron leer las cookies de Chrome: {exc}"
+    if not cargadas:
+        return [], "Chrome no tiene sesión de mercadopublico.cl"
+
+    supply_url, supply_html = find_supply_summary(opener, start_url)
+    if not supply_url or not supply_html:
+        return [], "No se pudo abrir el cuadro de ofertas con la sesión de Chrome"
+
+    providers = parse_providers_todas_las_hojas(opener, supply_url, supply_html)
+    if any(p.get("voucher_url") for p in providers):
+        return providers, ""
+
+    # Las cookies copiadas no bastaron: se prueba con el propio Chrome. Así solo se
+    # lee la hoja visible, pero en la mayoría de las licitaciones es la única.
+    de_chrome = []
+    handle_original = None
+    pestana_nueva = False
+    try:
+        handle_original = driver.current_window_handle
+        driver.switch_to.new_window("tab")
+        pestana_nueva = True
+        driver.get(supply_url)
+        _esperar_carga(driver)
+        de_chrome = parse_providers(driver.page_source, supply_url)
+    except Exception as exc:
+        _log_debug(f"No se pudo abrir el cuadro en Chrome: {exc}")
+    finally:
+        try:
+            if pestana_nueva:
+                driver.close()
+            if handle_original:
+                driver.switch_to.window(handle_original)
+        except Exception:
+            pass
+    if any(p.get("voucher_url") for p in de_chrome):
+        if _total_hojas_cuadro(supply_html) > 1:
+            _log_warn("Comprobantes leídos solo de la primera hoja del cuadro (vía Chrome).")
+        return de_chrome, ""
+
+    return [], (
+        "El cuadro de ofertas no muestra el botón 'Comprobante de oferta': "
+        "inicie sesión en Mercado Público con la cuenta del comprador en el navegador"
+    )
+
+
+def asignar_comprobantes(providers, con_sesion):
+    """
+    Copia voucher_url de la lectura con sesión a la lectura sin sesión. Ambas recorren
+    el cuadro en el mismo orden, así que se empareja por posición y se confirma con el
+    RUT y el monto ofertado (un proveedor puede tener varias ofertas). Si el orden no
+    calza, se busca la oferta libre con el mismo RUT y monto, y por último solo RUT.
+    """
+    def _norm(valor):
+        return re.sub(r"[^0-9kK]", "", valor or "").upper()
+
+    def _clave(prov, con_monto):
+        rut = _norm(prov.get("rut") or prov.get("rut_firma"))
+        return (rut, _norm(prov.get("oferta"))) if con_monto else (rut,)
+
+    usados = set()
+    asignados = 0
+    for i, prov in enumerate(providers):
+        elegido = None
+        if (
+            i < len(con_sesion)
+            and i not in usados
+            and _clave(con_sesion[i], True) == _clave(prov, True)
+        ):
+            elegido = i
+        for con_monto in (True, False):
+            if elegido is not None:
+                break
+            for j, otro in enumerate(con_sesion):
+                if j not in usados and _clave(otro, con_monto) == _clave(prov, con_monto):
+                    elegido = j
+                    break
+        if elegido is None:
+            continue
+        usados.add(elegido)
+        url = con_sesion[elegido].get("voucher_url") or ""
+        if url:
+            prov["voucher_url"] = url
+            asignados += 1
+    return asignados
+
+
+def _esperar_carga(driver, timeout=25):
+    fin = time.time() + timeout
+    while time.time() < fin:
+        try:
+            if driver.execute_script("return document.readyState") == "complete":
+                return True
+        except Exception:
+            pass
+        time.sleep(0.5)
+    return False
+
+
+def guardar_comprobante_pdf(driver, url, output_path):
+    """
+    Abre el comprobante de oferta en una pestaña nueva del Chrome con sesión y lo
+    imprime a PDF, igual que "Imprimir > Guardar como PDF" en el navegador.
+    Retorna (ok, error).
+    """
+    handle_original = None
+    try:
+        handle_original = driver.current_window_handle
+    except Exception:
+        pass
+    pestana_nueva = False
+    try:
+        driver.switch_to.new_window("tab")
+        pestana_nueva = True
+        driver.get(url)
+        _esperar_carga(driver)
+        texto = ""
+        fin = time.time() + 15
+        while time.time() < fin:
+            try:
+                texto = driver.execute_script(
+                    "return (document.title || '') + ' ' + (document.body ? document.body.innerText : '');"
+                ) or ""
+            except Exception:
+                texto = ""
+            if COMPROBANTE_TEXTO.lower() in texto.lower():
+                break
+            time.sleep(1)
+        else:
+            # Sin el título del comprobante lo más probable es una página de login:
+            # no se guarda para no dejar un PDF engañoso en la carpeta del proveedor.
+            return False, "la página no mostró el comprobante (¿sesión vencida?)"
+
+        pdf = driver.execute_cdp_cmd(
+            "Page.printToPDF",
+            {"printBackground": True, "preferCSSPageSize": True},
+        )
+        data_b64 = (pdf or {}).get("data") or ""
+        if not data_b64:
+            return False, "Chrome no devolvió el PDF"
+        with open(output_path, "wb") as f:
+            f.write(base64.b64decode(data_b64))
+        return True, ""
+    except Exception as exc:
+        return False, str(exc)
+    finally:
+        try:
+            if pestana_nueva:
+                driver.close()
+            if handle_original:
+                driver.switch_to.window(handle_original)
+        except Exception:
+            pass
+
+
+def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None, driver=None):
+    """
+    driver: Chrome (Selenium) con la sesión del comprador iniciada. Es opcional, pero
+    sin él no se pueden guardar los comprobantes de oferta, que Mercado Público solo
+    muestra a usuarios con sesión.
+    """
     resumen = {"ok": False, "proveedores": [], "errores": []}
     codigo = (str(licitacion) or "").strip()
     if not codigo:
@@ -1179,6 +1433,28 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
             resumen["errores"].append(f"No se pudo obtener access_token: {exc}")
             _log_warn(f"No se pudo obtener access_token: {exc}")
 
+        comprobantes = {"total": len(providers), "descargados": 0, "aviso": ""}
+        resumen["comprobantes"] = comprobantes
+        if driver is None:
+            comprobantes["aviso"] = (
+                "Comprobantes de oferta no descargados: inicie el navegador y la sesión "
+                "de Mercado Público antes de procesar la licitación."
+            )
+        else:
+            _log_info("Leyendo comprobantes de oferta con la sesión del navegador...")
+            try:
+                con_sesion, error_sesion = leer_comprobantes_con_sesion(driver, start_url)
+            except Exception as exc:
+                con_sesion, error_sesion = [], f"Error leyendo comprobantes: {exc}"
+            if error_sesion:
+                comprobantes["aviso"] = f"Comprobantes de oferta no descargados: {error_sesion}."
+            else:
+                asignados = asignar_comprobantes(providers, con_sesion)
+                _log_info(f"Comprobantes de oferta encontrados: {asignados} de {len(providers)}")
+        if comprobantes["aviso"]:
+            resumen["errores"].append(comprobantes["aviso"])
+            _log_warn(comprobantes["aviso"])
+
         carpeta_base = os.path.join(download_root, f"{codigo} {sanitize_name(nombre_licitacion)}")
         os.makedirs(carpeta_base, exist_ok=True)
         resumen["carpeta_base"] = carpeta_base
@@ -1236,6 +1512,25 @@ def descargar_licitacion_automatica(licitacion, base_dir=None, debug_dir=None):
                     count = 0
                 prov_resumen[key]["descargados"] = count
                 total_descargados += count
+
+            voucher_url = provider.get("voucher_url") or ""
+            prov_resumen["comprobante"] = False
+            if driver is not None and voucher_url:
+                ok_comp, error_comp = guardar_comprobante_pdf(
+                    driver, voucher_url, os.path.join(provider_dir, COMPROBANTE_FILENAME)
+                )
+                prov_resumen["comprobante"] = ok_comp
+                if ok_comp:
+                    comprobantes["descargados"] += 1
+                    prov_resumen["otros"]["descargados"] += 1
+                    _log_info(f"Comprobante de oferta guardado para {provider_name}")
+                else:
+                    prov_resumen["otros"]["errores"].append(f"Comprobante de oferta: {error_comp}")
+                    _log_warn(f"Comprobante de oferta de {provider_name}: {error_comp}")
+            elif driver is not None and not comprobantes["aviso"]:
+                prov_resumen["otros"]["errores"].append(
+                    "Comprobante de oferta: el cuadro no trae el botón para esta oferta"
+                )
 
             prov_resumen["total_descargados"] = total_descargados
             total_global += total_descargados

@@ -211,8 +211,9 @@ class DescargadorProduccionApp:
         ttk.Label(
             navegador_frame,
             text=(
-                "Se abrira Chrome. Inicie sesion en MercadoPublico.cl solo para Compra agil. "
-                "El sistema detecta el token automaticamente; no es necesario presionar Continuar."
+                "Se abrira Chrome. Inicie sesion en MercadoPublico.cl con la cuenta del comprador: "
+                "es necesaria para Compra agil y para guardar los comprobantes de oferta de las "
+                "licitaciones. El sistema detecta el token automaticamente; no es necesario presionar Continuar."
             ),
             background=colors["card"],
             foreground=colors["muted"],
@@ -462,18 +463,56 @@ class DescargadorProduccionApp:
         normalizado = raw.replace("\n", ",").replace(";", ",")
         return [p.strip() for p in normalizado.split(",") if p.strip()]
 
+    def _token_vigente(self, margen_s=120):
+        """El token guardado existe y le quedan mas de margen_s segundos (dura 8 horas)."""
+        try:
+            with open("token", "r", encoding="utf-8") as f:
+                token = f.read().strip()
+        except Exception:
+            return False
+        if not token:
+            return False
+        vigencia = descarga_ca.segundos_vigencia_token(token)
+        return vigencia is None or vigencia > margen_s
+
+    def _renovar_token(self, timeout_s=25):
+        """
+        Toma un token vigente desde Chrome. Si el que hay esta vencido, abre Compra agil
+        para que la pagina haga llamadas a la API con un token nuevo y lo captura.
+        """
+        if not self.driver:
+            return False
+        if self.capturar_y_guardar_token_desde_selenium() and self._token_vigente():
+            return True
+        try:
+            self.driver.get("https://compra-agil.mercadopublico.cl/")
+        except Exception:
+            pass
+        fin = time.time() + timeout_s
+        while time.time() < fin:
+            time.sleep(2)
+            if self.capturar_y_guardar_token_desde_selenium() and self._token_vigente():
+                return True
+        return False
+
     def _asegurar_token_compra_agil(self, mostrar_mensaje=True):
-        if self.token_guardado:
+        if self.token_guardado and self._token_vigente():
             return True
-        self.token_estado.set("Buscando token antes de procesar compra agil...")
-        token_ok = self.capturar_y_guardar_token_desde_selenium()
-        self.token_guardado = token_ok
-        if token_ok:
+        # El token dura 8 horas y antes solo se revisaba una vez: con Chrome abierto
+        # desde temprano la API respondia 401 y el usuario veia un error generico.
+        self.token_guardado = False
+        self.token_estado.set("Buscando token vigente antes de procesar compra agil...")
+        if self._renovar_token():
+            self.token_estado.set("Token detectado y guardado.")
             return True
+        self.token_guardado = False
+        self.token_estado.set("Sesion vencida: inicie sesion de nuevo en Chrome.")
         if mostrar_mensaje:
             messagebox.showwarning(
-                "Token requerido",
-                "No se detecto token de sesion. Para compra agil es necesario iniciar sesion y esperar la deteccion.",
+                "Sesion vencida",
+                "No hay un token de sesion vigente (dura 8 horas).\n\n"
+                "Inicie sesion de nuevo en MercadoPublico.cl en la ventana de Chrome, "
+                "entre a Compra agil y vuelva a procesar.",
             )
         self.status_var.set("Token no disponible para compra agil")
         return False
@@ -561,11 +600,35 @@ class DescargadorProduccionApp:
             return False
 
         self.status_var.set(f"Descargando adjuntos de compra agil {codigo}...")
-        ok = descarga_ca.descargar_compra_agil_api(codigo, driver=self.driver, base_dir=base_dir)
+        diagnostico = {}
+        ok = descarga_ca.descargar_compra_agil_api(
+            codigo, driver=self.driver, base_dir=base_dir, diagnostico=diagnostico
+        )
         if not ok:
+            motivo = diagnostico.get("motivo") or ""
+            detalle = diagnostico.get("detalle") or ""
+            if motivo == "sesion_vencida":
+                self.token_guardado = False
+                self.token_estado.set("Sesion vencida: inicie sesion de nuevo en Chrome.")
+                texto = (
+                    f"No se pudieron descargar los adjuntos de la compra agil {codigo}: "
+                    "la sesion de Mercado Publico vencio.\n\n"
+                    "Inicie sesion de nuevo en Chrome, entre a Compra agil y vuelva a procesar."
+                )
+            elif motivo == "sin_ofertas":
+                texto = (
+                    f"La compra agil {codigo} no tiene ofertas ni adjuntos para descargar.\n\n{detalle}\n\n"
+                    "Si la compra aun no cierra, las ofertas no son visibles todavia."
+                )
+            else:
+                texto = f"No se pudieron descargar los adjuntos de la compra agil {codigo}."
+                if detalle:
+                    texto += f"\n\nDetalle: {detalle}"
+            texto += f"\n\nRegistro de la ejecucion: {RUTA_LOG or 'no disponible'}"
+            print(f"[FRONT] Compra agil {codigo} sin descargas: {motivo} {detalle}")
             if mostrar_mensaje:
-                messagebox.showerror("Descarga", "No se pudieron descargar los adjuntos de la compra agil.")
-            self.status_var.set("Fallo descarga compra agil")
+                messagebox.showerror("Descarga", texto)
+            self.status_var.set(f"Fallo descarga compra agil: {motivo or 'error'}")
             return False
 
         carpeta = descarga_ca.resolver_carpeta_base(base_dir, "ComprasAgiles", codigo)
@@ -604,9 +667,11 @@ class DescargadorProduccionApp:
         base_dir = self._normalizar_base_descargas()
         self.status_var.set(f"Descargando adjuntos de licitacion {codigo}...")
         licitaciones_root = os.path.join(base_dir, "Licitaciones")
+        driver = self.driver if self.navegador_iniciado else None
         resumen = descarga_licitaciones.descargar_licitacion_automatica(
             codigo,
             base_dir=licitaciones_root,
+            driver=driver,
         )
         nombre_proyecto = resumen.get("nombre_licitacion") or ""
         carpeta_licitacion = resumen.get("carpeta_base") or descarga_ca.resolver_carpeta_base(
@@ -646,12 +711,24 @@ class DescargadorProduccionApp:
             base_dir=base_dir,
             carpeta_base=carpeta_licitacion,
         )
+        comprobantes = resumen.get("comprobantes") or {}
+        if comprobantes.get("aviso"):
+            nota_comprobantes = comprobantes["aviso"]
+        else:
+            nota_comprobantes = (
+                f"Comprobantes de oferta guardados: {comprobantes.get('descargados', 0)} "
+                f"de {comprobantes.get('total', 0)}."
+            )
+        faltan_comprobantes = comprobantes.get("descargados", 0) < comprobantes.get("total", 0)
+
         if ruta_excel:
             self.status_var.set(f"Flujo completado: {codigo}")
             if mostrar_mensaje:
-                messagebox.showinfo(
+                mostrar = messagebox.showwarning if faltan_comprobantes else messagebox.showinfo
+                mostrar(
                     "Proceso completado",
-                    f"Licitacion {codigo} procesada.\n\nExcel generado en:\n{ruta_excel}",
+                    f"Licitacion {codigo} procesada.\n\nExcel generado en:\n{ruta_excel}"
+                    f"\n\n{nota_comprobantes}",
                 )
             return True
         else:
@@ -1138,7 +1215,59 @@ class DescargadorProduccionApp:
             self.btn_procesar.configure(state="disabled")
 
 
+RUTA_LOG = None
+
+
+class _Tee:
+    """Escribe en la consola (si hay) y en el archivo de registro a la vez."""
+
+    def __init__(self, original, archivo):
+        self.original = original
+        self.archivo = archivo
+
+    def write(self, texto):
+        for destino in (self.original, self.archivo):
+            if destino is None:
+                continue
+            try:
+                destino.write(texto)
+                destino.flush()
+            except Exception:
+                pass
+        return len(texto)
+
+    def flush(self):
+        for destino in (self.original, self.archivo):
+            try:
+                if destino is not None:
+                    destino.flush()
+            except Exception:
+                pass
+
+
+def _activar_registro():
+    """
+    Guarda todo lo que imprime la aplicacion en logs/descargador_AAAAMMDD.log junto al
+    programa, para poder revisar despues por que fallo una descarga.
+    """
+    global RUTA_LOG
+    import sys
+    from datetime import datetime
+
+    try:
+        carpeta = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+        os.makedirs(carpeta, exist_ok=True)
+        RUTA_LOG = os.path.join(carpeta, f"descargador_{datetime.now():%Y%m%d}.log")
+        archivo = open(RUTA_LOG, "a", encoding="utf-8")
+        archivo.write(f"\n===== Inicio {datetime.now():%Y-%m-%d %H:%M:%S} =====\n")
+        sys.stdout = _Tee(sys.stdout, archivo)
+        sys.stderr = _Tee(sys.stderr, archivo)
+    except Exception:
+        RUTA_LOG = None
+
+
 def main():
+    _activar_registro()
     root = tk.Tk()
     app = DescargadorProduccionApp(root)
     root.protocol("WM_DELETE_WINDOW", app.on_closing)

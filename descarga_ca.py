@@ -291,7 +291,24 @@ def descargar_compra_agil(codigo_ca, driver=None, base_dir="Descargas", nombre_p
         return False
 
 
-def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_dir="Descargas", nombre_proyecto=None):
+def segundos_vigencia_token(token):
+    """
+    Segundos que le quedan al token (JWT) de compra ágil; negativo si ya venció.
+    None si no se puede leer el vencimiento (token sin formato JWT).
+    """
+    try:
+        valor = (token or "").strip()
+        if valor.lower().startswith("bearer "):
+            valor = valor[7:].strip()
+        cuerpo = valor.split(".")[1]
+        cuerpo += "=" * (-len(cuerpo) % 4)
+        exp = json.loads(base64.urlsafe_b64decode(cuerpo)).get("exp")
+        return float(exp) - time.time() if exp else None
+    except Exception:
+        return None
+
+
+def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_dir="Descargas", nombre_proyecto=None, diagnostico=None):
     """
     Descarga los adjuntos de una compra ágil usando la API oficial con el token Bearer.
 
@@ -300,13 +317,28 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
         token_path (str): Ruta al archivo que contiene el token (por defecto 'token')
         driver: Instancia Selenium opcional, usada como respaldo para imprimir certificados
 
+        diagnostico (dict, opcional): si se entrega, se llena con "motivo" y "detalle"
+            para explicarle al usuario por qué no se descargó nada.
+
     Returns:
         bool: True si todo fue bien, False en caso contrario
     """
+    if diagnostico is None:
+        diagnostico = {}
+    diagnostico.update({"motivo": "", "detalle": ""})
+    fallas_api = []
+
     try:
         token = _leer_token(token_path)
     except Exception as e:
         print(f"[API] Error leyendo token: {e}")
+        diagnostico.update({"motivo": "sin_token", "detalle": str(e)})
+        return False
+
+    vigencia = segundos_vigencia_token(token)
+    if vigencia is not None and vigencia <= 0:
+        print(f"[API] El token venció hace {int(-vigencia // 60)} min")
+        diagnostico.update({"motivo": "sesion_vencida", "detalle": "El token de sesión está vencido."})
         return False
 
     info_data = None
@@ -316,6 +348,7 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
             nombre_proyecto = _extraer_nombre_proyecto_compra_info(info_data)
         except Exception as e:
             print(f"[API] Error obteniendo nombre de compra agil: {e}")
+            fallas_api.append(str(e))
             info_data = None
 
     if not nombre_proyecto and driver:
@@ -343,6 +376,7 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
         archivos_generales, _ = _listar_adjuntos_api(codigo_ca, token)
     except Exception as e:
         print(f"[API] Error al listar adjuntos generales: {e}")
+        fallas_api.append(str(e))
         archivos_generales = []
 
     if archivos_generales:
@@ -378,6 +412,7 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
         candidatos = extract_candidate_ids(info_data)
     except Exception as e:
         print(f"[API] Error al obtener información de compra o candidatos: {e}")
+        fallas_api.append(str(e))
         candidatos = []
 
     if not candidatos:
@@ -513,6 +548,32 @@ def descargar_compra_agil_api(codigo_ca, token_path="token", driver=None, base_d
         print(f"[VOUCHER_CA] Error inesperado descargando comprobantes de oferta: {e}")
 
     print(f"[API] Descarga finalizada. Éxitos: {exitosos} | Errores: {errores}")
+    if exitosos == 0:
+        if any(re.search(r"HTTP 40[13]\b", f) for f in fallas_api):
+            diagnostico.update({
+                "motivo": "sesion_vencida",
+                "detalle": "Mercado Público rechazó el token (sesión vencida o cerrada).",
+            })
+        elif fallas_api:
+            diagnostico.update({"motivo": "error_api", "detalle": fallas_api[0][:300]})
+        elif not candidatos and not archivos_generales:
+            estado = ""
+            try:
+                detalle = ((info_data or {}).get("payload") or {}).get("detalleSolicitud") or {}
+                estado = str(detalle.get("estado") or detalle.get("estadoSolicitud") or "")
+            except Exception:
+                estado = ""
+            diagnostico.update({
+                "motivo": "sin_ofertas",
+                "detalle": "La compra no tiene ofertas ni adjuntos visibles"
+                + (f" (estado: {estado})." if estado else "."),
+            })
+        else:
+            diagnostico.update({
+                "motivo": "descargas_fallidas",
+                "detalle": f"Se encontraron {len(candidatos)} oferta(s) pero fallaron todas las descargas ({errores} error(es)).",
+            })
+        print(f"[API] Sin descargas: {diagnostico['motivo']} - {diagnostico['detalle']}")
     return exitosos > 0
 
 def navegar_a_compra_agil(codigo_ca, driver):
